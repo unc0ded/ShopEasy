@@ -18,11 +18,11 @@ public class LoginActivity extends AppCompatActivity {
 
     TextInputEditText emailOrPhoneE,passwordE;
     TextView signUp;
+    Button login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.MaterialLight);
         setContentView(R.layout.activity_login);
 
         attachID();
@@ -58,14 +58,14 @@ public class LoginActivity extends AppCompatActivity {
                 signUpPopUp.show();
             }
         });
-
-        Toolbar myToolbar = findViewById(R.id.login_toolbar);
-        setSupportActionBar(myToolbar);
     }
 
     private void attachID() {
         emailOrPhoneE = findViewById(R.id.email_phone_tf);
         passwordE = findViewById(R.id.password_tf);
         signUp = findViewById(R.id.sign_up_textView);
+        Toolbar myToolbar = findViewById(R.id.login_toolbar);
+        setSupportActionBar(myToolbar);
+        login=findViewById(R.id.login_btn);
     }
 }

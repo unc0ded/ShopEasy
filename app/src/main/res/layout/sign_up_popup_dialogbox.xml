@@ -7,7 +7,7 @@
     android:background="#FFFFFF"
     android:backgroundTint="#FFFFFF">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/popup_customer_sign_up_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/popup_vendor_sign_up_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
