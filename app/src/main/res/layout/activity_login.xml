@@ -38,6 +38,7 @@
             app:boxStrokeColor="@color/box_stroke"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email_phone_tf"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#00FFFFFF"
@@ -57,10 +58,10 @@
             app:boxStrokeColor="@color/box_stroke"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password_tf"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#00FFFFFF"
-                android:id="@+id/otp_tf"
                 android:textColorHint="@color/bgColor"
                 android:textColor="#ffffff" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -76,6 +77,23 @@
             style="?attr/materialButtonOutlinedStyle"
             android:id="@+id/login_btn"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Not registered?"
+            android:textColor="#99FFFFFF"
+            android:layout_gravity="center"
+            android:padding="15dp"/>
+
+        <TextView
+            android:id="@+id/sign_up_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign Up"
+            android:layout_gravity="center"
+            android:textSize="20dp"
+            android:textColor="@android:color/white"
+            />
 
     </LinearLayout>
 
