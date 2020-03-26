@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LoginActivity"
-    android:background="@color/cardview_dark_background"
+    android:background="@color/darkBackground"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
@@ -36,14 +36,21 @@
             android:layout_marginTop="20dp"
             app:hintTextColor="@color/bgColor"
             app:boxStrokeColor="@color/box_stroke"
+            app:boxCornerRadiusTopEnd="4dp"
+            app:boxCornerRadiusBottomEnd="4dp"
+            app:boxCornerRadiusBottomStart="4dp"
+            app:boxCornerRadiusTopStart="4dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#00FFFFFF"
                 android:textColorHint="@color/bgColor"
                 android:textColor="#ffffff"/>
         </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -55,11 +62,14 @@
             android:layout_marginHorizontal="20dp"
             app:hintTextColor="@color/bgColor"
             app:boxStrokeColor="@color/box_stroke"
+            app:boxCornerRadiusTopEnd="4dp"
+            app:boxCornerRadiusBottomEnd="4dp"
+            app:boxCornerRadiusBottomStart="4dp"
+            app:boxCornerRadiusTopStart="4dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#00FFFFFF"
                 android:id="@+id/otp_tf"
                 android:textColorHint="@color/bgColor"
                 android:textColor="#ffffff" />
@@ -71,9 +81,12 @@
             android:layout_gravity="center"
             android:textColor="#ffffff"
             android:layout_marginTop="20dp"
-            app:strokeColor="#3E000000"
+            app:cornerRadius="3dp"
+            android:backgroundTint="@color/btn_disabled"
+            app:rippleColor="@color/btn_pressed"
+            app:strokeColor="@color/bgColor"
             android:text="Sign In"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:id="@+id/login_btn"/>
 
 
