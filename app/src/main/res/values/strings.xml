@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ShopEasy</string>
     <string name="appTitle">ShopEasy</string>
+    <string name="sign_up_as_">
+    Sign Up as customer\nWe just need a few details....
+    </string>
 </resources>
