@@ -15,9 +15,13 @@ import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.unc0ded.shopdeliver.R;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class customerSignUpActivity extends AppCompatActivity {
 
@@ -26,6 +30,7 @@ public class customerSignUpActivity extends AppCompatActivity {
     TextInputLayout passField,reEnterPassField;
     Toolbar simpleBar;
     AutoCompleteTextView buildingSelect;
+    DatabaseReference userReference = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,8 @@ public class customerSignUpActivity extends AppCompatActivity {
             }
         });
 
+
+
         validateOTP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,6 +72,7 @@ public class customerSignUpActivity extends AppCompatActivity {
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if(Objects.requireNonNull(passwordE.getText()).toString().equals(Objects.requireNonNull(reEnterPasswordE.getText()).toString())) {
                     onBackPressed();
                 }

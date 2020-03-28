@@ -89,40 +89,53 @@
                     android:textColorHint="@color/bgColor" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/AppTheme.ExposedDropdownMenu"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginHorizontal="10dp">
 
-                <AutoCompleteTextView
-                    android:id="@+id/dropdown_base"
-                    android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/AppTheme.ExposedDropdownMenu"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:editable="false" />
+                    android:layout_weight="1.2">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <AutoCompleteTextView
+                        android:id="@+id/dropdown_base"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:editable="false" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:hint="Flat No."
-                android:textColorHint="@color/textColor"
-                app:boxCornerRadiusBottomEnd="4dp"
-                app:boxCornerRadiusBottomStart="4dp"
-                app:boxCornerRadiusTopEnd="4dp"
-                app:boxCornerRadiusTopStart="4dp"
-                app:boxStrokeColor="@color/box_stroke"
-                app:hintTextColor="@color/bgColor">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
+                <View
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:textColor="#ffffff"
-                    android:textColorHint="@color/bgColor" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_weight="0.4"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:hint="Flat No."
+                    android:textColorHint="@color/textColor"
+                    app:boxCornerRadiusBottomEnd="4dp"
+                    app:boxCornerRadiusBottomStart="4dp"
+                    app:boxCornerRadiusTopEnd="4dp"
+                    app:boxCornerRadiusTopStart="4dp"
+                    app:boxStrokeColor="@color/box_stroke"
+                    app:hintTextColor="@color/bgColor">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textColor="#ffffff"
+                        android:textColorHint="@color/bgColor" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
