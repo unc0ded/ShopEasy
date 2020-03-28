@@ -10,15 +10,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textview.MaterialTextView;
 import com.unc0ded.shopdeliver.signUpActivities.customerSignUpActivity;
 import com.unc0ded.shopdeliver.signUpActivities.vendorSignUpActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
     TextInputEditText emailOrPhoneE,passwordE;
-    TextView signUp;
-    Button login;
+    MaterialTextView signUp;
+    MaterialButton login;
+    Toolbar loginBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         attachID();
+        setSupportActionBar(loginBar);
 
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,8 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         emailOrPhoneE = findViewById(R.id.email_phone_tf);
         passwordE = findViewById(R.id.password_tf);
         signUp = findViewById(R.id.sign_up_textView);
-        Toolbar myToolbar = findViewById(R.id.login_toolbar);
-        setSupportActionBar(myToolbar);
+        loginBar = findViewById(R.id.login_toolbar);
         login=findViewById(R.id.login_btn);
     }
 }

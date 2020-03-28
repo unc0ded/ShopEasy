@@ -9,8 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
-        <activity android:name=".signUpActivities.customerSignUpActivity"></activity>
-        <activity android:name=".signUpActivities.vendorSignUpActivity"></activity>
+        <activity android:name=".signUpActivities.customerSignUpActivity" />
+        <activity android:name=".signUpActivities.vendorSignUpActivity" />
         <activity android:name=".LoginActivity" />
         <activity
             android:name=".SplashScreen"
@@ -21,6 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
