@@ -9,6 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
+        <activity
+            android:name=".mainActivities.customerMainActivity"
+            android:label="@string/title_activity_customer_main"></activity>
         <activity android:name=".signUpActivities.customerSignUpActivity" />
         <activity android:name=".signUpActivities.vendorSignUpActivity" />
         <activity android:name=".LoginActivity" />

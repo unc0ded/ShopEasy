@@ -1,18 +1,18 @@
 package com.unc0ded.shopdeliver;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
+import com.unc0ded.shopdeliver.mainActivities.customerMainActivity;
 import com.unc0ded.shopdeliver.signUpActivities.customerSignUpActivity;
 import com.unc0ded.shopdeliver.signUpActivities.vendorSignUpActivity;
 
@@ -60,6 +60,14 @@ public class LoginActivity extends AppCompatActivity {
                     });
                 }
                 signUpPopUp.show();
+            }
+        });
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent login = new Intent(LoginActivity.this, customerMainActivity.class);
+                startActivity(login);
             }
         });
     }

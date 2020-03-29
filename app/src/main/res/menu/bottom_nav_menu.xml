@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/customer_navigation_shops_list"
+        android:icon="@drawable/ic_store_i24px"
+        android:title="@string/title_shop_list" />
+
+    <item
+        android:id="@+id/customer_navigation_view_orders"
+        android:icon="@drawable/ic_shopping_cart_24px"
+        android:title="@string/title_orders" />
+
+    <item
+        android:id="@+id/customer_navigation_settings"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/title_settings" />
+
+</menu>
