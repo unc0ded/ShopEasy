@@ -7,19 +7,20 @@
 
     <fragment
         android:id="@+id/customer_navigation_shops_list"
-        android:name="com.unc0ded.shopdeliver.mainActivities.ui.customerOrders.customerOrdersFragment"
+        android:name="com.unc0ded.shopdeliver.mainActivities.ui.customerShopsList.customerShopsListFragment"
         android:label="Nearby Vendors"
-        tools:layout="@layout/customer_fragment_shops_list"/>
+        tools:layout="@layout/fragment_customer_shops_list"/>
 
     <fragment
         android:id="@+id/customer_navigation_view_orders"
-        android:name="com.unc0ded.shopdeliver.mainActivities.ui.customerShopsList.customerShopsListFragment"
+        android:name="com.unc0ded.shopdeliver.mainActivities.ui.customerOrders.customerOrdersFragment"
         android:label="View Orders"
-        tools:layout="@layout/customer_fragment_view_orders" />
+        tools:layout="@layout/fragment_customer_orders" />
+
 
     <fragment
         android:id="@+id/customer_navigation_settings"
         android:name="com.unc0ded.shopdeliver.mainActivities.ui.customerSettings.customerSettingsFragment"
         android:label="Settings"
-        tools:layout="@layout/customer_fragment_settings" />
+        tools:layout="@layout/fragment_customer_settings" />
 </navigation>

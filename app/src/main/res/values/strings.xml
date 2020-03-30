@@ -5,7 +5,7 @@
     <string name="sign_up_vendor">Vendor Sign Up</string>
     <string name="title_activity_customer_main">customerMainActivity</string>
     <string name="title_shop_list">Nearby Vendors</string>
-    <string name="title_orders">Your Orders</string>
-    <string name="title_settings">Account Settings</string>
+    <string name="title_orders">Orders</string>
+    <string name="title_settings">Account</string>
     <string name="todo">TODO</string>
 </resources>
