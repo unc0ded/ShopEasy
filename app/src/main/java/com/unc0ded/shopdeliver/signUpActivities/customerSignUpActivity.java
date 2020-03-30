@@ -63,9 +63,9 @@ public class customerSignUpActivity extends AppCompatActivity {
         validateOTP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                passField.setVisibility(View.VISIBLE);
-                reEnterPassField.setVisibility(View.VISIBLE);
-                signUp.setVisibility(View.VISIBLE);
+                passField.setEnabled(true);
+                reEnterPassField.setEnabled(true);
+                signUp.setEnabled(true);
             }
         });
 
