@@ -143,7 +143,7 @@
                 android:layout_marginHorizontal="10dp">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/customer_sign_up_phone"
+                    android:id="@+id/customer_sign_up_phone_text_input_layout"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -157,6 +157,7 @@
                     app:hintTextColor="@color/bgColor">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/customer_sign_up_phone"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:paddingEnd="95dp"
@@ -170,7 +171,7 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_alignEnd="@+id/customer_sign_up_phone"
+                    android:layout_alignEnd="@id/customer_sign_up_phone_text_input_layout"
                     android:layout_marginTop="7dp"
                     android:layout_marginEnd="2dp"
                     android:text="GET OTP"

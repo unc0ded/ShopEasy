@@ -12,7 +12,6 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
-import com.unc0ded.shopdeliver.mainActivities.customerMainActivity;
 import com.unc0ded.shopdeliver.signUpActivities.customerSignUpActivity;
 import com.unc0ded.shopdeliver.signUpActivities.vendorSignUpActivity;
 
@@ -22,6 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     MaterialTextView signUp;
     MaterialButton login;
     Toolbar loginBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +66,7 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent login = new Intent(LoginActivity.this, customerMainActivity.class);
-                startActivity(login);
+
             }
         });
     }
