@@ -13,6 +13,7 @@
             android:name=".mainActivities.customerMainActivity"
             android:label="@string/title_activity_customer_main"
             android:theme="@style/Theme.MaterialComponents.Light"></activity>
+
         <activity android:name=".signUpActivities.customerSignUpActivity" />
         <activity android:name=".signUpActivities.vendorSignUpActivity" />
         <activity android:name=".LoginActivity" />

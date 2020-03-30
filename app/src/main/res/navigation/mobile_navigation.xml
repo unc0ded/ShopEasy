@@ -17,6 +17,7 @@
         android:label="View Orders"
         tools:layout="@layout/fragment_customer_orders" />
 
+
     <fragment
         android:id="@+id/customer_navigation_settings"
         android:name="com.unc0ded.shopdeliver.mainActivities.ui.customerSettings.customerSettingsFragment"
