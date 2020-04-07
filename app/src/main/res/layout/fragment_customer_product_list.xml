@@ -10,17 +10,19 @@
     android:background="@color/darkBackground">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/customer_orders_toolbar"
+            android:id="@+id/customer_product_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/bgColor"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
-            app:title="Order History">
+            app:title="Product List">
 
         </androidx.appcompat.widget.Toolbar>
 

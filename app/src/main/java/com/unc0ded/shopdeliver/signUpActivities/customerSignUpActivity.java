@@ -78,14 +78,15 @@ public class customerSignUpActivity extends AppCompatActivity {
                 otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.");
                 otpAlertBuilder.setCancelable(true);
 
-                otpAlertBuilder.setPositiveButton("Ok",
+                otpAlertBuilder.setPositiveButton("Accept",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
                                 if((Objects.requireNonNull(phoneE.getText()).toString().length()) != 10) {
                                     Toast.makeText(customerSignUpActivity.this, "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
-                                }else{
+                                }
+                                else{
                                     sendOTP();
                                     phoneE.setEnabled(false);
                                     getOTP.setEnabled(false);
@@ -107,7 +108,10 @@ public class customerSignUpActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
                 Log.d("customerCallbacks", "onVerificationCompleted:" + phoneAuthCredential);
-                Toast.makeText(customerSignUpActivity.this, "OTP sent to mobile number", Toast.LENGTH_SHORT).show();
+                Toast.makeText(customerSignUpActivity.this, "Mobile Number Verified", Toast.LENGTH_SHORT).show();
+                passField.setEnabled(true);
+                reEnterPassField.setEnabled(true);
+                signUp.setEnabled(true);
             }
 
             @Override
@@ -118,9 +122,9 @@ public class customerSignUpActivity extends AppCompatActivity {
                 getOTP.setEnabled(true);
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     Log.d("customerCallbacks","onVerificationFailed: Invalid Number");
-                } else if (e instanceof FirebaseTooManyRequestsException) {
+                }
+                else if (e instanceof FirebaseTooManyRequestsException) {
                     Log.d("customerCallbacks","onVerificationFailed: SMS quota exceeded");
-
                 }
             }
 
@@ -136,14 +140,14 @@ public class customerSignUpActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(Objects.requireNonNull(otpE.getText()).toString().isEmpty()){
                     Toast.makeText(customerSignUpActivity.this, "Please enter OTP.", Toast.LENGTH_SHORT).show();
-                }else{
+                }
+                else{
                     validateOTPFunc();
                 }
             }
         });
 
         signUp.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
 
@@ -187,7 +191,7 @@ public class customerSignUpActivity extends AppCompatActivity {
 
     private void signInWithPhoneAuthCredentials(PhoneAuthCredential customerCredential) {
         customerAuth.signInWithCredential(customerCredential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(customerSignUpActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
@@ -203,6 +207,8 @@ public class customerSignUpActivity extends AppCompatActivity {
                             signUp.setEnabled(true);
                         }else{
                             Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
+                            if(task.getException() instanceof FirebaseAuthInvalidCredentialsException)
+                                Toast.makeText(customerSignUpActivity.this, "Incorrect OTP", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -225,7 +231,6 @@ public class customerSignUpActivity extends AppCompatActivity {
     }
 
     private void attachID() {
-
         simpleBar=findViewById(R.id.back_toolbar);
 
         nameE = findViewById(R.id.customer_name);

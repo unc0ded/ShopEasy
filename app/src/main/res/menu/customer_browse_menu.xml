@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/cart_button"
+        android:icon="@drawable/ic_shopping_cart_24px"
+        android:title="Shopping Cart"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/search_btn"
+        android:icon="@drawable/ic_search_24px"
+        android:title="Search"
+        app:showAsAction="always"/>
+</menu>

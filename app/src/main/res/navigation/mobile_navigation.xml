@@ -9,12 +9,16 @@
         android:id="@+id/customer_navigation_shops_list"
         android:name="com.unc0ded.shopdeliver.mainActivities.ui.customerShopsList.customerShopsListFragment"
         android:label="Nearby Vendors"
-        tools:layout="@layout/fragment_customer_shops_list"/>
+        tools:layout="@layout/fragment_customer_shops_list">
+        <action
+            android:id="@+id/action_customer_navigation_shops_list_to_customer_navigation_product_list"
+            app:destination="@id/customer_navigation_product_list" />
+    </fragment>
 
     <fragment
         android:id="@+id/customer_navigation_view_orders"
         android:name="com.unc0ded.shopdeliver.mainActivities.ui.customerOrders.customerOrdersFragment"
-        android:label="View Orders"
+        android:label="Orders"
         tools:layout="@layout/fragment_customer_orders" />
 
 
@@ -23,4 +27,9 @@
         android:name="com.unc0ded.shopdeliver.mainActivities.ui.customerSettings.customerSettingsFragment"
         android:label="Settings"
         tools:layout="@layout/fragment_customer_settings" />
+    <fragment
+        android:id="@+id/customer_navigation_product_list"
+        android:name="com.unc0ded.shopdeliver.mainActivities.ui.customerShopsList.customerProductList"
+        android:label="Products Available"
+        tools:layout="@layout/fragment_customer_product_list" />
 </navigation>
