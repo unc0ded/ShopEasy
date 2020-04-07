@@ -1,6 +1,7 @@
 package com.unc0ded.shopdeliver.signUpActivities;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -26,6 +27,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.unc0ded.shopdeliver.LoginActivity;
 import com.unc0ded.shopdeliver.R;
 
 import java.util.Objects;
@@ -34,14 +38,14 @@ import java.util.concurrent.TimeUnit;
 public class customerSignUpActivity extends AppCompatActivity {
 
     MaterialButton signUp,getOTP,validateOTP;
-    TextInputEditText passwordE,reEnterPasswordE,phoneE, otpE;
+    TextInputEditText nameE,societyNameE,flatNumberE,passwordE,reEnterPasswordE,phoneE, otpE;
     TextInputLayout passField,reEnterPassField;
     Toolbar simpleBar;
     AutoCompleteTextView buildingSelect;
     private String sentOTP;
 
     //Firebase
-    //DatabaseReference userReference = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference userReference;
     FirebaseAuth customerAuth;
     PhoneAuthProvider.OnVerificationStateChangedCallbacks customerCallbacks;
 
@@ -78,8 +82,14 @@ public class customerSignUpActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                sendOTP();
-                                Toast.makeText(customerSignUpActivity.this, "OTP sent to mobile number", Toast.LENGTH_SHORT).show();
+
+                                if((Objects.requireNonNull(phoneE.getText()).toString().length()) != 10) {
+                                    Toast.makeText(customerSignUpActivity.this, "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    sendOTP();
+                                    phoneE.setEnabled(false);
+                                    getOTP.setEnabled(false);
+                                }
                                 dialog.cancel();
                             }
                         }).setNegativeButton("Cancel",
@@ -88,10 +98,7 @@ public class customerSignUpActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
-                        });
-
-                AlertDialog otpAlert = otpAlertBuilder.create();
-                otpAlert.show();
+                        }).create().show();
 
             }
         });
@@ -100,18 +107,20 @@ public class customerSignUpActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
                 Log.d("customerCallbacks", "onVerificationCompleted:" + phoneAuthCredential);
+                Toast.makeText(customerSignUpActivity.this, "OTP sent to mobile number", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
                 Log.d("customerCallbacks", "onVerificationFailed", e);
-
+                Toast.makeText(customerSignUpActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                phoneE.setEnabled(true);
+                getOTP.setEnabled(true);
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     Log.d("customerCallbacks","onVerificationFailed: Invalid Number");
                 } else if (e instanceof FirebaseTooManyRequestsException) {
                     Log.d("customerCallbacks","onVerificationFailed: SMS quota exceeded");
-                    // The SMS quota for the project has been exceeded
-                    // ...
+
                 }
             }
 
@@ -125,17 +134,47 @@ public class customerSignUpActivity extends AppCompatActivity {
         validateOTP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validateOTPFunc();
+                if(Objects.requireNonNull(otpE.getText()).toString().isEmpty()){
+                    Toast.makeText(customerSignUpActivity.this, "Please enter OTP.", Toast.LENGTH_SHORT).show();
+                }else{
+                    validateOTPFunc();
+                }
             }
         });
 
         signUp.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
 
-                if(Objects.requireNonNull(passwordE.getText()).toString().equals(Objects.requireNonNull(reEnterPasswordE.getText()).toString())) {
-                    onBackPressed();
+                String name = Objects.requireNonNull(nameE.getText()).toString(), societyName = Objects.requireNonNull(societyNameE.getText()).toString()
+                        ,buildingName = buildingSelect.getText().toString(), flatNumber = Objects.requireNonNull(flatNumberE.getText()).toString()
+                        ,password = Objects.requireNonNull(passwordE.getText()).toString()
+                        ,reEnterPassword = Objects.requireNonNull(reEnterPasswordE.getText()).toString();
+
+                if((!(passwordE.getText()).toString().isEmpty())&&(!(reEnterPasswordE.getText()).toString().isEmpty())
+                        &&(!(nameE.getText()).toString().isEmpty())&&(!(societyNameE.getText()).toString().isEmpty())
+                        &&(!(flatNumberE.getText()).toString().isEmpty())&&(!(buildingSelect.getText().toString().equals("Building Number")))) {
+                    if(password.equals(reEnterPassword)) {
+                        addCustomer();
+                        Intent signUp = new Intent(customerSignUpActivity.this, LoginActivity.class);
+                        startActivity(signUp);
+                    }else{
+                        Toast.makeText(customerSignUpActivity.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(customerSignUpActivity.this, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                 }
+            }
+
+            private void addCustomer() {
+                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Name").setValue(nameE.getText().toString());
+                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Society").setValue(societyNameE.getText().toString());
+                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Building Name").setValue(buildingSelect.getText().toString());
+                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Flat Number").setValue(flatNumberE.getText().toString());
+                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Phone Number").setValue(("+91" + phoneE.getText().toString()));
+                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Password").setValue(passwordE.getText().toString());
+                Toast.makeText(customerSignUpActivity.this, "You have been registered successfully!", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -156,9 +195,12 @@ public class customerSignUpActivity extends AppCompatActivity {
 
                             Toast.makeText(customerSignUpActivity.this, "Phone number verified!", Toast.LENGTH_SHORT).show();
 
-                            passField.setVisibility(View.VISIBLE);
-                            reEnterPassField.setVisibility(View.VISIBLE);
-                            signUp.setVisibility(View.VISIBLE);
+                            otpE.setEnabled(false);
+                            validateOTP.setEnabled(false);
+
+                            passField.setEnabled(true);
+                            reEnterPassField.setEnabled(true);
+                            signUp.setEnabled(true);
                         }else{
                             Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
                         }
@@ -167,13 +209,11 @@ public class customerSignUpActivity extends AppCompatActivity {
     }
 
     private void sendOTP() {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(Objects.requireNonNull(phoneE.getText()).toString()
+        PhoneAuthProvider.getInstance().verifyPhoneNumber("+91"+Objects.requireNonNull(phoneE.getText()).toString()
                 ,60, TimeUnit.SECONDS
                 ,customerSignUpActivity.this
                 ,customerCallbacks);
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -185,16 +225,27 @@ public class customerSignUpActivity extends AppCompatActivity {
     }
 
     private void attachID() {
+
+        simpleBar=findViewById(R.id.back_toolbar);
+
+        nameE = findViewById(R.id.customer_name);
+        societyNameE = findViewById(R.id.society_name);
+        flatNumberE = findViewById(R.id.flat_number);
         passwordE = findViewById(R.id.customer_sign_up_password);
         reEnterPasswordE = findViewById(R.id.customer_sign_up_reenter_password);
         phoneE = findViewById(R.id.customer_sign_up_phone);
         otpE = findViewById(R.id.customer_sign_up_otp);
+        buildingSelect = findViewById(R.id.building_dropdown_base);
+
         signUp = findViewById(R.id.customer_sign_up_btn);
-        getOTP = findViewById(R.id.otp_btn);
+        getOTP = findViewById(R.id.customer_otp_btn);
         validateOTP = findViewById(R.id.customer_validate_otp);
-        simpleBar=findViewById(R.id.back_toolbar);
+
         passField=findViewById(R.id.textInputLayout3);
         reEnterPassField=findViewById(R.id.textInputLayout2);
-        buildingSelect = findViewById(R.id.dropdown_base);
+
+        customerAuth = FirebaseAuth.getInstance();
+        userReference = FirebaseDatabase.getInstance().getReference().child("Users");
+
     }
 }

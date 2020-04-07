@@ -32,14 +32,6 @@ public class LoginActivity extends AppCompatActivity {
         attachID();
         setSupportActionBar(loginBar);
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent home= new Intent(LoginActivity.this, customerMainActivity.class);
-                startActivity(home);
-            }
-        });
-
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,7 +67,8 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent login = new Intent(LoginActivity.this, customerMainActivity.class);
+                startActivity(login);
             }
         });
     }
