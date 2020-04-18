@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">ShopEasy</string>
     <string name="appTitle">ShopEasy</string>
-    <string name="sign_up_as_">
-    Sign Up as customer\nWe just need a few details....
-    </string>
+    <string name="sign_up_cust">Customer Sign Up</string>
+    <string name="sign_up_vendor">Vendor Sign Up</string>
+    <string name="title_activity_customer_main">customerMainActivity</string>
+    <string name="title_shop_list">Nearby Vendors</string>
+    <string name="title_orders">Orders</string>
+    <string name="title_settings">Account</string>
+    <string name="todo">TODO</string>
 </resources>

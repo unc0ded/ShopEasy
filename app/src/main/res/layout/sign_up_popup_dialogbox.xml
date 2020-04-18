@@ -1,42 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="291dp"
-    android:layout_height="121dp"
-    android:background="#FFFFFF"
-    android:backgroundTint="#FFFFFF">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/compColor"
+    android:orientation="vertical">
 
     <com.google.android.material.textview.MaterialTextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="18dp"
-        android:text="Sign Up as"
-        android:textSize="24dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="10dp"
+        android:textAlignment="center"
+        android:textColor="#000"
+        android:text="Register As"
+        android:textSize="20dp" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/popup_customer_sign_up_btn"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="61dp"
-        android:backgroundTint="#A9A9A9"
-        android:text="Customer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/popup_vendor_sign_up_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="169dp"
-        android:layout_marginTop="61dp"
-        android:backgroundTint="#A9A9A9"
-        android:text="Vendor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/popup_customer_sign_up_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/bgColor"
+            android:text="Customer" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/popup_vendor_sign_up_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/bgColor"
+            android:layout_margin="10dp"
+            android:text="Vendor" />
+    </LinearLayout>
+
+</LinearLayout>
