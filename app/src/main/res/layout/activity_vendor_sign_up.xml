@@ -47,7 +47,6 @@
                 android:textSize="24dp" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,7 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:hint="UPI ID"
+                android:hint="Shop Type"
                 android:textColorHint="@color/textColor"
                 app:boxCornerRadiusBottomEnd="4dp"
                 app:boxCornerRadiusBottomStart="4dp"
@@ -106,7 +105,29 @@
                 app:hintTextColor="@color/bgColor">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/vendor_upi"
+                    android:id="@+id/vendor_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="#ffffff"
+                    android:textColorHint="@color/bgColor" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:hint="Locality"
+                android:textColorHint="@color/textColor"
+                app:boxCornerRadiusBottomEnd="4dp"
+                app:boxCornerRadiusBottomStart="4dp"
+                app:boxCornerRadiusTopEnd="4dp"
+                app:boxCornerRadiusTopStart="4dp"
+                app:boxStrokeColor="@color/box_stroke"
+                app:hintTextColor="@color/bgColor">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/vendor_address"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textColor="#ffffff"
@@ -197,8 +218,38 @@
 
             </RelativeLayout>
 
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Connect Email Address (Optional)"
+                android:textColor="#FFFFFF"
+                android:layout_margin="20dp"
+                android:textSize="15dp"
+                android:fontFamily="@font/anonymous_pro"/>
+
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/vendor_sign_up_password_text_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:hint="Email"
+                android:textColorHint="@color/textColor"
+                app:boxCornerRadiusBottomEnd="4dp"
+                app:boxCornerRadiusBottomStart="4dp"
+                app:boxCornerRadiusTopEnd="4dp"
+                app:boxCornerRadiusTopStart="4dp"
+                app:boxStrokeColor="@color/box_stroke"
+                app:hintTextColor="@color/bgColor">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/vendor_sign_up_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="#ffffff"
+                    android:textColorHint="@color/bgColor" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -223,7 +274,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/vendor_sign_up_reenter_password_text_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

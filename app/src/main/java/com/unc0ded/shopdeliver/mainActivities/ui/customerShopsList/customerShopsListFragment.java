@@ -1,6 +1,7 @@
 package com.unc0ded.shopdeliver.mainActivities.ui.customerShopsList;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,11 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.unc0ded.shopdeliver.adapter.VendorListAdapter;
 import com.unc0ded.shopdeliver.mainActivities.customerMainActivity;
 
@@ -34,6 +40,7 @@ public class customerShopsListFragment extends Fragment {
     Toolbar toolbar;
     RecyclerView vendorRV;
     ArrayList<Vendor> vendorList = new ArrayList<>();
+    DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
 
     private customerShopsListViewModel customerShopsListViewModel;
 
@@ -50,13 +57,26 @@ public class customerShopsListFragment extends Fragment {
 //            }
 //        });
         vendorRV=root.findViewById(R.id.vendor_list_rv);
-        vendorList.add(new Vendor("Dmart","Supermarket","Baner"));
-        vendorList.add(new Vendor("Medplus","Medical","Aundh"));
-        vendorList.add(new Vendor("Joshi","Confectionary","Aundh"));
-        VendorListAdapter adapter=new VendorListAdapter(getActivity(),vendorList);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(getActivity());
-        vendorRV.setAdapter(adapter);
-        vendorRV.setLayoutManager(linearLayoutManager);
+        vendorRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot shot : dataSnapshot.getChildren())
+                {
+                    vendorList.add(shot.getValue(Vendor.class));
+                }
+
+                vendorRV.setAdapter(new VendorListAdapter(getActivity(), vendorList));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("Data fetch error", databaseError.getMessage());
+            }
+        });
+//        vendorList.add(new Vendor("Dmart","Supermarket","Baner","1234567890"));
+//        vendorList.add(new Vendor("Medplus","Medical","Aundh", "2422567890"));
+//        vendorList.add(new Vendor("Joshi","Confectionary","Aundh", "2345678912"));
         return root;
     }
     @Override

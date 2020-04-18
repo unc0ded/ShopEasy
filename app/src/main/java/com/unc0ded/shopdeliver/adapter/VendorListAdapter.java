@@ -15,10 +15,10 @@ import com.unc0ded.shopdeliver.model.Vendor;
 import java.util.ArrayList;
 import java.util.zip.Inflater;
 
-public class VendorListAdapter extends RecyclerView.Adapter<VendorListVH> {
+public class VendorListAdapter extends RecyclerView.Adapter<VendorListAdapter.VendorListVH> {
 
     private Context context;
-    private ArrayList<Vendor> vendorList=new ArrayList<>();
+    private ArrayList<Vendor> vendorList;
 
     public VendorListAdapter(Context context, ArrayList<Vendor> vendorList) {
         this.context = context;
@@ -40,25 +40,25 @@ public class VendorListAdapter extends RecyclerView.Adapter<VendorListVH> {
     public int getItemCount() {
         return vendorList.size();
     }
-}
 
-class VendorListVH extends RecyclerView.ViewHolder {
+    class VendorListVH extends RecyclerView.ViewHolder {
 
-    TextView nameTV, typeTV, addressTV;
-    public VendorListVH(@NonNull View itemView) {
-        super(itemView);
-        attachID();
-    }
+        TextView nameTV, typeTV, addressTV;
+        public VendorListVH(@NonNull View itemView) {
+            super(itemView);
+            attachID();
+        }
 
-    private void attachID() {
-        nameTV=itemView.findViewById(R.id.vendor_name_tv);
-        typeTV=itemView.findViewById(R.id.vendor_type_tv);
-        addressTV=itemView.findViewById(R.id.vendor_address_tv);
-    }
+        private void attachID() {
+            nameTV=itemView.findViewById(R.id.vendor_name_tv);
+            typeTV=itemView.findViewById(R.id.vendor_type_tv);
+            addressTV=itemView.findViewById(R.id.vendor_address_tv);
+        }
 
-    public void populate(Vendor vendor) {
-        nameTV.setText(vendor.getName());
-        typeTV.setText(vendor.getType());
-        addressTV.setText(vendor.getAddress());
+        public void populate(Vendor vendor) {
+            nameTV.setText(vendor.getShopName());
+            typeTV.setText(vendor.getType());
+            addressTV.setText(vendor.getAddress());
+        }
     }
 }

@@ -14,12 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
@@ -31,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.unc0ded.shopdeliver.LoginActivity;
 import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.model.Customer;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -38,9 +41,10 @@ import java.util.concurrent.TimeUnit;
 public class customerSignUpActivity extends AppCompatActivity {
 
     MaterialButton signUp,getOTP,validateOTP;
-    TextInputEditText nameE,societyNameE,flatNumberE,passwordE,reEnterPasswordE,phoneE, otpE;
-    TextInputLayout passField,reEnterPassField;
+    MaterialTextView optionalTV;
+    TextInputEditText nameE,societyNameE,flatNumberE,passwordE,reEnterPasswordE,phoneE, otpE, emailE, localityE;
     Toolbar simpleBar;
+    NestedScrollView scrollView;
     AutoCompleteTextView buildingSelect;
     private String sentOTP;
 
@@ -68,6 +72,11 @@ public class customerSignUpActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(customerSignUpActivity.this, R.layout.dropdown_item, BUILDINGS);
         buildingSelect.setAdapter(adapter);
 
+        emailE.setEnabled(false);
+        passwordE.setEnabled(false);
+        reEnterPasswordE.setEnabled(false);
+        signUp.setEnabled(false);
+
         customerAuth = FirebaseAuth.getInstance();
 
         getOTP.setOnClickListener(new View.OnClickListener() {
@@ -75,22 +84,22 @@ public class customerSignUpActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 AlertDialog.Builder otpAlertBuilder = new AlertDialog.Builder(customerSignUpActivity.this);
-                otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.");
-                otpAlertBuilder.setCancelable(true);
-
-                otpAlertBuilder.setPositiveButton("Accept",
+                otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
+                        .setCancelable(true)
+                        .setPositiveButton("Accept",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
-                                if((Objects.requireNonNull(phoneE.getText()).toString().length()) != 10) {
-                                    Toast.makeText(customerSignUpActivity.this, "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    sendOTP();
-                                    phoneE.setEnabled(false);
-                                    getOTP.setEnabled(false);
-                                }
+                                if((Objects.requireNonNull(phoneE.getText()).toString().length()) != 10)
+                                    {
+                                        Toast.makeText(customerSignUpActivity.this, "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
+                                    }
+                                else
+                                    {
+                                        sendOTP();
+                                        phoneE.setEnabled(false);
+                                        getOTP.setEnabled(false);
+                                    }
                                 dialog.cancel();
                             }
                         }).setNegativeButton("Cancel",
@@ -108,10 +117,12 @@ public class customerSignUpActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
                 Log.d("customerCallbacks", "onVerificationCompleted:" + phoneAuthCredential);
-                Toast.makeText(customerSignUpActivity.this, "Mobile Number Verified", Toast.LENGTH_SHORT).show();
-                passField.setEnabled(true);
-                reEnterPassField.setEnabled(true);
+                signInWithPhoneAuthCredentials(phoneAuthCredential);
+                passwordE.setEnabled(true);
+                reEnterPasswordE.setEnabled(true);
+                emailE.setEnabled(true);
                 signUp.setEnabled(true);
+                autoScroll();
             }
 
             @Override
@@ -138,12 +149,14 @@ public class customerSignUpActivity extends AppCompatActivity {
         validateOTP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Objects.requireNonNull(otpE.getText()).toString().isEmpty()){
-                    Toast.makeText(customerSignUpActivity.this, "Please enter OTP.", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    validateOTPFunc();
-                }
+                if(Objects.requireNonNull(otpE.getText()).toString().isEmpty())
+                    {
+                        Toast.makeText(customerSignUpActivity.this, "Please enter OTP.", Toast.LENGTH_SHORT).show();
+                    }
+                else
+                    {
+                        validateOTPFunc();
+                    }
             }
         });
 
@@ -151,37 +164,50 @@ public class customerSignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String name = Objects.requireNonNull(nameE.getText()).toString(), societyName = Objects.requireNonNull(societyNameE.getText()).toString()
-                        ,buildingName = buildingSelect.getText().toString(), flatNumber = Objects.requireNonNull(flatNumberE.getText()).toString()
-                        ,password = Objects.requireNonNull(passwordE.getText()).toString()
-                        ,reEnterPassword = Objects.requireNonNull(reEnterPasswordE.getText()).toString();
-
                 if((!(passwordE.getText()).toString().isEmpty())&&(!(reEnterPasswordE.getText()).toString().isEmpty())
                         &&(!(nameE.getText()).toString().isEmpty())&&(!(societyNameE.getText()).toString().isEmpty())
-                        &&(!(flatNumberE.getText()).toString().isEmpty())&&(!(buildingSelect.getText().toString().equals("Building Number")))) {
-                    if(password.equals(reEnterPassword)) {
-                        addCustomer();
+                        &&(!(flatNumberE.getText()).toString().isEmpty())&&(!(buildingSelect.getText().toString().equals("Building Number")))
+                        &&(!(emailE.getText().toString().isEmpty()))&&(!(phoneE.getText().toString().isEmpty()))&&(!(localityE.getText().toString().isEmpty())))
+                    {
+                        if((Objects.requireNonNull(passwordE.getText().toString()).equals(Objects.requireNonNull(reEnterPasswordE.getText().toString()))))
+                            {
+                                addCustomer(nameE.getText().toString(),societyNameE.getText().toString(),(buildingSelect.getText().toString()+flatNumberE.getText().toString()), localityE.getText().toString(), phoneE.getText().toString(), emailE.getText().toString());
+                                Intent signUp = new Intent(customerSignUpActivity.this, LoginActivity.class);
+                                startActivity(signUp);
+                            }
+                        else
+                            {
+                                Toast.makeText(customerSignUpActivity.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
+                            }
+                    }
+                else if(((passwordE.getText()).toString().isEmpty())&&((reEnterPasswordE.getText()).toString().isEmpty())
+                        &&(!(nameE.getText()).toString().isEmpty())&&(!(societyNameE.getText()).toString().isEmpty())
+                        &&(!(flatNumberE.getText()).toString().isEmpty())&&(!(buildingSelect.getText().toString().equals("Building Number")))
+                        &&((emailE.getText().toString().isEmpty()))&&(!(phoneE.getText().toString().isEmpty()))&&(!(localityE.getText().toString().isEmpty())))
+                    {
+                        addCustomer(nameE.getText().toString(),societyNameE.getText().toString(),(buildingSelect.getText().toString()+flatNumberE.getText().toString()), localityE.getText().toString(), phoneE.getText().toString());
                         Intent signUp = new Intent(customerSignUpActivity.this, LoginActivity.class);
                         startActivity(signUp);
-                    }else{
-                        Toast.makeText(customerSignUpActivity.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(customerSignUpActivity.this, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            private void addCustomer() {
-                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Name").setValue(nameE.getText().toString());
-                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Society").setValue(societyNameE.getText().toString());
-                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Building Name").setValue(buildingSelect.getText().toString());
-                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Flat Number").setValue(flatNumberE.getText().toString());
-                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Phone Number").setValue(("+91" + phoneE.getText().toString()));
-                userReference.child("Customers").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Password").setValue(passwordE.getText().toString());
-                Toast.makeText(customerSignUpActivity.this, "You have been registered successfully!", Toast.LENGTH_LONG).show();
+                else
+                    {
+                        Toast.makeText(customerSignUpActivity.this, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
+                    }
             }
         });
 
+    }
+
+    private void addCustomer(String custName, String socName, String flat, String loc,  String phone, String email) {
+        Customer createCustomer = new Customer(custName,socName,flat,loc,phone,email);
+        userReference.child("Customers").child(loc).child(socName).child(flat).setValue(createCustomer);
+        Toast.makeText(customerSignUpActivity.this, "You have been registered successfully!", Toast.LENGTH_LONG).show();
+    }
+
+    private void addCustomer(String custName, String socName, String flat, String loc, String phone) {
+        Customer createCustomer = new Customer(custName, socName, flat, loc, phone);
+        userReference.child("Customers").child(loc).child(socName).child(flat).setValue(createCustomer);
+        Toast.makeText(customerSignUpActivity.this, "You have been registered successfully!", Toast.LENGTH_LONG).show();
     }
 
     private void validateOTPFunc() {
@@ -194,22 +220,27 @@ public class customerSignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(customerSignUpActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            Log.d("SIGN UP Success", "signInWithCredential:success");
+                        if(task.isSuccessful())
+                            {
+                                Log.d("SIGN UP Success", "signInWithCredential:success");
 
-                            Toast.makeText(customerSignUpActivity.this, "Phone number verified!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(customerSignUpActivity.this, "Phone number verified!", Toast.LENGTH_SHORT).show();
 
-                            otpE.setEnabled(false);
-                            validateOTP.setEnabled(false);
+                                otpE.setEnabled(false);
+                                validateOTP.setEnabled(false);
 
-                            passField.setEnabled(true);
-                            reEnterPassField.setEnabled(true);
-                            signUp.setEnabled(true);
-                        }else{
-                            Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
-                            if(task.getException() instanceof FirebaseAuthInvalidCredentialsException)
-                                Toast.makeText(customerSignUpActivity.this, "Incorrect OTP", Toast.LENGTH_SHORT).show();
-                        }
+                                emailE.setEnabled(true);
+                                passwordE.setEnabled(true);
+                                reEnterPasswordE.setEnabled(true);
+                                signUp.setEnabled(true);
+                                autoScroll();
+                            }
+                        else
+                            {
+                                Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
+                                if(task.getException() instanceof FirebaseAuthInvalidCredentialsException)
+                                    Toast.makeText(customerSignUpActivity.this, "Incorrect OTP", Toast.LENGTH_SHORT).show();
+                            }
                     }
                 });
     }
@@ -221,10 +252,20 @@ public class customerSignUpActivity extends AppCompatActivity {
                 ,customerCallbacks);
     }
 
+    private void autoScroll(){
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.smoothScrollTo(0,optionalTV.getBottom());
+            }
+        });
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // handle arrow click here
-        if (item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home)
+        {
             finish();
         }
         return super.onOptionsItemSelected(item);
@@ -232,22 +273,24 @@ public class customerSignUpActivity extends AppCompatActivity {
 
     private void attachID() {
         simpleBar=findViewById(R.id.back_toolbar);
+        scrollView=findViewById(R.id.customer_sign_up_nested_scrollview);
 
-        nameE = findViewById(R.id.customer_name);
-        societyNameE = findViewById(R.id.society_name);
-        flatNumberE = findViewById(R.id.flat_number);
+        optionalTV=findViewById(R.id.customer_sign_up_optional_tv);
+        nameE = findViewById(R.id.customer_sign_up_name);
+        societyNameE = findViewById(R.id.customer_sign_up_society_name);
+        flatNumberE = findViewById(R.id.customer_sign_up_flat_number);
+        localityE=findViewById(R.id.customer_sign_up_locality);
         passwordE = findViewById(R.id.customer_sign_up_password);
         reEnterPasswordE = findViewById(R.id.customer_sign_up_reenter_password);
         phoneE = findViewById(R.id.customer_sign_up_phone);
         otpE = findViewById(R.id.customer_sign_up_otp);
-        buildingSelect = findViewById(R.id.building_dropdown_base);
+        buildingSelect = findViewById(R.id.customer_sign_up_building_name);
 
         signUp = findViewById(R.id.customer_sign_up_btn);
         getOTP = findViewById(R.id.customer_otp_btn);
         validateOTP = findViewById(R.id.customer_validate_otp);
 
-        passField=findViewById(R.id.textInputLayout3);
-        reEnterPassField=findViewById(R.id.textInputLayout2);
+        emailE=findViewById(R.id.customer_sign_up_email);
 
         customerAuth = FirebaseAuth.getInstance();
         userReference = FirebaseDatabase.getInstance().getReference().child("Users");

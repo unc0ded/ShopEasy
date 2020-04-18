@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".signUpActivities.customerSignUpActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -23,6 +24,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/customer_sign_up_nested_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/darkBackground"
@@ -32,8 +34,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:context=".signUpActivities.customerSignUpActivity">
+            android:orientation="vertical">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/sign_up_as_"
@@ -47,7 +48,6 @@
                 android:textSize="24dp" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 app:hintTextColor="@color/bgColor">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/customer_name"
+                    android:id="@+id/customer_sign_up_name"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textColor="#ffffff"
@@ -84,7 +84,7 @@
                 app:hintTextColor="@color/bgColor">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/society_name"
+                    android:id="@+id/customer_sign_up_society_name"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textColor="#ffffff"
@@ -104,7 +104,7 @@
                     android:layout_weight="1.2">
 
                     <AutoCompleteTextView
-                        android:id="@+id/building_dropdown_base"
+                        android:id="@+id/customer_sign_up_building_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:editable="false" />
@@ -131,7 +131,7 @@
                     app:hintTextColor="@color/bgColor">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/flat_number"
+                        android:id="@+id/customer_sign_up_flat_number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:textColor="#ffffff"
@@ -139,6 +139,28 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:hint="Locality"
+                android:textColorHint="@color/textColor"
+                app:boxCornerRadiusBottomEnd="4dp"
+                app:boxCornerRadiusBottomStart="4dp"
+                app:boxCornerRadiusTopEnd="4dp"
+                app:boxCornerRadiusTopStart="4dp"
+                app:boxStrokeColor="@color/box_stroke"
+                app:hintTextColor="@color/bgColor">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/customer_sign_up_locality"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="#ffffff"
+                    android:textColorHint="@color/bgColor" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -219,17 +241,27 @@
                     android:layout_alignEnd="@+id/customer_otp_text_input_layout"
                     android:layout_marginTop="7dp"
                     android:layout_marginEnd="2dp"
-                    android:text="Validate Otp"
+                    android:text="Validate"
                     android:textColor="@color/compColor" />
 
             </RelativeLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/customer_sign_up_optional_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Connect Email Address (Optional)"
+                android:textColor="#FFFFFF"
+                android:layout_margin="20dp"
+                android:textSize="15dp"
+                android:fontFamily="@font/anonymous_pro"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:hint="Email (optional)"
+                android:hint="Email"
                 android:textColorHint="@color/textColor"
                 app:boxCornerRadiusBottomEnd="4dp"
                 app:boxCornerRadiusBottomStart="4dp"
@@ -239,6 +271,7 @@
                 app:hintTextColor="@color/bgColor">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/customer_sign_up_email"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textColor="#ffffff"
@@ -246,7 +279,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout3"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -271,7 +303,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout2"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -309,6 +340,10 @@
                 app:cornerRadius="3dp"
                 app:rippleColor="@color/btn_pressed"
                 app:strokeColor="@color/bgColor" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="330dp"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

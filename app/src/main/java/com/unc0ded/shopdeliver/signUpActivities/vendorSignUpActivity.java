@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.unc0ded.shopdeliver.LoginActivity;
 import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.model.Vendor;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -37,8 +38,7 @@ public class vendorSignUpActivity extends AppCompatActivity {
 
     Toolbar simpleBar;
     MaterialButton getOTP,validateOTP,signUp;
-    TextInputEditText shopNameE,vendorNameE,upiIDE,passwordE,reEnterPasswordE,phoneE,otpE;
-    TextInputLayout passField,reEnterPassField;
+    TextInputEditText shopNameE,vendorNameE,vendorTypeE,passwordE,reEnterPasswordE,phoneE,otpE,emailE,addressE;
     private String sentOTP;
 
     //Firebase Objects
@@ -60,25 +60,31 @@ public class vendorSignUpActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        emailE.setEnabled(false);
+        passwordE.setEnabled(false);
+        reEnterPasswordE.setEnabled(false);
+        signUp.setEnabled(false);
+
         getOTP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder otpAlertBuilder = new AlertDialog.Builder(vendorSignUpActivity.this);
-                otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.");
-                otpAlertBuilder.setCancelable(true);
-
-                otpAlertBuilder.setPositiveButton("Ok",
+                otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
+                        .setCancelable(true)
+                        .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
-                                if((Objects.requireNonNull(phoneE.getText()).toString().length()) != 10) {
-                                    Toast.makeText(vendorSignUpActivity.this, "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
-                                }else{
-                                    sendOTP();
-                                    phoneE.setEnabled(false);
-                                    getOTP.setEnabled(false);
-                                }
+                                if((Objects.requireNonNull(phoneE.getText()).toString().length()) != 10)
+                                    {
+                                        Toast.makeText(vendorSignUpActivity.this, "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
+                                    }
+                                else
+                                    {
+                                        sendOTP();
+                                        phoneE.setEnabled(false);
+                                        getOTP.setEnabled(false);
+                                    }
                                 dialog.cancel();
                             }
                         }).setNegativeButton("Cancel",
@@ -96,7 +102,11 @@ public class vendorSignUpActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
                 Log.d("customerCallbacks", "onVerificationCompleted:" + phoneAuthCredential);
-                Toast.makeText(vendorSignUpActivity.this, "OTP sent to mobile number", Toast.LENGTH_SHORT).show();
+                signInWithPhoneAuthCredentials(phoneAuthCredential);
+                passwordE.setEnabled(true);
+                reEnterPasswordE.setEnabled(true);
+                signUp.setEnabled(true);
+                emailE.setEnabled(true);
             }
 
             @Override
@@ -107,7 +117,8 @@ public class vendorSignUpActivity extends AppCompatActivity {
                 getOTP.setEnabled(true);
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     Log.d("vendorCallbacks","onVerificationFailed: Invalid Number");
-                } else if (e instanceof FirebaseTooManyRequestsException) {
+                }
+                else if (e instanceof FirebaseTooManyRequestsException) {
                     Log.d("vendorCallbacks","onVerificationFailed: SMS quota exceeded");
                 }
             }
@@ -124,7 +135,8 @@ public class vendorSignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(Objects.requireNonNull(otpE.getText()).toString().isEmpty()){
                     Toast.makeText(vendorSignUpActivity.this, "Please enter OTP.", Toast.LENGTH_SHORT).show();
-                }else{
+                }
+                else{
                     validateOTPFunc();
                 }
             }
@@ -135,28 +147,47 @@ public class vendorSignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if((!(passwordE.getText().toString().isEmpty()))&&(!(reEnterPasswordE.getText().toString().isEmpty()))
                         &&(!(shopNameE.getText().toString().isEmpty()))&&(!(vendorNameE.getText().toString().isEmpty()))
-                        &&(!(upiIDE.getText().toString().isEmpty()))) {
-                    if((Objects.requireNonNull(passwordE.getText()).toString().equals(Objects.requireNonNull(reEnterPasswordE.getText()).toString()))) {
-                        addVendor();
+                        &&(!(vendorTypeE.getText().toString().isEmpty()))&&(!(addressE.getText().toString().isEmpty()))
+                        &&(!(emailE.getText().toString().isEmpty()))&&(!(phoneE.getText().toString().isEmpty()))) 
+                    {
+                        if((Objects.requireNonNull(passwordE.getText()).toString().equals(Objects.requireNonNull(reEnterPasswordE.getText()).toString()))) 
+                            {
+                                addVendor(shopNameE.getText().toString(),vendorTypeE.getText().toString(), vendorNameE.getText().toString(), phoneE.getText().toString(),emailE.getText().toString(),addressE.getText().toString());
+                                Intent signUp = new Intent(vendorSignUpActivity.this, LoginActivity.class);
+                                startActivity(signUp);
+                            }
+                        else 
+                            {    
+                                Toast.makeText(vendorSignUpActivity.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
+                            }
+                    }
+                else if(((passwordE.getText().toString().isEmpty()))&&((reEnterPasswordE.getText().toString().isEmpty()))
+                        &&(!(shopNameE.getText().toString().isEmpty()))&&(!(vendorNameE.getText().toString().isEmpty()))
+                        &&(!(vendorTypeE.getText().toString().isEmpty()))&&(!(addressE.getText().toString().isEmpty()))
+                        &&((emailE.getText().toString().isEmpty()))&&(!(phoneE.getText().toString().isEmpty())))
+                    {
+                        addVendor(shopNameE.getText().toString(),vendorTypeE.getText().toString(), vendorNameE.getText().toString(), phoneE.getText().toString(),addressE.getText().toString());
                         Intent signUp = new Intent(vendorSignUpActivity.this, LoginActivity.class);
                         startActivity(signUp);
-                    }else{
-                        Toast.makeText(vendorSignUpActivity.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(vendorSignUpActivity.this, "Please fill all fields!", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            private void addVendor() {
-                userReference.child("Vendor").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Shop Name").setValue(shopNameE.getText().toString());
-                userReference.child("Vendor").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Vendor Name").setValue(vendorNameE.getText().toString());
-                userReference.child("Vendor").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("UPI ID").setValue(upiIDE.getText().toString());
-                userReference.child("Vendor").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Phone Number").setValue("+91" + phoneE.getText().toString());
-                userReference.child("Vendor").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Password").setValue(passwordE.getText().toString());
-                Toast.makeText(vendorSignUpActivity.this, "You have been registered successfully!", Toast.LENGTH_LONG).show();
+                else
+                    {
+                        Toast.makeText(vendorSignUpActivity.this, "Please fill necessary fields!", Toast.LENGTH_SHORT).show();
+                    }
             }
         });
+    }
+
+    private void addVendor(String shopName, String shopType, String propName, String phone, String email, String address) {
+        Vendor createVendor = new Vendor(shopName,shopType,propName,phone,email,address);
+        userReference.child("Vendors").child(address).child(shopNameE.getText().toString()).setValue(createVendor);
+        Toast.makeText(vendorSignUpActivity.this, "You have been registered successfully!", Toast.LENGTH_LONG).show();
+    }
+
+    private void addVendor(String shopName, String shopType, String propName, String phone, String address) {
+        Vendor createVendor = new Vendor(shopName,shopType,propName,phone,address);
+        userReference.child("Vendors").child(address).child(shopNameE.getText().toString()).setValue(createVendor);
+        Toast.makeText(vendorSignUpActivity.this, "You have been registered successfully!", Toast.LENGTH_LONG).show();
     }
 
     private void validateOTPFunc() {
@@ -177,8 +208,9 @@ public class vendorSignUpActivity extends AppCompatActivity {
                             otpE.setEnabled(false);
                             validateOTP.setEnabled(false);
 
-                            passField.setEnabled(true);
-                            reEnterPassField.setEnabled(true);
+                            emailE.setEnabled(true);
+                            passwordE.setEnabled(true);
+                            reEnterPasswordE.setEnabled(true);
                             signUp.setEnabled(true);
                         }else{
                             Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
@@ -208,7 +240,8 @@ public class vendorSignUpActivity extends AppCompatActivity {
 
         shopNameE = findViewById(R.id.shop_name);
         vendorNameE = findViewById(R.id.vendor_name);
-        upiIDE = findViewById(R.id.vendor_upi);
+        vendorTypeE = findViewById(R.id.vendor_type);
+        addressE=findViewById(R.id.vendor_address);
         otpE = findViewById(R.id.vendor_sign_up_otp);
         phoneE = findViewById(R.id.vendor_sign_up_phone);
         passwordE = findViewById(R.id.vendor_sign_up_password);
@@ -218,8 +251,7 @@ public class vendorSignUpActivity extends AppCompatActivity {
         validateOTP = findViewById(R.id.vendor_validate_otp);
         signUp = findViewById(R.id.vendor_sign_up_btn);
 
-        passField = findViewById(R.id.vendor_sign_up_password_text_input_layout);
-        reEnterPassField = findViewById(R.id.vendor_sign_up_reenter_password_text_input_layout);
+        emailE=findViewById(R.id.vendor_sign_up_email);
 
         vendorAuth = FirebaseAuth.getInstance();
         userReference = FirebaseDatabase.getInstance().getReference().child("Users");
