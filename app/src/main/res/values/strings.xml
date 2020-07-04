@@ -8,4 +8,11 @@
     <string name="title_orders">Orders</string>
     <string name="title_settings">Account</string>
     <string name="todo">TODO</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="orders_received">Orders Received</string>
+    <string name="inventory">Inventory</string>
+    <string name="additional_details">Additional Details</string>
+    <string name="vendor_sign_up">Vendor Sign Up</string>
 </resources>

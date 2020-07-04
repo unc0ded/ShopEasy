@@ -7,6 +7,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    
+    <style name="MaterialTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:statusBarColor">#000</item>
+    </style>
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
@@ -32,7 +36,7 @@
 
     <!-- customization of the material theme for use as
          an overlay for the ExposedDropdownMenu style  -->
-    <style name="AppTheme.ExposedDropdownMenu.MaterialThemeOverlay" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="AppTheme.ExposedDropdownMenu.MaterialThemeOverlay" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- background color of dropdown (popup) items -->
         <item name="colorSurface">@color/compColor</item>
         <item name="android:colorControlHighlight">@color/bgColor</item>
@@ -49,7 +53,7 @@
     <style name="AppTheme.ExposedDropdownMenu.AutoCompleteStyle">
         <!-- restore padding to sanity -->
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textColorHint">@color/bgColor</item>
         <item name="android:hint">Building Name</item>
         <item name="android:paddingLeft">12dp</item>
