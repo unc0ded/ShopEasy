@@ -15,4 +15,20 @@
     <string name="inventory">Inventory</string>
     <string name="additional_details">Additional Details</string>
     <string name="vendor_sign_up">Vendor Sign Up</string>
+    <string name="phone_number_text">Phone Number</string>
+    <string name="get_otp_text">GET OTP</string>
+    <string name="otp_text">OTP</string>
+    <string name="validate_text">Validate</string>
+    <string name="name_text">Name</string>
+    <string name="locality_text">Locality</string>
+    <string name="society_name_text">Society Name</string>
+    <string name="flat_no_text">Flat No.</string>
+    <string name="connect_email_address_optional_text">Connect Email Address (Optional)</string>
+    <string name="email_text">Email</string>
+    <string name="password_text">Password</string>
+    <string name="re_enter_password_text">Re-enter Password</string>
+    <string name="sign_up_text">Sign Up</string>
+    <string name="shop_name_text">Shop Name</string>
+    <string name="proprietor_name_text">Proprietor Name</string>
+    <string name="shop_type_text">Shop Type</string>
 </resources>

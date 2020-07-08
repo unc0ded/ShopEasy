@@ -1,6 +1,7 @@
 package com.unc0ded.shopdeliver.activities;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,24 +10,18 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
 
-    TextInputEditText emailOrPhoneE,passwordE;
-    MaterialTextView signUp;
-    MaterialButton login;
-    Toolbar loginBar;
+    ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        attachID();
-        setSupportActionBar(loginBar);
-    }
-
-    private void attachID() {
-        loginBar = findViewById(R.id.login_toolbar);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+        setSupportActionBar(binding.loginActivityToolbar);
     }
 }

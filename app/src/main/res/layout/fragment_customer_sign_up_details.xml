@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
@@ -28,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="Name"
+            android:hint="@string/name_text"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -38,7 +37,7 @@
             app:hintTextColor="@color/bgColor">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/customer_sign_up_name"
+                android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="#ffffff"
@@ -50,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="Locality"
+            android:hint="@string/locality_text"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -59,7 +58,7 @@
             app:boxStrokeColor="@color/box_stroke"
             app:hintTextColor="@color/bgColor">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/customer_sign_up_locality"
+                android:id="@+id/locality"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="#ffffff"
@@ -71,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="Society Name"
+            android:hint="@string/society_name_text"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -81,7 +80,7 @@
             app:hintTextColor="@color/bgColor">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/customer_sign_up_society_name"
+                android:id="@+id/society_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="#ffffff"
@@ -101,9 +100,10 @@
                 android:layout_weight="1.2">
 
                 <AutoCompleteTextView
-                    android:id="@+id/customer_sign_up_building_name"
+                    android:id="@+id/building_name"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    tools:ignore="LabelFor" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -117,7 +117,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.8"
-                android:hint="Flat No."
+                android:hint="@string/flat_no_text"
                 android:textColorHint="@color/textColor"
                 app:boxCornerRadiusBottomEnd="4dp"
                 app:boxCornerRadiusBottomStart="4dp"
@@ -127,7 +127,7 @@
                 app:hintTextColor="@color/bgColor">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/customer_sign_up_flat_number"
+                    android:id="@+id/flat_number"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textColor="#ffffff"
@@ -140,10 +140,10 @@
             android:id="@+id/customer_sign_up_optional_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Connect Email Address (Optional)"
+            android:text="@string/connect_email_address_optional_text"
             android:textColor="#FFFFFF"
             android:layout_margin="20dp"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:fontFamily="@font/anonymous_pro"/>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -151,7 +151,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="Email"
+            android:hint="@string/email_text"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -161,7 +161,7 @@
             app:hintTextColor="@color/bgColor">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/customer_sign_up_email"
+                android:id="@+id/email_id"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="#ffffff"
@@ -173,7 +173,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="Password"
+            android:hint="@string/password_text"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -183,7 +183,7 @@
             app:hintTextColor="@color/bgColor">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/customer_sign_up_password"
+                android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="textPassword"
@@ -196,7 +196,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="Re-enter Password"
+            android:hint="@string/re_enter_password_text"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -206,7 +206,7 @@
             app:hintTextColor="@color/bgColor">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/customer_sign_up_reenter_password"
+                android:id="@+id/re_enter_password"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="textPassword"
@@ -215,14 +215,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/customer_sign_up_btn"
+            android:id="@+id/sign_up_btn"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="20dp"
             android:backgroundTint="@color/btn_disabled"
-            android:text="Sign Up"
+            android:text="@string/sign_up_text"
             android:textColor="#ffffff"
             app:cornerRadius="3dp"
             app:rippleColor="@color/btn_pressed"

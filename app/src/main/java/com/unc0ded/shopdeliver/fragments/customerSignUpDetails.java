@@ -2,20 +2,16 @@ package com.unc0ded.shopdeliver.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,25 +21,19 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.unc0ded.shopdeliver.activities.LoginActivity;
 import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.activities.customerMainActivity;
+import com.unc0ded.shopdeliver.databinding.FragmentCustomerSignUpDetailsBinding;
+import com.unc0ded.shopdeliver.databinding.FragmentCustomerSignUpMainBinding;
 import com.unc0ded.shopdeliver.models.Customer;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class customerSignUpDetails extends Fragment {
 
-    private MaterialButton signUp;
-    private TextInputEditText nameE,societyNameE,flatNumberE,passwordE,reEnterPasswordE, localityE, emailE;
-    private AutoCompleteTextView buildingSelect;
+    FragmentCustomerSignUpDetailsBinding binding;
 
 //    private ArrayList<String> BUILDINGS = new ArrayList<>();
     private String[] BUILDINGS;
@@ -53,30 +43,21 @@ public class customerSignUpDetails extends Fragment {
     private FirebaseAuth customerAuth;
     private DatabaseReference userReference;
 
+    //empty constructor
+    public customerSignUpDetails(){
+    }
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_customer_sign_up_details, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentCustomerSignUpDetailsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        nameE = view.findViewById(R.id.customer_sign_up_name);
-        societyNameE = view.findViewById(R.id.customer_sign_up_society_name);
-        flatNumberE = view.findViewById(R.id.customer_sign_up_flat_number);
-        localityE=view.findViewById(R.id.customer_sign_up_locality);
-        buildingSelect = view.findViewById(R.id.customer_sign_up_building_name);
-
         phone = customerSignUpDetailsArgs.fromBundle(getArguments()).getPhone();
-
-        passwordE = view.findViewById(R.id.customer_sign_up_password);
-        reEnterPasswordE = view.findViewById(R.id.customer_sign_up_reenter_password);
-
-        signUp = view.findViewById(R.id.customer_sign_up_btn);
-
-        emailE= view.findViewById(R.id.customer_sign_up_email);
 
         customerAuth = FirebaseAuth.getInstance();
         userReference = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -85,13 +66,13 @@ public class customerSignUpDetails extends Fragment {
 //        BUILDINGS.add("B");
         BUILDINGS = new String[]{"A", "B"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item, BUILDINGS);
-        buildingSelect.setAdapter(adapter);
+        binding.buildingName.setAdapter(adapter);
 
-//        buildingSelect.setOnKeyListener(new View.OnKeyListener() {
+//        binding.buildingName.setOnKeyListener(new View.OnKeyListener() {
 //            @Override
 //            public boolean onKey(View view, int i, KeyEvent keyEvent) {
 //                try{
-//                    userReference.child("Customers").child(Objects.requireNonNull(localityE.getText().toString().trim())).child(Objects.requireNonNull(societyNameE.getText().toString().trim())).addChildEventListener(new ChildEventListener() {
+//                    userReference.child("Customers").child(Objects.requireNonNull(binding.locality.getText().toString().trim())).child(Objects.requireNonNull(binding.societyName.getText().toString().trim())).addChildEventListener(new ChildEventListener() {
 //                        @Override
 //                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 //                            BUILDINGS.clear();
@@ -100,7 +81,7 @@ public class customerSignUpDetails extends Fragment {
 //                                BUILDINGS.add(flatSplit[0]);
 //                            }
 //                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item, BUILDINGS);
-//                            buildingSelect.setAdapter(adapter);
+//                            binding.buildingName.setAdapter(adapter);
 //                        }
 //                        @Override
 //                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -110,7 +91,7 @@ public class customerSignUpDetails extends Fragment {
 //                                BUILDINGS.add(flatSplit[0]);
 //                            }
 //                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item, BUILDINGS);
-//                            buildingSelect.setAdapter(adapter);
+//                            binding.buildingName.setAdapter(adapter);
 //                        }
 //                        @Override
 //                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
@@ -120,7 +101,7 @@ public class customerSignUpDetails extends Fragment {
 //                                BUILDINGS.add(flatSplit[0]);
 //                            }
 //                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item, BUILDINGS);
-//                            buildingSelect.setAdapter(adapter);
+//                            binding.buildingName.setAdapter(adapter);
 //                        }
 //                        @Override
 //                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -130,7 +111,7 @@ public class customerSignUpDetails extends Fragment {
 //                                BUILDINGS.add(flatSplit[0]);
 //                            }
 //                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item, BUILDINGS);
-//                            buildingSelect.setAdapter(adapter);
+//                            binding.buildingName.setAdapter(adapter);
 //                        }
 //                        @Override
 //                        public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -141,7 +122,7 @@ public class customerSignUpDetails extends Fragment {
 //                catch (Exception e){
 //                    Toast.makeText(getContext(),"No previous entries for this society",Toast.LENGTH_SHORT).show();
 //                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item, BUILDINGS);
-//                    buildingSelect.setAdapter(adapter);
+//                    binding.buildingName.setAdapter(adapter);
 //                }
 //
 //                return true;
@@ -149,18 +130,18 @@ public class customerSignUpDetails extends Fragment {
 //        });
 
 
-        signUp.setOnClickListener(new View.OnClickListener() {
+        binding.signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if((!(passwordE.getText()).toString().isEmpty())&&(!(reEnterPasswordE.getText()).toString().isEmpty())
-                        &&(!(nameE.getText()).toString().trim().isEmpty())&&(!(societyNameE.getText()).toString().trim().isEmpty())
-                        &&(!(flatNumberE.getText()).toString().trim().isEmpty())&&(!(buildingSelect.getText().toString().trim().equals("Building Number")))
-                        &&(!(emailE.getText().toString().isEmpty()))&&(!(localityE.getText().toString().isEmpty())))
+                if((!(binding.password.getText()).toString().isEmpty())&&(!(binding.reEnterPassword.getText()).toString().isEmpty())
+                        &&(!(binding.name.getText()).toString().trim().isEmpty())&&(!(binding.societyName.getText()).toString().trim().isEmpty())
+                        &&(!(binding.flatNumber.getText()).toString().trim().isEmpty())&&(!(binding.buildingName.getText().toString().trim().equals("Building Number")))
+                        &&(!(binding.emailId.getText().toString().isEmpty()))&&(!(binding.locality.getText().toString().isEmpty())))
                 {
-                    if((Objects.requireNonNull(passwordE.getText().toString()).equals(Objects.requireNonNull(reEnterPasswordE.getText().toString()))))
+                    if((Objects.requireNonNull(binding.password.getText().toString()).equals(Objects.requireNonNull(binding.reEnterPassword.getText().toString()))))
                     {
-                        AuthCredential emailCredential = EmailAuthProvider.getCredential(emailE.getText().toString().trim(), reEnterPasswordE.getText().toString());
+                        AuthCredential emailCredential = EmailAuthProvider.getCredential(binding.emailId.getText().toString().trim(), binding.reEnterPassword.getText().toString());
                         customerAuth.getCurrentUser().linkWithCredential(emailCredential)
                                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                                     @Override
@@ -171,7 +152,7 @@ public class customerSignUpDetails extends Fragment {
                                             Toast.makeText(getContext(), "Email Link Failed: "+ task.getException(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
-                        addCustomer(nameE.getText().toString().trim(),societyNameE.getText().toString().trim(),(buildingSelect.getText().toString().trim()+"-"+flatNumberE.getText().toString().trim()), localityE.getText().toString().trim(), phone, emailE.getText().toString().trim());
+                        addCustomer(binding.name.getText().toString().trim(),binding.societyName.getText().toString().trim(),(binding.buildingName.getText().toString().trim()+"-"+binding.flatNumber.getText().toString().trim()), binding.locality.getText().toString().trim(), phone, binding.emailId.getText().toString().trim());
                         Intent signUp = new Intent(getActivity(), customerMainActivity.class);
                         startActivity(signUp);
                         getActivity().finish();
@@ -181,12 +162,12 @@ public class customerSignUpDetails extends Fragment {
                         Toast.makeText(getActivity(), "Passwords do not match.", Toast.LENGTH_SHORT).show();
                     }
                 }
-                else if(((passwordE.getText()).toString().isEmpty())&&((reEnterPasswordE.getText()).toString().isEmpty())
-                        &&(!(nameE.getText()).toString().trim().isEmpty())&&(!(societyNameE.getText()).toString().trim().isEmpty())
-                        &&(!(flatNumberE.getText()).toString().trim().isEmpty())&&(!(buildingSelect.getText().toString().trim().equals("Building Number")))
-                        &&((emailE.getText().toString().trim().isEmpty()))&&(!(localityE.getText().toString().trim().isEmpty())))
+                else if(((binding.password.getText()).toString().isEmpty())&&((binding.reEnterPassword.getText()).toString().isEmpty())
+                        &&(!(binding.name.getText()).toString().trim().isEmpty())&&(!(binding.societyName.getText()).toString().trim().isEmpty())
+                        &&(!(binding.flatNumber.getText()).toString().trim().isEmpty())&&(!(binding.buildingName.getText().toString().trim().equals("Building Number")))
+                        &&((binding.emailId.getText().toString().trim().isEmpty()))&&(!(binding.locality.getText().toString().trim().isEmpty())))
                 {
-                    addCustomer(nameE.getText().toString().trim(),societyNameE.getText().toString().trim(),(buildingSelect.getText().toString().trim()+"-"+flatNumberE.getText().toString().trim()), localityE.getText().toString().trim(), phone);
+                    addCustomer(binding.name.getText().toString().trim(),binding.societyName.getText().toString().trim(),(binding.buildingName.getText().toString().trim()+"-"+binding.flatNumber.getText().toString().trim()), binding.locality.getText().toString().trim(), phone);
                     Intent signUp = new Intent(getActivity(), customerMainActivity.class);
                     startActivity(signUp);
                     getActivity().finish();
@@ -199,8 +180,15 @@ public class customerSignUpDetails extends Fragment {
         });
     }
 
-    private void addCustomer(String custName, String socName, String flat, String loc,  String phone, String email) {
-        Customer createCustomer = new Customer(custName,socName,flat,loc,phone,email);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //de-initialize binding object
+        binding = null;
+    }
+
+    private void addCustomer(String custName, String socName, String flat, String loc, String phone, String emailId) {
+        Customer createCustomer = new Customer(custName,socName,flat,loc,phone,emailId);
         userReference.child("Customers").child(loc).child(socName).setValue(createCustomer);
         Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
     }

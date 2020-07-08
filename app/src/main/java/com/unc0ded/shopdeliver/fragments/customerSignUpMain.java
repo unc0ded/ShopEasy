@@ -2,6 +2,11 @@ package com.unc0ded.shopdeliver.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,16 +14,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
@@ -26,16 +23,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.databinding.FragmentCustomerSignUpMainBinding;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class customerSignUpMain extends Fragment {
 
+    FragmentCustomerSignUpMainBinding binding;
 
-    private MaterialButton getOTP,validateOTP;
-    private TextInputEditText phoneE, otpE;
     private String sentOTP;
     private View rootView;
 
@@ -43,14 +39,14 @@ public class customerSignUpMain extends Fragment {
     private FirebaseAuth customerAuth;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks customerCallbacks;
 
+    //empty constructor
     public customerSignUpMain() {
     }
 
-
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_customer_sign_up_main, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentCustomerSignUpMainBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -59,18 +55,12 @@ public class customerSignUpMain extends Fragment {
 
         rootView = view;
 
-        phoneE = view.findViewById(R.id.customer_sign_up_phone);
-        otpE = view.findViewById(R.id.customer_sign_up_otp);
-
-        getOTP = view.findViewById(R.id.customer_otp_btn);
-        validateOTP = view.findViewById(R.id.customer_validate_otp);
-
         customerAuth = FirebaseAuth.getInstance();
 
-        otpE.setEnabled(false);
-        validateOTP.setEnabled(false);
+        binding.otp.setEnabled(false);
+        binding.validateOtpBtn.setEnabled(false);
 
-        getOTP.setOnClickListener(new View.OnClickListener() {
+        binding.otpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -81,15 +71,15 @@ public class customerSignUpMain extends Fragment {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        if((Objects.requireNonNull(phoneE.getText()).toString().trim().length()) != 10)
+                                        if((Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim().length()) != 10)
                                         {
                                             Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
                                         }
                                         else
                                         {
                                             sendOTP();
-                                            phoneE.setEnabled(false);
-                                            getOTP.setEnabled(false);
+                                            binding.phoneNumber.setEnabled(false);
+                                            binding.otpBtn.setEnabled(false);
                                         }
                                         dialog.cancel();
                                     }
@@ -115,8 +105,8 @@ public class customerSignUpMain extends Fragment {
             public void onVerificationFailed(@NonNull FirebaseException e) {
                 Log.d("customerCallbacks", "onVerificationFailed", e);
                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                phoneE.setEnabled(true);
-                getOTP.setEnabled(true);
+                binding.phoneNumber.setEnabled(true);
+                binding.otpBtn.setEnabled(true);
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     Log.d("customerCallbacks","onVerificationFailed: Invalid Number");
                 }
@@ -129,15 +119,15 @@ public class customerSignUpMain extends Fragment {
             public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                 super.onCodeSent(s, forceResendingToken);
                 sentOTP = s;
-                otpE.setEnabled(true);
-                validateOTP.setEnabled(true);
+                binding.otp.setEnabled(true);
+                binding.validateOtpBtn.setEnabled(true);
             }
         };
 
-        validateOTP.setOnClickListener(new View.OnClickListener() {
+        binding.validateOtpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Objects.requireNonNull(otpE.getText()).toString().isEmpty())
+                if(Objects.requireNonNull(binding.otp.getText()).toString().isEmpty())
                 {
                     Toast.makeText(getContext(), "Please enter OTP.", Toast.LENGTH_SHORT).show();
                 }
@@ -153,14 +143,21 @@ public class customerSignUpMain extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        phoneE.setEnabled(true);
-        otpE.setEnabled(true);
-        getOTP.setEnabled(true);
-        validateOTP.setEnabled(true);
+        binding.phoneNumber.setEnabled(true);
+        binding.otp.setEnabled(true);
+        binding.otpBtn.setEnabled(true);
+        binding.validateOtpBtn.setEnabled(true);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //de-initialize binding object
+        binding = null;
     }
 
     private void validateOTPFunc() {
-        PhoneAuthCredential customerCredential = PhoneAuthProvider.getCredential(sentOTP, Objects.requireNonNull(otpE.getText()).toString());
+        PhoneAuthCredential customerCredential = PhoneAuthProvider.getCredential(sentOTP, Objects.requireNonNull(binding.otp.getText()).toString());
         signInWithPhoneAuthCredentials(customerCredential);
     }
 
@@ -175,12 +172,12 @@ public class customerSignUpMain extends Fragment {
 
                             Toast.makeText(getContext(), "Phone number verified!", Toast.LENGTH_SHORT).show();
 
-                            otpE.setEnabled(false);
-                            validateOTP.setEnabled(false);
-                            getOTP.setEnabled(false);
-                            validateOTP.setEnabled(false);
+                            binding.otp.setEnabled(false);
+                            binding.validateOtpBtn.setEnabled(false);
+                            binding.otpBtn.setEnabled(false);
+                            binding.validateOtpBtn.setEnabled(false);
 
-                            customerSignUpMainDirections.ActionCustomerSignUpMainToCustomerSignUpDetails action = customerSignUpMainDirections.actionCustomerSignUpMainToCustomerSignUpDetails("+91"+phoneE.getText().toString().trim());
+                            customerSignUpMainDirections.ActionCustomerSignUpMainToCustomerSignUpDetails action = customerSignUpMainDirections.actionCustomerSignUpMainToCustomerSignUpDetails("+91"+binding.phoneNumber.getText().toString().trim());
                             Navigation.findNavController(rootView).navigate(action);
                         }
                         else
@@ -189,10 +186,10 @@ public class customerSignUpMain extends Fragment {
                             if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 Toast.makeText(getContext(), "Incorrect OTP", Toast.LENGTH_SHORT).show();
 
-                                phoneE.setEnabled(true);
-                                otpE.setEnabled(true);
-                                getOTP.setEnabled(true);
-                                validateOTP.setEnabled(true);
+                                binding.phoneNumber.setEnabled(true);
+                                binding.otp.setEnabled(true);
+                                binding.otpBtn.setEnabled(true);
+                                binding.validateOtpBtn.setEnabled(true);
                             }
                         }
                     }
@@ -200,7 +197,7 @@ public class customerSignUpMain extends Fragment {
     }
 
     private void sendOTP() {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber("+91"+Objects.requireNonNull(phoneE.getText()).toString()
+        PhoneAuthProvider.getInstance().verifyPhoneNumber("+91"+Objects.requireNonNull(binding.phoneNumber.getText()).toString()
                 ,60, TimeUnit.SECONDS
                 ,getActivity()
                 ,customerCallbacks);

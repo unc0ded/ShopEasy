@@ -30,7 +30,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Phone Number"
+            android:hint="@string/phone_number_text"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -40,24 +40,24 @@
             app:hintTextColor="@color/bgColor">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/customer_sign_up_phone"
+                android:id="@+id/phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingEnd="95dp"
+                android:paddingHorizontal="95dp"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/bgColor" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/customer_otp_btn"
+            android:id="@+id/otp_btn"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignEnd="@id/customer_sign_up_phone_text_input_layout"
             android:layout_marginTop="7dp"
             android:layout_marginEnd="2dp"
-            android:text="GET OTP"
+            android:text="@string/get_otp_text"
             android:textColor="@color/compColor" />
 
     </RelativeLayout>
@@ -73,7 +73,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="OTP"
+            android:hint="@string/otp_text"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -83,24 +83,24 @@
             app:hintTextColor="@color/bgColor">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/customer_sign_up_otp"
+                android:id="@+id/otp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingEnd="95dp"
+                android:paddingHorizontal="95dp"
                 android:maxLength="6"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/bgColor" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/customer_validate_otp"
+            android:id="@+id/validate_otp_btn"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignEnd="@+id/customer_otp_text_input_layout"
             android:layout_marginTop="7dp"
             android:layout_marginEnd="2dp"
-            android:text="Validate"
+            android:text="@string/validate_text"
             android:textColor="@color/compColor" />
 
     </RelativeLayout>

@@ -26,65 +26,50 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.activities.LoginActivity;
 import com.unc0ded.shopdeliver.activities.vendorMainActivity;
+import com.unc0ded.shopdeliver.databinding.FragmentVendorSignUpDetailsBinding;
 import com.unc0ded.shopdeliver.models.Vendor;
 
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class vendorSignUpDetails extends Fragment {
 
-    private MaterialButton signUp;
-    private TextInputEditText shopNameE,vendorNameE,vendorTypeE,passwordE,reEnterPasswordE,emailE,addressE;
+    FragmentVendorSignUpDetailsBinding binding;
 
     String phone;
 
     private DatabaseReference userReference;
     FirebaseAuth vendorAuth;
 
+    //empty constructor
     public vendorSignUpDetails() {
-        // Required empty public constructor
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_vendor_sign_up_details, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentVendorSignUpDetailsBinding.inflate(inflater,container,false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        shopNameE = view.findViewById(R.id.shop_name);
-        vendorNameE = view.findViewById(R.id.vendor_name);
-        vendorTypeE = view.findViewById(R.id.vendor_type);
-        addressE = view.findViewById(R.id.vendor_address);
-
         phone = vendorSignUpDetailsArgs.fromBundle(getArguments()).getPhone();
-
-        emailE = view.findViewById(R.id.vendor_sign_up_email);
-        passwordE = view.findViewById(R.id.vendor_sign_up_password);
-        reEnterPasswordE = view.findViewById(R.id.vendor_sign_up_reenter_password);
-
-        signUp = view.findViewById(R.id.vendor_sign_up_btn);
 
         userReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        signUp.setOnClickListener(new View.OnClickListener() {
+        binding.signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if((!(passwordE.getText().toString().isEmpty()))&&(!(reEnterPasswordE.getText().toString().isEmpty()))
-                        &&(!(shopNameE.getText().toString().trim().isEmpty()))&&(!(vendorNameE.getText().toString().trim().isEmpty()))
-                        &&(!(vendorTypeE.getText().toString().trim().isEmpty()))&&(!(addressE.getText().toString().trim().isEmpty()))
-                        &&(!(emailE.getText().toString().trim().isEmpty())))
+                if((!(binding.password.getText().toString().isEmpty()))&&(!(binding.reEnterPassword.getText().toString().isEmpty()))
+                        &&(!(binding.shopName.getText().toString().trim().isEmpty()))&&(!(binding.vendorName.getText().toString().trim().isEmpty()))
+                        &&(!(binding.shopType.getText().toString().trim().isEmpty()))&&(!(binding.vendorAddress.getText().toString().trim().isEmpty()))
+                        &&(!(binding.emailId.getText().toString().trim().isEmpty())))
                 {
-                    if((Objects.requireNonNull(passwordE.getText()).toString().equals(Objects.requireNonNull(reEnterPasswordE.getText()).toString())))
+                    if((Objects.requireNonNull(binding.password.getText()).toString().equals(Objects.requireNonNull(binding.reEnterPassword.getText()).toString())))
                     {
-                        AuthCredential emailCredential = EmailAuthProvider.getCredential(emailE.getText().toString().trim(), reEnterPasswordE.getText().toString());
+                        AuthCredential emailCredential = EmailAuthProvider.getCredential(binding.emailId.getText().toString().trim(), binding.reEnterPassword.getText().toString());
                         vendorAuth.getCurrentUser().linkWithCredential(emailCredential)
                                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                                     @Override
@@ -95,7 +80,7 @@ public class vendorSignUpDetails extends Fragment {
                                             Toast.makeText(getContext(), "Email Link Failed: "+ task.getException(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
-                        addVendor(shopNameE.getText().toString().trim(),vendorTypeE.getText().toString().trim(), vendorNameE.getText().toString().trim(), phone, emailE.getText().toString().trim(), addressE.getText().toString().trim());
+                        addVendor(binding.shopName.getText().toString().trim(),binding.shopType.getText().toString().trim(), binding.vendorName.getText().toString().trim(), phone, binding.emailId.getText().toString().trim(), binding.vendorAddress.getText().toString().trim());
                         Intent signUp = new Intent(getContext(), vendorMainActivity.class);
                         startActivity(signUp);
                         getActivity().finish();
@@ -105,13 +90,13 @@ public class vendorSignUpDetails extends Fragment {
                         Toast.makeText(getContext(), "Passwords do not match.", Toast.LENGTH_SHORT).show();
                     }
                 }
-                else if(((passwordE.getText().toString().isEmpty()))&&((reEnterPasswordE.getText().toString().isEmpty()))
-                        &&(!(shopNameE.getText().toString().trim().isEmpty()))&&(!(vendorNameE.getText().toString().trim().isEmpty()))
-                        &&(!(vendorTypeE.getText().toString().trim().isEmpty()))&&(!(addressE.getText().toString().trim().isEmpty()))
-                        &&((emailE.getText().toString().trim().isEmpty())))
+                else if(((binding.password.getText().toString().isEmpty()))&&((binding.reEnterPassword.getText().toString().isEmpty()))
+                        &&(!(binding.shopName.getText().toString().trim().isEmpty()))&&(!(binding.vendorName.getText().toString().trim().isEmpty()))
+                        &&(!(binding.shopType.getText().toString().trim().isEmpty()))&&(!(binding.vendorAddress.getText().toString().trim().isEmpty()))
+                        &&((binding.emailId.getText().toString().trim().isEmpty())))
                 {
-                    addVendor(shopNameE.getText().toString().trim(),vendorTypeE.getText().toString().trim(), vendorNameE.getText().toString().trim(), phone, addressE.getText().toString().trim());
-                    Intent signUp = new Intent(getContext(), vendorMainActivity.class);
+                    addVendor(binding.shopName.getText().toString().trim(),binding.shopType.getText().toString().trim(), binding.vendorName.getText().toString().trim(), phone, binding.vendorAddress.getText().toString().trim());
+                    Intent signUp= new Intent(getContext(), vendorMainActivity.class);
                     startActivity(signUp);
                     getActivity().finish();
                 }
@@ -123,15 +108,22 @@ public class vendorSignUpDetails extends Fragment {
         });
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //de-initialize binding object
+        binding = null;
+    }
+
     private void addVendor(String shopName, String shopType, String propName, String phone, String email, String address) {
         Vendor createVendor = new Vendor(shopName,shopType,propName,phone,email,address);
-        userReference.child("Vendors").child(address).child(shopNameE.getText().toString().trim()).setValue(createVendor);
+        userReference.child("Vendors").child(address).child(binding.shopName.getText().toString().trim()).setValue(createVendor);
         Toast.makeText(getContext(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
     }
 
     private void addVendor(String shopName, String shopType, String propName, String phone, String address) {
         Vendor createVendor = new Vendor(shopName,shopType,propName,phone,address);
-        userReference.child("Vendors").child(address).child(shopNameE.getText().toString().trim()).setValue(createVendor);
+        userReference.child("Vendors").child(address).child(binding.shopName.getText().toString().trim()).setValue(createVendor);
         Toast.makeText(getContext(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
     }
 }

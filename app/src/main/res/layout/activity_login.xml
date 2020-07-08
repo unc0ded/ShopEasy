@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:background="@color/bgColor"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-            android:id="@+id/login_toolbar" />
+            android:id="@+id/login_activity_toolbar" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -29,7 +29,7 @@
         android:orientation="vertical">
 
         <fragment
-            android:id="@+id/login_nav_host_fragment"
+            android:id="@+id/login_activity_nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
