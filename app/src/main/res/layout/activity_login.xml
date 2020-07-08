@@ -1,107 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
-    android:background="@color/darkBackground"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.LoginActivity">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bgColor"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
-        app:title="Login"
-        android:id="@+id/login_toolbar"/>
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bgColor"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            android:id="@+id/login_toolbar" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:background="@color/darkBackground"
         android:orientation="vertical">
-        <View
+
+        <fragment
+            android:id="@+id/login_nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
-            android:layout_height="20dp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="20dp"
-            android:hint="Email or Phone Number"
-            android:textColorHint="@color/textColor"
-            app:hintTextColor="@color/bgColor"
-            app:boxStrokeColor="@color/box_stroke"
-            app:boxCornerRadiusTopEnd="4dp"
-            app:boxCornerRadiusBottomEnd="4dp"
-            app:boxCornerRadiusBottomStart="4dp"
-            app:boxCornerRadiusTopStart="4dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/email_phone_tf"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColorHint="@color/bgColor"
-                android:textColor="#ffffff"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:hintEnabled="true"
-            android:hint="Password"
-            android:textColorHint="#99FFFFFF"
-            app:hintAnimationEnabled="true"
-            android:layout_marginHorizontal="20dp"
-            app:hintTextColor="@color/bgColor"
-            app:boxStrokeColor="@color/box_stroke"
-            app:boxCornerRadiusTopEnd="4dp"
-            app:boxCornerRadiusBottomEnd="4dp"
-            app:boxCornerRadiusBottomStart="4dp"
-            app:boxCornerRadiusTopStart="4dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/password_tf"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColorHint="@color/bgColor"
-                android:textColor="#ffffff" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="#ffffff"
-            android:layout_marginTop="20dp"
-            app:cornerRadius="3dp"
-            android:backgroundTint="@color/btn_disabled"
-            app:rippleColor="@color/btn_pressed"
-            app:strokeColor="@color/bgColor"
-            android:text="Sign In"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:id="@+id/login_btn"/>
-
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Not registered?"
-            android:textColor="#99FFFFFF"
-            android:layout_gravity="center"
-            android:padding="15dp"/>
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/sign_up_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign Up"
-            android:layout_gravity="center"
-            android:textSize="20dp"
-            android:textColor="@android:color/white"
-            />
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/login_nav" />
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

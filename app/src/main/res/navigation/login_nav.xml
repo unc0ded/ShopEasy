@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_nav"
+    app:startDestination="@id/login">
+
+    <fragment
+        android:id="@+id/customer_sign_up_main"
+        android:name="com.unc0ded.shopdeliver.fragments.customerSignUpMain"
+        tools:layout="@layout/fragment_customer_sign_up_main">
+        <action
+            android:id="@+id/action_customer_sign_up_main_to_customer_sign_up_details"
+            app:destination="@id/customer_sign_up_details"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popUpTo="@id/customer_sign_up_main" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/customer_sign_up_details"
+        android:name="com.unc0ded.shopdeliver.fragments.customerSignUpDetails"
+        tools:layout="@layout/fragment_customer_sign_up_details">
+        <argument
+            android:name="phone"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/login"
+        android:name="com.unc0ded.shopdeliver.fragments.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_login_to_customer_sign_up_main"
+            app:destination="@id/customer_sign_up_main"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popUpTo="@id/login" />
+        <action
+            android:id="@+id/action_login_to_vendorSignUpMain"
+            app:destination="@id/vendor_sign_up_main"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/login" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/vendor_sign_up_main"
+        android:name="com.unc0ded.shopdeliver.fragments.vendorSignUpMain"
+        android:label="fragment_vendor_sign_up_main"
+        tools:layout="@layout/fragment_vendor_sign_up_main" >
+        <action
+            android:id="@+id/action_vendorSignUpMain_to_vendorSignUpDetails"
+            app:destination="@id/vendor_sign_up_details"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/vendor_sign_up_main" />
+    </fragment>
+    <fragment
+        android:id="@+id/vendor_sign_up_details"
+        android:name="com.unc0ded.shopdeliver.fragments.vendorSignUpDetails"
+        android:label="fragment_vendor_sign_up_details"
+        tools:layout="@layout/fragment_vendor_sign_up_details" >
+        <argument
+            android:name="phone"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

@@ -1,38 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardElevation="6dp"
-    android:layout_margin="10dp">
+    android:layout_margin="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="5dp"
-        android:background="@color/compColor">
+        android:padding="15dp">
 
-        <com.google.android.material.textview.MaterialTextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Vendor Name"
-            android:textStyle="bold"
-            android:textSize="30dp"
-            android:id="@+id/vendor_name_tv"/>
-        <com.google.android.material.textview.MaterialTextView
+            android:orientation="horizontal">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/vendor_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/aldrich"
+                android:hint="Vendor Name"
+                android:textColorHint="@color/CardTextColor"
+                android:textSize="30sp"
+                android:textColor="@color/CardTextColor"
+                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+                <View
+                    android:id="@+id/delivery_status"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="end"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/available"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Type"
-            android:textSize="20dp"
-            android:id="@+id/vendor_type_tv"/>
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Address"
-            android:textStyle="italic"
-            android:textSize="20dp"
-            android:id="@+id/vendor_address_tv"/>
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.6"
+                android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vendor_type_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:fontFamily="@font/cagliostro"
+                    android:hint="Type"
+                    android:textColorHint="@color/CardTextColor"
+                    android:textColor="@color/CardTextColor"
+                    android:textSize="20dp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vendor_address_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:fontFamily="@font/cagliostro"
+                    android:hint="Address"
+                    android:textColorHint="@color/CardTextColor"
+                    android:textColor="@color/CardTextColor"
+                    android:textSize="20dp" />
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
