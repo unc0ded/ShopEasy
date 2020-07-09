@@ -31,4 +31,6 @@
     <string name="shop_name_text">Shop Name</string>
     <string name="proprietor_name_text">Proprietor Name</string>
     <string name="shop_type_text">Shop Type</string>
+    <string name="email_or_phone_number_text">Email or Phone Number</string>
+    <string name="not_registered_text">Not registered?</string>
 </resources>

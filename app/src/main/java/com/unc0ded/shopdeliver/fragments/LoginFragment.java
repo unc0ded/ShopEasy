@@ -20,36 +20,37 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.activities.customerMainActivity;
+import com.unc0ded.shopdeliver.databinding.FragmentLoginBinding;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class LoginFragment extends Fragment {
 
-    public LoginFragment() {
-        // Required empty public constructor
-    }
-
-    TextInputEditText emailOrPhoneE,passwordE;
-    MaterialTextView signUp;
-    MaterialButton login;
-    Toolbar loginBar;
+    FragmentLoginBinding binding;
     View root;
 
+    //TODO: the loginBar was initialized as loginBar = root.findViewById(R.id.login_tool_bar) but was never used.
+    // Have to figure out what it is used for and how to implement it.
+//    Toolbar loginBar;
+
+    //empty constructor
+    public LoginFragment() {
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false);
+        binding = FragmentLoginBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         root = view;
-        attachID();
 
-        signUp.setOnClickListener(new View.OnClickListener() {
+        binding.signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -79,20 +80,20 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        login.setOnClickListener(new View.OnClickListener() {
+        binding.signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent login = new Intent(getContext(), customerMainActivity.class);
-                startActivity(login);
+                Intent signIn = new Intent(getContext(), customerMainActivity.class);
+                startActivity(signIn);
             }
         });
     }
 
-    private void attachID() {
-        emailOrPhoneE = root.findViewById(R.id.email_phone_tf);
-        passwordE = root.findViewById(R.id.password_tf);
-        signUp = root.findViewById(R.id.sign_up_textView);
-        loginBar = root.findViewById(R.id.login_toolbar);
-        login= root.findViewById(R.id.login_btn);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //de-initialize binding object
+        binding = null;
     }
+
 }
