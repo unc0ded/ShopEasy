@@ -36,7 +36,7 @@ public class customerSignUpMain extends Fragment {
     private View rootView;
 
     //Firebase
-    private FirebaseAuth customerAuth;
+    private FirebaseAuth customerAuth = FirebaseAuth.getInstance();;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks customerCallbacks;
 
     //empty constructor
@@ -52,10 +52,7 @@ public class customerSignUpMain extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         rootView = view;
-
-        customerAuth = FirebaseAuth.getInstance();
 
         binding.otp.setEnabled(false);
         binding.validateOtpBtn.setEnabled(false);
@@ -64,7 +61,7 @@ public class customerSignUpMain extends Fragment {
             @Override
             public void onClick(View view) {
 
-                AlertDialog.Builder otpAlertBuilder = new AlertDialog.Builder(getContext());
+                AlertDialog.Builder otpAlertBuilder = new AlertDialog.Builder(requireContext());
                 otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
                         .setCancelable(true)
                         .setPositiveButton("Accept",
@@ -127,12 +124,9 @@ public class customerSignUpMain extends Fragment {
         binding.validateOtpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Objects.requireNonNull(binding.otp.getText()).toString().isEmpty())
-                {
+                if(Objects.requireNonNull(binding.otp.getText()).toString().isEmpty()) {
                     Toast.makeText(getContext(), "Please enter OTP.", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
+                } else {
                     validateOTPFunc();
                 }
             }
@@ -163,12 +157,11 @@ public class customerSignUpMain extends Fragment {
 
     private void signInWithPhoneAuthCredentials(PhoneAuthCredential customerCredential) {
         customerAuth.signInWithCredential(customerCredential)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful())
-                        {
-                            Log.d("SIGN UP Success", "signInWithCredential:success");
+                        if(task.isSuccessful()) {
+                            Log.d("signInWithCredential:", "success");
 
                             Toast.makeText(getContext(), "Phone number verified!", Toast.LENGTH_SHORT).show();
 
@@ -179,9 +172,7 @@ public class customerSignUpMain extends Fragment {
 
                             customerSignUpMainDirections.ActionCustomerSignUpMainToCustomerSignUpDetails action = customerSignUpMainDirections.actionCustomerSignUpMainToCustomerSignUpDetails("+91"+binding.phoneNumber.getText().toString().trim());
                             Navigation.findNavController(rootView).navigate(action);
-                        }
-                        else
-                        {
+                        } else {
                             Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
                             if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 Toast.makeText(getContext(), "Incorrect OTP", Toast.LENGTH_SHORT).show();
@@ -199,7 +190,7 @@ public class customerSignUpMain extends Fragment {
     private void sendOTP() {
         PhoneAuthProvider.getInstance().verifyPhoneNumber("+91"+Objects.requireNonNull(binding.phoneNumber.getText()).toString()
                 ,60, TimeUnit.SECONDS
-                ,getActivity()
+                , requireActivity()
                 ,customerCallbacks);
     }
 

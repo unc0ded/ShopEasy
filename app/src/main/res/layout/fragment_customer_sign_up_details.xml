@@ -22,12 +22,81 @@
             android:textColor="@android:color/white"
             android:textSize="24sp" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:baselineAligned="false">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:textColorHint="@color/textColor"
+                android:hint="@string/first_name_text"
+                app:boxCornerRadiusBottomEnd="4dp"
+                app:boxCornerRadiusBottomStart="4dp"
+                app:boxCornerRadiusTopEnd="4dp"
+                app:boxCornerRadiusTopStart="4dp"
+                app:boxStrokeColor="@color/box_stroke"
+                app:hintTextColor="@color/bgColor"
+                android:layout_weight="1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="#ffffff"
+                    android:textColorHint="@color/bgColor"
+                    android:inputType="textPersonName"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:textColorHint="@color/textColor"
+                android:hint="@string/last_name_text"
+                app:boxCornerRadiusBottomEnd="4dp"
+                app:boxCornerRadiusBottomStart="4dp"
+                app:boxCornerRadiusTopEnd="4dp"
+                app:boxCornerRadiusTopStart="4dp"
+                app:boxStrokeColor="@color/box_stroke"
+                app:hintTextColor="@color/bgColor"
+                android:layout_weight="1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/last_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="#ffffff"
+                    android:textColorHint="@color/bgColor"
+                    android:inputType="textPersonName"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address"
+            android:textColor="#FFFFFF"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            android:textSize="15sp"
+            android:fontFamily="@font/anonymous_pro"/>
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="@string/name_text"
+            android:hint="Fist Line"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -35,13 +104,15 @@
             app:boxCornerRadiusTopStart="4dp"
             app:boxStrokeColor="@color/box_stroke"
             app:hintTextColor="@color/bgColor">
-
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/name"
+                android:id="@+id/first_line"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="#ffffff"
-                android:textColorHint="@color/bgColor"/>
+                android:textColorHint="@color/bgColor"
+                android:inputType="textPostalAddress"
+                android:maxLines="1"
+                android:minLines="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -49,7 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="@string/locality_text"
+            android:hint="Second Line"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -57,12 +128,16 @@
             app:boxCornerRadiusTopStart="4dp"
             app:boxStrokeColor="@color/box_stroke"
             app:hintTextColor="@color/bgColor">
+
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/locality"
+                android:id="@+id/second_line"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="#ffffff"
-                android:textColorHint="@color/bgColor" />
+                android:textColorHint="@color/bgColor"
+                android:inputType="textPostalAddress"
+                android:maxLines="1"
+                android:minLines="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -70,7 +145,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="@string/society_name_text"
+            android:hint="Pincode"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -80,44 +155,31 @@
             app:hintTextColor="@color/bgColor">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/society_name"
+                android:id="@+id/pincode"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="#ffffff"
-                android:textColorHint="@color/bgColor" />
+                android:textColorHint="@color/bgColor"
+                android:inputType="number"
+                android:maxLength="6"
+                android:maxLines="1"
+                android:minLines="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginHorizontal="10dp">
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/AppTheme.ExposedDropdownMenu"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.2">
-
-                <AutoCompleteTextView
-                    android:id="@+id/building_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:ignore="LabelFor" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.4"/>
+            android:layout_marginHorizontal="10dp"
+            android:weightSum="2">
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:hint="@string/flat_no_text"
+                android:layout_weight="1"
+                android:layout_marginEnd="20dp"
+                android:hint="@string/city_text"
                 android:textColorHint="@color/textColor"
                 app:boxCornerRadiusBottomEnd="4dp"
                 app:boxCornerRadiusBottomStart="4dp"
@@ -127,11 +189,27 @@
                 app:hintTextColor="@color/bgColor">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/flat_number"
+                    android:id="@+id/city"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textColor="#ffffff"
-                    android:textColorHint="@color/bgColor" />
+                    android:textColorHint="@color/bgColor"
+                    android:inputType="text"
+                    android:maxLines="1"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/AppTheme.ExposedDropdownMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <AutoCompleteTextView
+                    android:id="@+id/state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="LabelFor" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -165,7 +243,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="#ffffff"
-                android:textColorHint="@color/bgColor" />
+                android:textColorHint="@color/bgColor"
+                android:inputType="textEmailAddress"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -180,7 +259,9 @@
             app:boxCornerRadiusTopEnd="4dp"
             app:boxCornerRadiusTopStart="4dp"
             app:boxStrokeColor="@color/box_stroke"
-            app:hintTextColor="@color/bgColor">
+            app:hintTextColor="@color/bgColor"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/bgColor">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/password"
@@ -203,7 +284,9 @@
             app:boxCornerRadiusTopEnd="4dp"
             app:boxCornerRadiusTopStart="4dp"
             app:boxStrokeColor="@color/box_stroke"
-            app:hintTextColor="@color/bgColor">
+            app:hintTextColor="@color/bgColor"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/bgColor">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/re_enter_password"

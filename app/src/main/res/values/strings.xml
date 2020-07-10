@@ -36,4 +36,7 @@
     <string name="register_as">Register As</string>
     <string name="customer_text">Customer</string>
     <string name="vendor_text">Vendor</string>
+    <string name="first_name_text">First Name</string>
+    <string name="last_name_text">Last Name</string>
+    <string name="city_text">City</string>
 </resources>
