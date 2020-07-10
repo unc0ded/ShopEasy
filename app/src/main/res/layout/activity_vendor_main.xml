@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/customer_container"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/darkBackground">
+    tools:context=".activities.vendorMainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -19,21 +17,18 @@
             android:layout_height="match_parent"
             android:background="@color/bgColor"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:title="Browse">
-
-        </androidx.appcompat.widget.Toolbar>
+            app:layout_scrollFlags="scroll|enterAlways|snap"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <fragment
-        android:id="@+id/customer_nav_host_fragment"
+        android:id="@+id/vendor_nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginVertical="?attr/actionBarSize"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/customer_main_nav" />
+        app:navGraph="@navigation/vendor_main_nav"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
@@ -41,7 +36,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/bgColor"
-        app:menu="@menu/customer_bottom_nav_menu"
-        app:itemIconTint="@color/nav_bar_color"
-        app:itemTextColor="@color/nav_bar_color"/>
+        app:menu="@menu/vendor_bottom_nav_menu"
+        app:itemTextColor="@color/nav_bar_color"
+        app:itemIconTint="@color/nav_bar_color"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

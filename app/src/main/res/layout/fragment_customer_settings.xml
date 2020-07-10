@@ -1,29 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/customer_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/darkBackground">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/customer_settings_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/bgColor"
-            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
-            app:title="Account">
-
-        </androidx.appcompat.widget.Toolbar>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

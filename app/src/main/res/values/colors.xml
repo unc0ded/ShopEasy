@@ -12,4 +12,12 @@
     <color name="btn_disabled">#1F000000</color>
     <color name="btn_focused">#90000000</color>
     <color name="btn_pressed">#DE000000</color>
+
+    <color name="available">#3A853E</color>
+    <color name="unavailable">#C12C21</color>
+
+    <color name="cardBackground">#8cc9bd</color>
+    <color name="Black">#000</color>
+    <color name="White">#FFF</color>
+    <color name="CardTextColor">#437d9c</color>
 </resources>

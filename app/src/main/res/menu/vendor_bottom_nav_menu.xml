@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/vendor_inventory"
+        android:icon="@drawable/ic_storage_24px"
+        android:title="@string/inventory" />
+
+    <item
+        android:id="@+id/vendor_orders"
+        android:icon="@drawable/ic_menu_book_24px"
+        android:title="@string/orders_received" />
+
+    <item
+        android:id="@+id/vendor_settings"
+        android:icon="@drawable/ic_person_24px"
+        android:title="@string/title_settings" />
+</menu>

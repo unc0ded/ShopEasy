@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".fragments.LoginFragment"
+    android:background="@color/darkBackground">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/email_or_phone_number_text"
+        android:textColorHint="@color/textColor"
+        app:hintTextColor="@color/bgColor"
+        app:boxStrokeColor="@color/box_stroke"
+        app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusBottomEnd="4dp"
+        app:boxCornerRadiusBottomStart="4dp"
+        app:boxCornerRadiusTopStart="4dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email_or_phone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColorHint="@color/bgColor"
+            android:textColor="#ffffff"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:hintEnabled="true"
+        android:hint="@string/password_text"
+        android:textColorHint="#99FFFFFF"
+        app:hintAnimationEnabled="true"
+        android:layout_marginHorizontal="20dp"
+        app:hintTextColor="@color/bgColor"
+        app:boxStrokeColor="@color/box_stroke"
+        app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusBottomEnd="4dp"
+        app:boxCornerRadiusBottomStart="4dp"
+        app:boxCornerRadiusTopStart="4dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColorHint="@color/bgColor"
+            android:textColor="#ffffff" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="#ffffff"
+        android:layout_marginTop="20dp"
+        app:cornerRadius="3dp"
+        android:backgroundTint="@color/btn_disabled"
+        app:rippleColor="@color/btn_pressed"
+        app:strokeColor="@color/bgColor"
+        android:text="@string/common_signin_button_text"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:id="@+id/sign_in_btn"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/not_registered_text"
+        android:textColor="#99FFFFFF"
+        android:layout_gravity="center"
+        android:padding="15dp"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/sign_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_up_text"
+        android:layout_gravity="center"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        />
+
+</LinearLayout>
