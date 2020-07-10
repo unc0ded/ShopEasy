@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@color/compColor"
     android:orientation="vertical">
 
     <com.google.android.material.textview.MaterialTextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_gravity="center"
         android:textAlignment="center"
         android:textColor="#000"
-        android:text="Register As"
-        android:textSize="20dp" />
+        android:text="@string/register_as"
+        android:textSize="20sp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
@@ -27,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:backgroundTint="@color/bgColor"
-            android:text="Customer" />
+            android:text="@string/customer_text"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/popup_vendor_sign_up_btn"
@@ -35,7 +34,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/bgColor"
             android:layout_margin="10dp"
-            android:text="Vendor" />
+            android:text="@string/vendor_text"/>
     </LinearLayout>
 
 </LinearLayout>

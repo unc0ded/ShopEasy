@@ -14,9 +14,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.databinding.FragmentCustomerOrdersBinding;
 
 public class customerOrdersFragment extends Fragment {
 
+    FragmentCustomerOrdersBinding binding;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,10 +26,11 @@ public class customerOrdersFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_customer_orders, container, false);
-        return root;
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentCustomerOrdersBinding.inflate(inflater ,container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -43,5 +46,11 @@ public class customerOrdersFragment extends Fragment {
             return true;
         }
         else return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

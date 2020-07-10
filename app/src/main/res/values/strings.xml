@@ -33,4 +33,7 @@
     <string name="shop_type_text">Shop Type</string>
     <string name="email_or_phone_number_text">Email or Phone Number</string>
     <string name="not_registered_text">Not registered?</string>
+    <string name="register_as">Register As</string>
+    <string name="customer_text">Customer</string>
+    <string name="vendor_text">Vendor</string>
 </resources>

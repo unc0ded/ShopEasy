@@ -3,28 +3,21 @@ package com.unc0ded.shopdeliver.fragments;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textview.MaterialTextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import com.unc0ded.shopdeliver.R;
-import com.unc0ded.shopdeliver.activities.customerMainActivity;
+import com.unc0ded.shopdeliver.activities.vendorMainActivity;
 import com.unc0ded.shopdeliver.databinding.FragmentLoginBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class LoginFragment extends Fragment {
 
     FragmentLoginBinding binding;
@@ -55,7 +48,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
 
                 final Dialog signUpPopUp = new Dialog(getContext());
-                signUpPopUp.setContentView(R.layout.sign_up_popup_dialogbox);
+                signUpPopUp.setContentView(R.layout.sign_up_dialogbox);
                 Button customer = signUpPopUp.findViewById(R.id.popup_customer_sign_up_btn),vendor = signUpPopUp.findViewById(R.id.popup_vendor_sign_up_btn);
 
                 //Customer and Vendor Buttons
@@ -83,7 +76,7 @@ public class LoginFragment extends Fragment {
         binding.signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signIn = new Intent(getContext(), customerMainActivity.class);
+                Intent signIn = new Intent(getContext(), vendorMainActivity.class);
                 startActivity(signIn);
             }
         });

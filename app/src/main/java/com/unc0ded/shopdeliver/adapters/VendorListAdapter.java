@@ -1,18 +1,16 @@
 package com.unc0ded.shopdeliver.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.databinding.VendorListItemBinding;
 import com.unc0ded.shopdeliver.models.Vendor;
 
 import java.util.ArrayList;
@@ -30,7 +28,7 @@ public class VendorListAdapter extends RecyclerView.Adapter<VendorListAdapter.Ve
     @NonNull
     @Override
     public VendorListVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new VendorListVH(LayoutInflater.from(parent.getContext()).inflate(R.layout.vendor_list_item,parent,false));
+        return new VendorListVH(VendorListItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -45,26 +43,18 @@ public class VendorListAdapter extends RecyclerView.Adapter<VendorListAdapter.Ve
 
     class VendorListVH extends RecyclerView.ViewHolder {
 
-        TextView nameTV, typeTV, addressTV;
-        View deliveryStatus;
+        VendorListItemBinding binding;
 
-        public VendorListVH(@NonNull View itemView) {
-            super(itemView);
-            attachID();
-        }
-
-        private void attachID() {
-            nameTV=itemView.findViewById(R.id.vendor_name_tv);
-            typeTV=itemView.findViewById(R.id.vendor_type_tv);
-            addressTV=itemView.findViewById(R.id.vendor_address_tv);
-            deliveryStatus = itemView.findViewById(R.id.delivery_status);
+        public VendorListVH(@NonNull VendorListItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         public void populate(Vendor vendor) {
-            nameTV.setText(vendor.getShopName());
-            typeTV.setText(vendor.getType());
-            addressTV.setText(vendor.getAddress());
-            deliveryStatus.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.available), PorterDuff.Mode.SRC_ATOP);
+            binding.vendorNameTv.setText(vendor.getShopName());
+            binding.vendorTypeTv.setText(vendor.getType());
+            binding.vendorAddressTv.setText(vendor.getAddress());
+            binding.deliveryStatus.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.available), PorterDuff.Mode.SRC_ATOP);
         }
     }
 }

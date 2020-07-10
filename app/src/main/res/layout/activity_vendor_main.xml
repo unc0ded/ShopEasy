@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/vendor_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/bgColor"
@@ -31,7 +31,7 @@
         app:navGraph="@navigation/vendor_main_nav"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/vendor_bottom_nav"
+        android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
