@@ -1,6 +1,9 @@
 package com.unc0ded.shopdeliver.fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,32 +66,39 @@ public class vendorSignUpMain extends Fragment {
         binding.otpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder otpAlertBuilder = new AlertDialog.Builder(getContext());
-                otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
-                        .setCancelable(true)
-                        .setPositiveButton("Ok",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if((Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim().length()) != 10)
-                                        {
-                                            Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
+                ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+                if (isConnected){
+                    AlertDialog.Builder otpAlertBuilder = new AlertDialog.Builder(requireContext());
+                    otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
+                            .setCancelable(true)
+                            .setPositiveButton("Ok",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if((Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim().length()) != 10)
+                                            {
+                                                Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
+                                            }
+                                            else
+                                            {
+                                                sendOTP();
+                                                binding.phoneNumber.setEnabled(false);
+                                                binding.otpBtn.setEnabled(false);
+                                            }
+                                            dialog.cancel();
                                         }
-                                        else
-                                        {
-                                            sendOTP();
-                                            binding.phoneNumber.setEnabled(false);
-                                            binding.otpBtn.setEnabled(false);
-                                        }
-                                        dialog.cancel();
-                                    }
-                                }).setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        }).create().show();
+                                    }).setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            }).create().show();
+                }else
+                    Toast.makeText(getContext(), "No internet connection!", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -160,7 +170,7 @@ public class vendorSignUpMain extends Fragment {
 
     private void signInWithPhoneAuthCredentials(PhoneAuthCredential vendorCredential) {
         vendorAuth.signInWithCredential(vendorCredential)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
@@ -191,7 +201,7 @@ public class vendorSignUpMain extends Fragment {
     private void sendOTP() {
         PhoneAuthProvider.getInstance().verifyPhoneNumber("+91"+ Objects.requireNonNull(binding.phoneNumber.getText()).toString()
                 ,60, TimeUnit.SECONDS
-                ,getActivity()
+                ,requireActivity()
                 ,vendorCallbacks);
     }
 }

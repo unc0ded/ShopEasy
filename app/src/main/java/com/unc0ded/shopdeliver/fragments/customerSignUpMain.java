@@ -1,6 +1,9 @@
 package com.unc0ded.shopdeliver.fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,7 +39,7 @@ public class customerSignUpMain extends Fragment {
     private View rootView;
 
     //Firebase
-    private FirebaseAuth customerAuth = FirebaseAuth.getInstance();;
+    private FirebaseAuth customerAuth = FirebaseAuth.getInstance();
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks customerCallbacks;
 
     //empty constructor
@@ -61,32 +64,39 @@ public class customerSignUpMain extends Fragment {
             @Override
             public void onClick(View view) {
 
-                AlertDialog.Builder otpAlertBuilder = new AlertDialog.Builder(requireContext());
-                otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
-                        .setCancelable(true)
-                        .setPositiveButton("Accept",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if((Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim().length()) != 10)
-                                        {
-                                            Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
+                ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+                if (isConnected){
+                    AlertDialog.Builder otpAlertBuilder = new AlertDialog.Builder(requireContext());
+                    otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
+                            .setCancelable(true)
+                            .setPositiveButton("Accept",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if((Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim().length()) != 10)
+                                            {
+                                                Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
+                                            }
+                                            else
+                                            {
+                                                sendOTP();
+                                                binding.phoneNumber.setEnabled(false);
+                                                binding.otpBtn.setEnabled(false);
+                                            }
+                                            dialog.cancel();
                                         }
-                                        else
-                                        {
-                                            sendOTP();
-                                            binding.phoneNumber.setEnabled(false);
-                                            binding.otpBtn.setEnabled(false);
-                                        }
-                                        dialog.cancel();
-                                    }
-                                }).setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        }).create().show();
+                                    }).setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            }).create().show();
+                }else
+                    Toast.makeText(getContext(), "No internet connection!", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -163,14 +173,16 @@ public class customerSignUpMain extends Fragment {
                         if(task.isSuccessful()) {
                             Log.d("signInWithCredential:", "success");
 
-                            Toast.makeText(getContext(), "Phone number verified!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Phone number verified!", Toast.LENGTH_LONG).show();
 
                             binding.otp.setEnabled(false);
                             binding.validateOtpBtn.setEnabled(false);
                             binding.otpBtn.setEnabled(false);
                             binding.validateOtpBtn.setEnabled(false);
 
-                            customerSignUpMainDirections.ActionCustomerSignUpMainToCustomerSignUpDetails action = customerSignUpMainDirections.actionCustomerSignUpMainToCustomerSignUpDetails("+91"+binding.phoneNumber.getText().toString().trim());
+
+
+                            customerSignUpMainDirections.ActionCustomerSignUpMainToCustomerSignUpDetails action = customerSignUpMainDirections.actionCustomerSignUpMainToCustomerSignUpDetails("+91 "+binding.phoneNumber.getText().toString().trim());
                             Navigation.findNavController(rootView).navigate(action);
                         } else {
                             Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
@@ -193,5 +205,4 @@ public class customerSignUpMain extends Fragment {
                 , requireActivity()
                 ,customerCallbacks);
     }
-
 }

@@ -84,7 +84,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Address"
+            android:text="@string/address_text"
             android:textColor="#FFFFFF"
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"
@@ -96,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="Fist Line"
+            android:hint="@string/fist_line_text"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -120,7 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="Second Line"
+            android:hint="@string/second_line_text"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -145,7 +145,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:hint="Pincode"
+            android:hint="@string/pin_code_text"
             android:textColorHint="@color/textColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
@@ -155,7 +155,7 @@
             app:hintTextColor="@color/bgColor">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/pincode"
+                android:id="@+id/pin_code"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="#ffffff"
@@ -171,7 +171,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginHorizontal="10dp"
-            android:weightSum="2">
+            android:weightSum="2"
+            android:baselineAligned="false">
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -202,7 +203,8 @@
                 style="@style/AppTheme.ExposedDropdownMenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:hint="@string/state_text">
 
                 <AutoCompleteTextView
                     android:id="@+id/state"
@@ -261,7 +263,7 @@
             app:boxStrokeColor="@color/box_stroke"
             app:hintTextColor="@color/bgColor"
             app:passwordToggleEnabled="true"
-            app:passwordToggleTint="@color/bgColor">
+            app:passwordToggleTint="@color/textColor">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/password"
@@ -286,7 +288,7 @@
             app:boxStrokeColor="@color/box_stroke"
             app:hintTextColor="@color/bgColor"
             app:passwordToggleEnabled="true"
-            app:passwordToggleTint="@color/bgColor">
+            app:passwordToggleTint="@color/textColor">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/re_enter_password"

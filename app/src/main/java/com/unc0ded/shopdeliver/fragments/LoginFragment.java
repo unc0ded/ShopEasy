@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.activities.customerMainActivity;
 import com.unc0ded.shopdeliver.activities.vendorMainActivity;
 import com.unc0ded.shopdeliver.databinding.FragmentLoginBinding;
 
@@ -47,7 +48,7 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                final Dialog signUpPopUp = new Dialog(getContext());
+                final Dialog signUpPopUp = new Dialog(requireContext());
                 signUpPopUp.setContentView(R.layout.sign_up_dialogbox);
                 Button customer = signUpPopUp.findViewById(R.id.popup_customer_sign_up_btn),vendor = signUpPopUp.findViewById(R.id.popup_vendor_sign_up_btn);
 
@@ -76,7 +77,7 @@ public class LoginFragment extends Fragment {
         binding.signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signIn = new Intent(getContext(), vendorMainActivity.class);
+                Intent signIn = new Intent(getContext(), customerMainActivity.class);
                 startActivity(signIn);
             }
         });

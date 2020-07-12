@@ -39,4 +39,11 @@
     <string name="first_name_text">First Name</string>
     <string name="last_name_text">Last Name</string>
     <string name="city_text">City</string>
+    <string name="address_text">Address</string>
+    <string name="fist_line_text">Fist Line</string>
+    <string name="second_line_text">Second Line</string>
+    <string name="pin_code_text">Pin Code</string>
+    <string name="shop_address_text">Shop Address</string>
+    <string name="state_text">State</string>
+    <string name="about_shop_text">About Shop</string>
 </resources>
