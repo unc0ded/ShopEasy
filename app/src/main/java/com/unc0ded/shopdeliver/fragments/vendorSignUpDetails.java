@@ -167,23 +167,42 @@ public class vendorSignUpDetails extends Fragment {
                 if (!documentSnapshot.exists()){
                     HashMap<String, Date> timeStamp = new HashMap<>();
                     timeStamp.put("New pin code available:", Calendar.getInstance().getTime());
-                    newUser.collection("Vendors").document(pin_code).set(timeStamp);
+                    newUser.collection("Vendors").document(pin_code).set(timeStamp).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            newUser.collection("Vendors").document(pin_code).update(Objects.requireNonNull(vendorAuth.getUid()), new_user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
+                                    startActivity(new Intent(requireContext(), vendorMainActivity.class));
+                                    requireActivity().finish();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getActivity(), "There was some problem registering you\nPlease try again later", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
+                }else{
+                    newUser.collection("Vendors").document(pin_code).update(Objects.requireNonNull(vendorAuth.getUid()), new_user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(requireContext(), vendorMainActivity.class));
+                            requireActivity().finish();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), "There was some problem registering you\nPlease try again later", Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             }
         });
-        newUser.collection("Vendors").document(pin_code).update(Objects.requireNonNull(vendorAuth.getUid()), new_user).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
-                startActivity(new Intent(requireContext(), vendorMainActivity.class));
-                requireActivity().finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getActivity(), "There was some problem registering you\nPlease try again later", Toast.LENGTH_LONG).show();
-            }
-        });
+
     }
 
     private void addVendorWithEmail(String first_name, String last_name, String shop_name, String shop_type, String line1, String line2, final String pin_code, String city
@@ -218,22 +237,41 @@ public class vendorSignUpDetails extends Fragment {
                 if (!documentSnapshot.exists()){
                     HashMap<String, Date> timeStamp = new HashMap<>();
                     timeStamp.put("New pin code available:", Calendar.getInstance().getTime());
-                    newUser.collection("Vendors").document(pin_code).set(timeStamp);
+                    newUser.collection("Vendors").document(pin_code).set(timeStamp).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            newUser.collection("Vendors").document(pin_code).update(Objects.requireNonNull(vendorAuth.getUid()), new_user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
+                                    startActivity(new Intent(requireContext(), vendorMainActivity.class));
+                                    requireActivity().finish();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getActivity(), "There was some problem registering you\nPlease try again later", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
+                }else{
+                    newUser.collection("Vendors").document(pin_code).update(Objects.requireNonNull(vendorAuth.getUid()), new_user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(requireContext(), vendorMainActivity.class));
+                            requireActivity().finish();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), "There was some problem registering you\nPlease try again later", Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             }
         });
-        newUser.collection("Vendors").document(pin_code).update(Objects.requireNonNull(vendorAuth.getUid()), new_user).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
-                startActivity(new Intent(requireContext(), vendorMainActivity.class));
-                requireActivity().finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getActivity(), "There was some problem registering you. Please try again later", Toast.LENGTH_LONG).show();
-            }
-        });
+
     }
 }

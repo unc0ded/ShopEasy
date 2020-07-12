@@ -15,24 +15,38 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.adapters.VendorListAdapter;
 import com.unc0ded.shopdeliver.databinding.FragmentCustomerShopsListBinding;
 import com.unc0ded.shopdeliver.models.Vendor;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Objects;
 
 public class customerShopsListFragment extends Fragment {
 
     FragmentCustomerShopsListBinding binding;
 
     ArrayList<Vendor> vendorList = new ArrayList<>();
-    DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
+
+    FirebaseAuth customerAuth = FirebaseAuth.getInstance();
+    CollectionReference vendorFdb = FirebaseFirestore.getInstance().collection("Vendors");
+
+    String PIN_CODE = "411008";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,27 +67,60 @@ public class customerShopsListFragment extends Fragment {
 
         binding.listRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        reference.child("Vendors").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                vendorList.clear();
-                for(DataSnapshot localityShot : dataSnapshot.getChildren())
-                {
-                    for(DataSnapshot vendorShot : localityShot.getChildren()){
-                        vendorList.add(vendorShot.getValue(Vendor.class));
+        if (customerAuth.getUid() != null){
+            vendorFdb.document(customerAuth.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
+                        try {
+                            Log.i("pin code fetched", new JSONObject(documentSnapshot.getData()).getJSONObject("Address").getString("Pin code"));
+                            PIN_CODE = new JSONObject(documentSnapshot.getData()).getJSONObject("Address").getString("Pin code");
+                            fetchVendors();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-                binding.listRv.setAdapter(new VendorListAdapter(getActivity(), vendorList));
-            }
+            });
+        }else {
+            fetchVendors();
+        }
+    }
 
+    private void fetchVendors() {
+        vendorFdb.document(PIN_CODE).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("Data fetch error", databaseError.getMessage());
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists() && documentSnapshot.getData() != null){
+                    JSONObject vendors_list = new JSONObject(documentSnapshot.getData());
+                    populateVendorsList(vendors_list);
+                }else
+                    binding.message.setText("No vendors found\nin your area :(");
             }
         });
-//        vendorList.add(new Vendor("Dmart","Supermarket","Baner","1234567890"));
-//        vendorList.add(new Vendor("Medplus","Medical","Aundh", "2422567890"));
-//        vendorList.add(new Vendor("Joshi","Confectionary","Aundh", "2345678912"));
+    }
+
+    private void populateVendorsList(JSONObject vendors_list) {
+        Iterator<String> keys = vendors_list.keys();
+
+        vendorList.clear();
+        while(keys.hasNext()){
+            try {
+                String key = keys.next();
+                if (!key.equals("New pin code available:")){
+                    vendorList.add(new Vendor(vendors_list.getJSONObject(key).getString("Shop Name")
+                            , vendors_list.getJSONObject(key).getString("Shop Type")
+                            , vendors_list.getJSONObject(key).getJSONObject("Address").getString("Address Line 2")
+                            , "9999999999"));
+
+                    binding.listRv.setAdapter(new VendorListAdapter(getActivity(), vendorList));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        binding.message.setText("Shops in the area " + PIN_CODE);
     }
 
     @Override
@@ -98,4 +145,6 @@ public class customerShopsListFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+
 }

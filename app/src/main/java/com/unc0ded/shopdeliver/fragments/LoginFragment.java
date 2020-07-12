@@ -1,6 +1,8 @@
 package com.unc0ded.shopdeliver.fragments;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -77,8 +79,27 @@ public class LoginFragment extends Fragment {
         binding.signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signIn = new Intent(getContext(), customerMainActivity.class);
-                startActivity(signIn);
+                AlertDialog.Builder choose = new AlertDialog.Builder(requireContext());
+                choose.setCancelable(true);
+                choose.setTitle("Debug");
+                choose.setMessage("Which activity do you want to debug?");
+                choose.setPositiveButton("customerMainActivity", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(getContext(), customerMainActivity.class));
+                        requireActivity().finish();
+                    }
+                });
+
+                choose.setNegativeButton("vendorMainActivity", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(getContext(), vendorMainActivity.class));
+                        requireActivity().finish();
+                    }
+                });
+
+                choose.show();
             }
         });
     }
