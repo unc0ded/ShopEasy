@@ -46,6 +46,7 @@ public class customerShopsListFragment extends Fragment {
     FirebaseAuth customerAuth = FirebaseAuth.getInstance();
     CollectionReference vendorFdb = FirebaseFirestore.getInstance().collection("Vendors");
 
+    //hardcode here for debugging
     String PIN_CODE = "411008";
 
     @Override
