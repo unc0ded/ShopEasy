@@ -1,6 +1,9 @@
 package com.unc0ded.shopdeliver.fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,7 +39,7 @@ public class customerSignUpMain extends Fragment {
     private View rootView;
 
     //Firebase
-    private FirebaseAuth customerAuth;
+    private FirebaseAuth customerAuth = FirebaseAuth.getInstance();
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks customerCallbacks;
 
     //empty constructor
@@ -52,10 +55,7 @@ public class customerSignUpMain extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         rootView = view;
-
-        customerAuth = FirebaseAuth.getInstance();
 
         binding.otp.setEnabled(false);
         binding.validateOtpBtn.setEnabled(false);
@@ -64,32 +64,39 @@ public class customerSignUpMain extends Fragment {
             @Override
             public void onClick(View view) {
 
-                AlertDialog.Builder otpAlertBuilder = new AlertDialog.Builder(getContext());
-                otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
-                        .setCancelable(true)
-                        .setPositiveButton("Accept",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if((Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim().length()) != 10)
-                                        {
-                                            Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
+                ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+                if (isConnected){
+                    AlertDialog.Builder otpAlertBuilder = new AlertDialog.Builder(requireContext());
+                    otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
+                            .setCancelable(true)
+                            .setPositiveButton("Accept",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if((Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim().length()) != 10)
+                                            {
+                                                Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
+                                            }
+                                            else
+                                            {
+                                                sendOTP();
+                                                binding.phoneNumber.setEnabled(false);
+                                                binding.otpBtn.setEnabled(false);
+                                            }
+                                            dialog.cancel();
                                         }
-                                        else
-                                        {
-                                            sendOTP();
-                                            binding.phoneNumber.setEnabled(false);
-                                            binding.otpBtn.setEnabled(false);
-                                        }
-                                        dialog.cancel();
-                                    }
-                                }).setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        }).create().show();
+                                    }).setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            }).create().show();
+                }else
+                    Toast.makeText(getContext(), "No internet connection!", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -127,12 +134,9 @@ public class customerSignUpMain extends Fragment {
         binding.validateOtpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Objects.requireNonNull(binding.otp.getText()).toString().isEmpty())
-                {
+                if(Objects.requireNonNull(binding.otp.getText()).toString().isEmpty()) {
                     Toast.makeText(getContext(), "Please enter OTP.", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
+                } else {
                     validateOTPFunc();
                 }
             }
@@ -163,25 +167,24 @@ public class customerSignUpMain extends Fragment {
 
     private void signInWithPhoneAuthCredentials(PhoneAuthCredential customerCredential) {
         customerAuth.signInWithCredential(customerCredential)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful())
-                        {
-                            Log.d("SIGN UP Success", "signInWithCredential:success");
+                        if(task.isSuccessful()) {
+                            Log.d("signInWithCredential:", "success");
 
-                            Toast.makeText(getContext(), "Phone number verified!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Phone number verified!", Toast.LENGTH_LONG).show();
 
                             binding.otp.setEnabled(false);
                             binding.validateOtpBtn.setEnabled(false);
                             binding.otpBtn.setEnabled(false);
                             binding.validateOtpBtn.setEnabled(false);
 
-                            customerSignUpMainDirections.ActionCustomerSignUpMainToCustomerSignUpDetails action = customerSignUpMainDirections.actionCustomerSignUpMainToCustomerSignUpDetails("+91"+binding.phoneNumber.getText().toString().trim());
+
+
+                            customerSignUpMainDirections.ActionCustomerSignUpMainToCustomerSignUpDetails action = customerSignUpMainDirections.actionCustomerSignUpMainToCustomerSignUpDetails("+91 "+binding.phoneNumber.getText().toString().trim());
                             Navigation.findNavController(rootView).navigate(action);
-                        }
-                        else
-                        {
+                        } else {
                             Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
                             if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 Toast.makeText(getContext(), "Incorrect OTP", Toast.LENGTH_SHORT).show();
@@ -199,8 +202,7 @@ public class customerSignUpMain extends Fragment {
     private void sendOTP() {
         PhoneAuthProvider.getInstance().verifyPhoneNumber("+91"+Objects.requireNonNull(binding.phoneNumber.getText()).toString()
                 ,60, TimeUnit.SECONDS
-                ,getActivity()
+                , requireActivity()
                 ,customerCallbacks);
     }
-
 }

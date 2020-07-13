@@ -43,7 +43,8 @@
                 android:layout_height="match_parent"
                 android:paddingHorizontal="95dp"
                 android:textColor="#ffffff"
-                android:textColorHint="@color/bgColor" />
+                android:textColorHint="@color/bgColor"
+                android:maxLength="10"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 

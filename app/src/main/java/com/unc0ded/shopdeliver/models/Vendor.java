@@ -20,6 +20,13 @@ public class Vendor {
         Address = address;
     }
 
+    public Vendor(String name, String type, String area, String s) {
+        ShopName = name;
+        Type = type;
+        Address = area;
+        Phone = s;
+    }
+
     public Vendor() {
     }
 

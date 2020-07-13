@@ -1,5 +1,6 @@
 package com.unc0ded.shopdeliver.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -9,12 +10,15 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.databinding.ActivityCustomerMainBinding;
 
 public class customerMainActivity extends AppCompatActivity {
 
     ActivityCustomerMainBinding binding;
+
+    FirebaseAuth userAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,4 +37,10 @@ public class customerMainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.bottomNav, navController);
     }
 
+    @Override
+    public void onBackPressed() {
+        userAuth.signOut();
+        startActivity(new Intent(customerMainActivity.this, LoginActivity.class));
+        finish();
+    }
 }
