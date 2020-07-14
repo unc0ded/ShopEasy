@@ -9,39 +9,55 @@
     tools:context=".fragments.LoginFragment"
     android:background="@color/darkBackground">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="20dp" />
-
-    <com.google.android.material.textfield.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="20dp"
-        android:hint="@string/email_or_phone_number_text"
-        android:textColorHint="@color/textColor"
-        app:hintTextColor="@color/bgColor"
-        app:boxStrokeColor="@color/box_stroke"
-        app:boxCornerRadiusTopEnd="4dp"
-        app:boxCornerRadiusBottomEnd="4dp"
-        app:boxCornerRadiusBottomStart="4dp"
-        app:boxCornerRadiusTopStart="4dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/email_or_phone"
-            android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:layout_marginTop="20dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:id="@+id/username_layout"
+            android:hint="@string/phone_number_text"
+            android:textColorHint="@color/textColor"
+            app:hintTextColor="@color/bgColor"
+            app:boxStrokeColor="@color/box_stroke"
+            app:boxCornerRadiusTopEnd="4dp"
+            app:boxCornerRadiusBottomEnd="4dp"
+            app:boxCornerRadiusBottomStart="4dp"
+            app:boxCornerRadiusTopStart="4dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email_or_phone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColorHint="@color/bgColor"
+                android:textColor="#ffffff"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:textColorHint="@color/bgColor"
-            android:textColor="#ffffff"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_weight="1"
+            android:id="@+id/switch_method"
+            android:layout_marginStart="10dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:text="@string/use_email_text"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimary"/>
+
+    </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:hintEnabled="true"
+        android:visibility="gone"
+        android:id="@+id/password_layout"
         android:hint="@string/password_text"
         android:textColorHint="#99FFFFFF"
-        app:hintAnimationEnabled="true"
         android:layout_marginHorizontal="20dp"
         app:hintTextColor="@color/bgColor"
         app:boxStrokeColor="@color/box_stroke"
@@ -55,6 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColorHint="@color/bgColor"
+            android:inputType="textPassword"
             android:textColor="#ffffff" />
     </com.google.android.material.textfield.TextInputLayout>
 

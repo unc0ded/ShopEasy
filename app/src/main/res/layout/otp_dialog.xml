@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.chaos.view.PinView
+        android:id="@+id/otp_et"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        style="@style/PinWidget.PinView"
+        android:cursorVisible="false"
+        android:layout_gravity="center"
+        android:inputType="number"
+        android:textColor="@color/line_colors"
+        app:lineColor="@color/line_colors"
+        app:itemCount="6"
+        app:itemRadius="5dp"
+        app:viewType="rectangle"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.Button"
+        android:id="@+id/otp_verify_btn"
+        android:text="@string/verify_otp"
+        app:backgroundTint="@color/colorAccent"
+        android:textColor="@color/Black"/>
+
+</LinearLayout>

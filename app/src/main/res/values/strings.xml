@@ -31,7 +31,8 @@
     <string name="shop_name_text">Shop Name</string>
     <string name="proprietor_name_text">Proprietor Name</string>
     <string name="shop_type_text">Shop Type</string>
-    <string name="email_or_phone_number_text">Email or Phone Number</string>
+    <string name="use_phone_number_text">Use Phone</string>
+    <string name="use_email_text">Use email</string>
     <string name="not_registered_text">Not registered?</string>
     <string name="register_as">Register As</string>
     <string name="customer_text">Customer</string>
@@ -46,4 +47,13 @@
     <string name="shop_address_text">Shop Address</string>
     <string name="state_text">State</string>
     <string name="about_shop_text">About Shop</string>
+    <string name="verify_otp">Verify</string>
+    <string name="add_item_to_inventory">Add new item to Inventory</string>
+    <string name="new_item_name">Item Name</string>
+    <string name="new_item_type">Item Type</string>
+    <string name="quantity">Quantity</string>
+    <string name="new_item_price">Price</string>
+    <string name="labels">Labels:</string>
+    <string name="label_new">New</string>
+    <string name="label_popular">Popular</string>
 </resources>

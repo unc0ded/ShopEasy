@@ -68,36 +68,32 @@ public class customerShopsListFragment extends Fragment {
 
         binding.listRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        if (customerAuth.getUid() != null){
-            vendorFdb.document(customerAuth.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
-                        try {
-                            Log.i("pin code fetched", new JSONObject(documentSnapshot.getData()).getJSONObject("Address").getString("Pin code"));
-                            PIN_CODE = new JSONObject(documentSnapshot.getData()).getJSONObject("Address").getString("Pin code");
-                            fetchVendors();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+        if (customerAuth.getUid() != null) {
+            vendorFdb.document(customerAuth.getUid()).get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
+                    try {
+                        Log.i("pin code fetched", new JSONObject(documentSnapshot.getData()).getJSONObject("Address").getString("Pin code"));
+                        PIN_CODE = new JSONObject(documentSnapshot.getData()).getJSONObject("Address").getString("Pin code");
+                        fetchVendors();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             });
-        }else {
+        }
+        else {
             fetchVendors();
         }
     }
 
     private void fetchVendors() {
-        vendorFdb.document(PIN_CODE).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists() && documentSnapshot.getData() != null){
-                    JSONObject vendors_list = new JSONObject(documentSnapshot.getData());
-                    populateVendorsList(vendors_list);
-                }else
-                    binding.message.setText("No vendors found\nin your area :(");
+        vendorFdb.document(PIN_CODE).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists() && documentSnapshot.getData() != null){
+                JSONObject vendors_list = new JSONObject(documentSnapshot.getData());
+                populateVendorsList(vendors_list);
             }
+            else
+                binding.message.setText("No vendors found\nin your area :(");
         });
     }
 
@@ -109,10 +105,10 @@ public class customerShopsListFragment extends Fragment {
             try {
                 String key = keys.next();
                 if (!key.equals("New pin code available:")){
-                    vendorList.add(new Vendor(vendors_list.getJSONObject(key).getString("Shop Name")
-                            , vendors_list.getJSONObject(key).getString("Shop Type")
-                            , vendors_list.getJSONObject(key).getJSONObject("Address").getString("Address Line 2")
-                            , "9999999999"));
+                    vendorList.add(new Vendor(vendors_list.getJSONObject(key).getString("Shop Name"),
+                            vendors_list.getJSONObject(key).getString("Shop Type"),
+                            vendors_list.getJSONObject(key).getJSONObject("Address").getString("Address Line 2"),
+                            "9999999999"));
 
                     binding.listRv.setAdapter(new VendorListAdapter(getActivity(), vendorList));
                 }
