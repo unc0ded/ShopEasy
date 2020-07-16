@@ -1,6 +1,7 @@
 package com.unc0ded.shopdeliver.fragments;
 
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,15 +16,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.adapters.VendorListAdapter;
@@ -44,7 +38,8 @@ public class customerShopsListFragment extends Fragment {
     ArrayList<Vendor> vendorList = new ArrayList<>();
 
     FirebaseAuth customerAuth = FirebaseAuth.getInstance();
-    CollectionReference vendorFdb = FirebaseFirestore.getInstance().collection("Vendors");
+    CollectionReference vendorFdb = FirebaseFirestore.getInstance().collection("Vendors")
+            , customerFdb = FirebaseFirestore.getInstance().collection("Customers");
 
     //hardcode here for debugging
     String PIN_CODE = "411008";
@@ -68,22 +63,19 @@ public class customerShopsListFragment extends Fragment {
 
         binding.listRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        if (customerAuth.getUid() != null) {
-            vendorFdb.document(customerAuth.getUid()).get().addOnSuccessListener(documentSnapshot -> {
+        if (customerAuth.getUid() != null){
+            customerFdb.document(Objects.requireNonNull(customerAuth.getUid())).get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
                     try {
-                        Log.i("pin code fetched", new JSONObject(documentSnapshot.getData()).getJSONObject("Address").getString("Pin code"));
                         PIN_CODE = new JSONObject(documentSnapshot.getData()).getJSONObject("Address").getString("Pin code");
-                        fetchVendors();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    fetchVendors();
                 }
             });
-        }
-        else {
+        }else
             fetchVendors();
-        }
     }
 
     private void fetchVendors() {
@@ -97,7 +89,7 @@ public class customerShopsListFragment extends Fragment {
         });
     }
 
-    private void populateVendorsList(JSONObject vendors_list) {
+    private void populateVendorsList(@NonNull JSONObject vendors_list) {
         Iterator<String> keys = vendors_list.keys();
 
         vendorList.clear();
@@ -142,6 +134,4 @@ public class customerShopsListFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
-
 }

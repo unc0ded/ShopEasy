@@ -65,6 +65,8 @@ public class LoginFragment extends Fragment {
     FirebaseAuth auth;
     FirebaseFirestore db;
 
+    androidx.appcompat.app.AlertDialog enter_otp;
+
     //TODO: the loginBar was initialized as loginBar = root.findViewById(R.id.login_tool_bar) but was never used.
     // Have to figure out what it is used for and how to implement it.
 //    Toolbar loginBar;
@@ -248,7 +250,7 @@ public class LoginFragment extends Fragment {
             else
                 Toast.makeText(requireContext(), "Please enter complete OTP", Toast.LENGTH_SHORT).show();
         });
-        new MaterialAlertDialogBuilder(requireContext())
+        enter_otp = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Enter OTP")
                 .setCancelable(false)
                 .setView(otpView)
@@ -267,12 +269,12 @@ public class LoginFragment extends Fragment {
                                 .addOnSuccessListener(documentSnapshot -> {
                                     if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
                                         startActivity(new Intent(requireContext(), customerMainActivity.class));
-                                        requireActivity().finish();
                                     }
                                     else {
                                         startActivity(new Intent(requireContext(), vendorMainActivity.class));
-                                        requireActivity().finish();
                                     }
+                                    enter_otp.dismiss();
+                                    requireActivity().finish();
                                 })
                                 .addOnFailureListener(e -> Log.e("Cred Search", "Failed: " + e.getMessage()));
                     }
