@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     app:cardElevation="6dp"
     android:layout_margin="5dp">
 
@@ -22,12 +22,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:fontFamily="@font/aldrich"
-                android:hint="Vendor Name"
+                android:fontFamily="@font/montserrat_light"
+                tools:hint="Vendor Name"
+                android:textColor="@color/CardTextColor"
                 android:textColorHint="@color/CardTextColor"
                 android:textSize="30sp"
-                android:textColor="@color/CardTextColor"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <View
                 android:id="@+id/delivery_status"
@@ -49,10 +49,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:fontFamily="@font/cagliostro"
-                android:hint="Type"
-                android:textColorHint="@color/CardTextColor"
+                android:fontFamily="@font/montserrat_light"
+                tools:hint="Type"
                 android:textColor="@color/CardTextColor"
+                android:textColorHint="@color/CardTextColor"
                 android:textSize="20sp" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -60,12 +60,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:fontFamily="@font/cagliostro"
+                android:fontFamily="@font/montserrat_light"
                 android:hint="@string/address_text"
-                android:textColorHint="@color/CardTextColor"
+                android:maxLines="1"
                 android:textColor="@color/CardTextColor"
-                android:textSize="20sp"
-                android:maxLines="1"/>
+                android:textColorHint="@color/CardTextColor"
+                android:textSize="20sp" />
 
         </RelativeLayout>
 

@@ -23,13 +23,13 @@ public class customerOrdersFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentCustomerOrdersBinding.inflate(inflater ,container, false);
+        setHasOptionsMenu(true);
         return binding.getRoot();
     }
 
@@ -41,7 +41,7 @@ public class customerOrdersFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId()==R.id.sort_button) {
+        if(item.getItemId() == R.id.sort_button) {
             Toast.makeText(getContext(), "Sort", Toast.LENGTH_SHORT).show();
             return true;
         }

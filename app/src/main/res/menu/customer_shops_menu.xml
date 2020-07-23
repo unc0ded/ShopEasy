@@ -4,11 +4,11 @@
     <item
         android:id="@+id/cart_button"
         android:icon="@drawable/ic_shopping_cart_24px"
-        android:title="Shopping Cart"
+        android:title="@string/shopping_cart"
         app:showAsAction="always" />
     <item
         android:id="@+id/search_btn"
         android:icon="@drawable/ic_search_24px"
-        android:title="Search"
-        app:showAsAction="always"/>
+        android:title="@string/search"
+        app:showAsAction="ifRoom"/>
 </menu>

@@ -26,7 +26,7 @@
              (default, enabled, hovered, focused, but NOT error) -->
         <item name="boxStrokeColor">@color/box_stroke</item>
         <!-- the hint INSIDE the box, before focusing the TextInputEditText -->
-        <item name="android:textColorHint">@color/textColor</item>
+        <item name="android:textColorHint">@color/darkBgTextColor</item>
         <!-- the hint ON TOP of the box, when the TextInputEditText is focused -->
         <item name="hintTextColor">@color/bgColor</item>
         <!-- Gain access to additional styling for the child AutoCompleteTextView,
@@ -54,7 +54,7 @@
         <!-- restore padding to sanity -->
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColorHint">@color/textColor</item>
+        <item name="android:textColorHint">@color/darkBgTextColor</item>
 <!--        <item name="android:hint">State</item>-->
         <item name="android:paddingLeft">12dp</item>
         <item name="android:paddingRight">12dp</item>

@@ -19,6 +19,7 @@ import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
@@ -35,7 +36,7 @@ public class customerSignUpMain extends Fragment {
 
     FragmentCustomerSignUpMainBinding binding;
 
-    private String sentOTP;
+    private String verificationId;
     private View rootView;
 
     //Firebase
@@ -60,45 +61,34 @@ public class customerSignUpMain extends Fragment {
         binding.otp.setEnabled(false);
         binding.validateOtpBtn.setEnabled(false);
 
-        binding.otpBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        binding.otpBtn.setOnClickListener(v -> {
 
-                ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
-                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+            ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
+            boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
-                if (isConnected){
-                    AlertDialog.Builder otpAlertBuilder = new AlertDialog.Builder(requireContext());
-                    otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
-                            .setCancelable(true)
-                            .setPositiveButton("Accept",
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if((Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim().length()) != 10)
-                                            {
-                                                Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
-                                            }
-                                            else
-                                            {
-                                                sendOTP();
-                                                binding.phoneNumber.setEnabled(false);
-                                                binding.otpBtn.setEnabled(false);
-                                            }
-                                            dialog.cancel();
-                                        }
-                                    }).setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+            if (isConnected){
+                MaterialAlertDialogBuilder otpAlertBuilder = new MaterialAlertDialogBuilder(requireContext());
+                otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
+                        .setCancelable(false)
+                        .setPositiveButton("Accept",
+                                (dialog, which) -> {
+                                    if((Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim().length()) != 10)
+                                    {
+                                        Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                    {
+                                        sendOTP();
+                                        binding.phoneNumber.setEnabled(false);
+                                        binding.otpBtn.setEnabled(false);
+                                    }
                                     dialog.cancel();
-                                }
-                            }).create().show();
-                }else
-                    Toast.makeText(getContext(), "No internet connection!", Toast.LENGTH_LONG).show();
-
+                                })
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).show();
             }
+            else
+                Toast.makeText(getContext(), "No internet connection!", Toast.LENGTH_LONG).show();
         });
 
         customerCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -125,20 +115,17 @@ public class customerSignUpMain extends Fragment {
             @Override
             public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                 super.onCodeSent(s, forceResendingToken);
-                sentOTP = s;
+                verificationId = s;
                 binding.otp.setEnabled(true);
                 binding.validateOtpBtn.setEnabled(true);
             }
         };
 
-        binding.validateOtpBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(Objects.requireNonNull(binding.otp.getText()).toString().isEmpty()) {
-                    Toast.makeText(getContext(), "Please enter OTP.", Toast.LENGTH_SHORT).show();
-                } else {
-                    validateOTPFunc();
-                }
+        binding.validateOtpBtn.setOnClickListener(v -> {
+            if(Objects.requireNonNull(binding.otp.getText()).toString().isEmpty()) {
+                Toast.makeText(getContext(), "Please enter OTP.", Toast.LENGTH_SHORT).show();
+            } else {
+                validateOTPFunc();
             }
         });
 
@@ -160,49 +147,45 @@ public class customerSignUpMain extends Fragment {
         binding = null;
     }
 
-    private void validateOTPFunc() {
-        PhoneAuthCredential customerCredential = PhoneAuthProvider.getCredential(sentOTP, Objects.requireNonNull(binding.otp.getText()).toString());
-        signInWithPhoneAuthCredentials(customerCredential);
-    }
-
-    private void signInWithPhoneAuthCredentials(PhoneAuthCredential customerCredential) {
-        customerAuth.signInWithCredential(customerCredential)
-                .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()) {
-                            Log.d("signInWithCredential:", "success");
-
-                            Toast.makeText(getContext(), "Phone number verified!", Toast.LENGTH_LONG).show();
-
-                            binding.otp.setEnabled(false);
-                            binding.validateOtpBtn.setEnabled(false);
-                            binding.otpBtn.setEnabled(false);
-                            binding.validateOtpBtn.setEnabled(false);
-
-
-
-                            customerSignUpMainDirections.ActionCustomerSignUpMainToCustomerSignUpDetails action = customerSignUpMainDirections.actionCustomerSignUpMainToCustomerSignUpDetails("+91 "+binding.phoneNumber.getText().toString().trim());
-                            Navigation.findNavController(rootView).navigate(action);
-                        } else {
-                            Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
-                            if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                Toast.makeText(getContext(), "Incorrect OTP", Toast.LENGTH_SHORT).show();
-
-                                binding.phoneNumber.setEnabled(true);
-                                binding.otp.setEnabled(true);
-                                binding.otpBtn.setEnabled(true);
-                                binding.validateOtpBtn.setEnabled(true);
-                            }
-                        }
-                    }
-                });
-    }
-
     private void sendOTP() {
         PhoneAuthProvider.getInstance().verifyPhoneNumber("+91"+Objects.requireNonNull(binding.phoneNumber.getText()).toString()
                 ,60, TimeUnit.SECONDS
                 , requireActivity()
                 ,customerCallbacks);
+    }
+
+    private void signInWithPhoneAuthCredentials(PhoneAuthCredential customerCredential) {
+        customerAuth.signInWithCredential(customerCredential)
+                .addOnCompleteListener(requireActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("signInWithCredential:", "success");
+
+                        Toast.makeText(getContext(), "Phone number verified!", Toast.LENGTH_LONG).show();
+
+                        binding.otp.setEnabled(false);
+                        binding.validateOtpBtn.setEnabled(false);
+                        binding.otpBtn.setEnabled(false);
+                        binding.validateOtpBtn.setEnabled(false);
+
+                        customerSignUpMainDirections.ActionCustomerSignUpMainToCustomerSignUpDetails action = customerSignUpMainDirections.actionCustomerSignUpMainToCustomerSignUpDetails("+91 "+binding.phoneNumber.getText().toString().trim());
+                        Navigation.findNavController(rootView).navigate(action);
+                    }
+                    else {
+                        Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
+                        if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                            Toast.makeText(getContext(), "Incorrect OTP", Toast.LENGTH_SHORT).show();
+
+                            binding.phoneNumber.setEnabled(true);
+                            binding.otp.setEnabled(true);
+                            binding.otpBtn.setEnabled(true);
+                            binding.validateOtpBtn.setEnabled(true);
+                        }
+                    }
+                });
+    }
+
+    private void validateOTPFunc() {
+        PhoneAuthCredential customerCredential = PhoneAuthProvider.getCredential(verificationId, Objects.requireNonNull(binding.otp.getText()).toString());
+        signInWithPhoneAuthCredentials(customerCredential);
     }
 }
