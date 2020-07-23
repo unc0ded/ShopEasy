@@ -62,4 +62,6 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     //OTP View
     implementation 'com.chaos.view:pinview:1.4.3'
+    //Fresco
+    implementation 'com.facebook.fresco:fresco:2.2.0'
 }

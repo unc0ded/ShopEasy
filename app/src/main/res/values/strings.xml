@@ -1,18 +1,17 @@
 <resources>
     <string name="app_name">ShopEasy</string>
-    <string name="appTitle">ShopEasy</string>
-    <string name="sign_up_cust">Customer Sign Up</string>
-    <string name="sign_up_vendor">Vendor Sign Up</string>
-    <string name="title_activity_customer_main">customerMainActivity</string>
+
+    <!-- Fragment titles -->
     <string name="title_shop_list">Nearby Vendors</string>
     <string name="title_orders">Orders</string>
     <string name="title_settings">Account</string>
-    <string name="todo">TODO</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="orders_received">Orders Received</string>
     <string name="inventory">Inventory</string>
+
+<!--    Sign up flow-->
+    <string name="sign_up_customer">Customer Sign Up</string>
+    <string name="sign_up_vendor">Vendor Sign Up</string>
     <string name="additional_details">Additional Details</string>
     <string name="vendor_sign_up">Vendor Sign Up</string>
     <string name="phone_number_text">Phone Number</string>
@@ -48,6 +47,8 @@
     <string name="state_text">State</string>
     <string name="about_shop_text">About Shop</string>
     <string name="verify_otp">Verify</string>
+
+<!--    Inventory item-->
     <string name="add_item_to_inventory">Add new item to Inventory</string>
     <string name="new_item_name">Item Name</string>
     <string name="new_item_type">Item Type</string>
@@ -56,4 +57,12 @@
     <string name="labels">Labels:</string>
     <string name="label_new">New</string>
     <string name="label_popular">Popular</string>
+    <string name="rupee_symbol">₹</string>
+
+<!--    Toolbar action items-->
+    <string name="log_out">Log Out</string>
+    <string name="shopping_cart">Shopping Cart</string>
+    <string name="search">Search</string>
+    <string name="no_vendors_found_text">No vendors found in your area :(</string>
+    <string name="vendor_name">Vendor Name</string>
 </resources>

@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/customer_navigation_shops_list">
+    app:startDestination="@id/customer_shops_list">
 
     <fragment
-        android:id="@+id/customer_navigation_shops_list"
+        android:id="@+id/customer_shops_list"
         android:name="com.unc0ded.shopdeliver.fragments.customerShopsListFragment"
         android:label="Nearby Vendors"
         tools:layout="@layout/fragment_customer_shops_list">
@@ -17,13 +17,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/customer_navigation_view_orders"
+        android:id="@+id/customer_orders"
         android:name="com.unc0ded.shopdeliver.fragments.customerOrdersFragment"
         android:label="Order History"
         tools:layout="@layout/fragment_customer_orders" />
 
     <fragment
-        android:id="@+id/customer_navigation_settings"
+        android:id="@+id/customer_settings"
         android:name="com.unc0ded.shopdeliver.fragments.customerSettingsFragment"
         android:label="Account Settings"
         tools:layout="@layout/fragment_customer_settings" />

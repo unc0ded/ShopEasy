@@ -28,7 +28,7 @@
         android:layout_gravity="end|bottom"
         android:contentDescription="@string/add_item_to_inventory"
         android:layout_margin="16dp"
-        android:backgroundTint="@color/colorOnSurface"
+        android:backgroundTint="@color/contrastColor"
         app:borderWidth="0dp"
         app:rippleColor="#99000000"
         android:src="@drawable/ic_add_24px"/>

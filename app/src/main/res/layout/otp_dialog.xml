@@ -7,26 +7,28 @@
 
     <com.chaos.view.PinView
         android:id="@+id/otp_et"
+        style="@style/PinWidget.PinView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        style="@style/PinWidget.PinView"
-        android:cursorVisible="false"
         android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:cursorVisible="false"
+        android:fontFamily="@font/sora_light"
         android:inputType="number"
         android:textColor="@color/line_colors"
-        app:lineColor="@color/line_colors"
         app:itemCount="6"
         app:itemRadius="5dp"
-        app:viewType="rectangle"/>
+        app:lineColor="@color/line_colors"
+        app:viewType="rectangle" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/otp_verify_btn"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.Button"
-        android:id="@+id/otp_verify_btn"
+        android:fontFamily="@font/sora_light"
         android:text="@string/verify_otp"
-        app:backgroundTint="@color/colorAccent"
-        android:textColor="@color/Black"/>
+        android:textColor="@color/Black"
+        app:backgroundTint="@color/colorAccent" />
 
 </LinearLayout>

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:fontFamily="@font/anonymous_pro"
+        android:fontFamily="@font/sora_light"
         android:text="@string/vendor_sign_up"
         android:textAlignment="center"
         android:textColor="@android:color/white"
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/phone_number_text"
-            android:textColorHint="@color/textColor"
+            android:textColorHint="@color/darkBgTextColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
             app:boxCornerRadiusTopEnd="4dp"
@@ -41,10 +41,11 @@
                 android:id="@+id/phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:fontFamily="@font/montserrat_light"
+                android:maxLength="10"
                 android:paddingHorizontal="95dp"
                 android:textColor="#ffffff"
-                android:textColorHint="@color/bgColor"
-                android:maxLength="10"/>
+                android:textColorHint="@color/bgColor" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,6 +57,7 @@
             android:layout_alignEnd="@+id/vendor_sign_up_phone_text_input_layout"
             android:layout_marginTop="7dp"
             android:layout_marginEnd="2dp"
+            android:fontFamily="@font/montserrat_light"
             android:text="@string/get_otp_text"
             android:textColor="@color/compColor" />
 
@@ -72,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/otp_text"
-            android:textColorHint="@color/textColor"
+            android:textColorHint="@color/darkBgTextColor"
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
             app:boxCornerRadiusTopEnd="4dp"
@@ -84,6 +86,7 @@
                 android:id="@+id/otp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:fontFamily="@font/montserrat_light"
                 android:paddingHorizontal="95dp"
                 android:textColor="#ffffff"
                 android:textColorHint="@color/bgColor" />
@@ -98,6 +101,7 @@
             android:layout_alignEnd="@+id/vendor_otp_text_input_layout"
             android:layout_marginTop="7dp"
             android:layout_marginEnd="2dp"
+            android:fontFamily="@font/montserrat_light"
             android:text="@string/validate_text"
             android:textColor="@color/compColor" />
 
