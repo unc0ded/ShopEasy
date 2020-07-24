@@ -1,4 +1,4 @@
-package com.unc0ded.shopdeliver.fragments;
+package com.unc0ded.shopdeliver.views.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.unc0ded.shopdeliver.R;
-import com.unc0ded.shopdeliver.activities.LoginActivity;
+import com.unc0ded.shopdeliver.views.activities.LoginActivity;
 import com.unc0ded.shopdeliver.databinding.FragmentCustomerSettingsBinding;
 
 public class customerSettingsFragment extends Fragment {

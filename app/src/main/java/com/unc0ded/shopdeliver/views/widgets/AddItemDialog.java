@@ -1,20 +1,15 @@
-package com.unc0ded.shopdeliver.widgets;
+package com.unc0ded.shopdeliver.views.widgets;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.databinding.DialogAddToInventoryBinding;

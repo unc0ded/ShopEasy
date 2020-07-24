@@ -1,8 +1,7 @@
-package com.unc0ded.shopdeliver.adapters;
+package com.unc0ded.shopdeliver.views.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;

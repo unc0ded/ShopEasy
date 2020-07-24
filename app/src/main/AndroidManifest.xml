@@ -15,12 +15,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MaterialTheme">
-        <activity android:name=".activities.vendorMainActivity" />
-        <activity android:name=".activities.customerMainActivity"/>
-        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".views.activities.vendorMainActivity" />
+        <activity android:name=".views.activities.customerMainActivity"/>
+        <activity android:name=".views.activities.SplashScreen" />
+        <!--android:theme="@style/SplashTheme"-->
         <activity
-            android:name=".activities.SplashScreen"
-            android:theme="@style/SplashTheme">
+            android:name=".views.activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

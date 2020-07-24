@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/vendor_inventory"
-        android:name="com.unc0ded.shopdeliver.fragments.vendorInventoryFragment"
+        android:name="com.unc0ded.shopdeliver.views.fragments.vendorInventoryFragment"
         android:label="@string/inventory"
         tools:layout="@layout/fragment_vendor_inventory" />
     <fragment
         android:id="@+id/vendor_orders"
-        android:name="com.unc0ded.shopdeliver.fragments.vendorOrdersFragment"
+        android:name="com.unc0ded.shopdeliver.views.fragments.vendorOrdersFragment"
         android:label="@string/orders_received"
         tools:layout="@layout/fragment_vendor_orders" />
     <fragment
         android:id="@+id/vendor_settings"
-        android:name="com.unc0ded.shopdeliver.fragments.vendorSettingsFragment"
+        android:name="com.unc0ded.shopdeliver.views.fragments.vendorSettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_vendor_settings" />
 </navigation>

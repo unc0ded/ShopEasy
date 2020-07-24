@@ -1,4 +1,4 @@
-package com.unc0ded.shopdeliver.activities;
+package com.unc0ded.shopdeliver.views.activities;
 
 import android.os.Bundle;
 import android.view.View;

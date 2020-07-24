@@ -1,4 +1,4 @@
-package com.unc0ded.shopdeliver.adapters;
+package com.unc0ded.shopdeliver.views.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
@@ -23,6 +23,9 @@ public class VendorListAdapter extends RecyclerView.Adapter<VendorListAdapter.Ve
     public VendorListAdapter(Context context, ArrayList<Vendor> vendorList) {
         this.context = context;
         this.vendorList = vendorList;
+    }
+
+    public VendorListAdapter() {
     }
 
     @NonNull

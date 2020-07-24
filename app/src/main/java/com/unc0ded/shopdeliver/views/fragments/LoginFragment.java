@@ -1,16 +1,13 @@
-package com.unc0ded.shopdeliver.fragments;
+package com.unc0ded.shopdeliver.views.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,29 +20,22 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.chaos.view.PinView;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unc0ded.shopdeliver.R;
-import com.unc0ded.shopdeliver.activities.customerMainActivity;
-import com.unc0ded.shopdeliver.activities.vendorMainActivity;
+import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
+import com.unc0ded.shopdeliver.views.activities.vendorMainActivity;
 import com.unc0ded.shopdeliver.databinding.FragmentLoginBinding;
-import com.unc0ded.shopdeliver.widgets.OtpWidget;
+import com.unc0ded.shopdeliver.views.widgets.OtpWidget;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -99,18 +89,20 @@ public class LoginFragment extends Fragment {
 
         switchLoginMethod.setOnClickListener(v -> {
             switch (Integer.parseInt(switchLoginMethod.getTag().toString())) {
-                case METHOD_PHONE: switchLoginMethod.setTag(METHOD_EMAIL);
-                switchLoginMethod.setText(getResources().getString(R.string.use_phone_number_text));
-                usernameLayout.setHint(getResources().getString(R.string.email_text));
-                emailOrPhone.setInputType(InputType.TYPE_CLASS_TEXT);
-                passwordLayout.setVisibility(View.VISIBLE);
-                break;
-                case METHOD_EMAIL: switchLoginMethod.setTag(METHOD_PHONE);
-                switchLoginMethod.setText(getResources().getString(R.string.use_email_text));
-                usernameLayout.setHint(getResources().getString(R.string.phone_number_text));
-                emailOrPhone.setInputType(InputType.TYPE_CLASS_NUMBER);
-                passwordLayout.setVisibility(View.GONE);
-                break;
+                case METHOD_PHONE:
+                    switchLoginMethod.setTag(METHOD_EMAIL);
+                    switchLoginMethod.setText(getResources().getString(R.string.use_phone_number_text));
+                    usernameLayout.setHint(getResources().getString(R.string.email_text));
+                    emailOrPhone.setInputType(InputType.TYPE_CLASS_TEXT);
+                    passwordLayout.setVisibility(View.VISIBLE);
+                    break;
+                case METHOD_EMAIL:
+                    switchLoginMethod.setTag(METHOD_PHONE);
+                    switchLoginMethod.setText(getResources().getString(R.string.use_email_text));
+                    usernameLayout.setHint(getResources().getString(R.string.phone_number_text));
+                    emailOrPhone.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    passwordLayout.setVisibility(View.GONE);
+                    break;
             }
         });
 
@@ -179,25 +171,26 @@ public class LoginFragment extends Fragment {
                         else
                             Toast.makeText(getContext(), "No internet connection!", Toast.LENGTH_LONG).show();
                     }
-                    break;
-                    case METHOD_EMAIL: auth.signInWithEmailAndPassword(Objects.requireNonNull(Objects.requireNonNull(emailOrPhone.getText()).toString().trim()), Objects.requireNonNull(password.getText()).toString())
+                        break;
+                    case METHOD_EMAIL:
+                        auth.signInWithEmailAndPassword(Objects.requireNonNull(Objects.requireNonNull(emailOrPhone.getText()).toString().trim())
+                                , Objects.requireNonNull(password.getText()).toString())
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     db.collection("Customers").document(Objects.requireNonNull(auth.getCurrentUser()).getUid()).get()
                                             .addOnSuccessListener(documentSnapshot -> {
                                                 if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
                                                     startActivity(new Intent(requireContext(), customerMainActivity.class));
-                                                    requireActivity().finish();
                                                 }
                                                 else {
                                                     startActivity(new Intent(requireContext(), vendorMainActivity.class));
-                                                    requireActivity().finish();
                                                 }
+                                                requireActivity().finish();
                                             })
-                                            .addOnFailureListener(e -> Log.e("Cred Search", "Failed: " + e.getMessage()));
+                            .addOnFailureListener(e -> Log.e("Cred Search", "Failed: " + e.getMessage()));
                                 }
                             });
-                    break;
+                        break;
                 }
             }
         });

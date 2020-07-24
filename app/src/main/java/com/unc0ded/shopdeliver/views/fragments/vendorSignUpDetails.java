@@ -1,4 +1,4 @@
-package com.unc0ded.shopdeliver.fragments;
+package com.unc0ded.shopdeliver.views.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,18 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unc0ded.shopdeliver.R;
-import com.unc0ded.shopdeliver.activities.vendorMainActivity;
+import com.unc0ded.shopdeliver.views.activities.vendorMainActivity;
 import com.unc0ded.shopdeliver.databinding.FragmentVendorSignUpDetailsBinding;
 
 import java.util.Calendar;

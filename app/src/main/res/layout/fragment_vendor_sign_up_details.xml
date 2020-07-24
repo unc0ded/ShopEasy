@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.vendorSignUpDetails"
+    tools:context=".views.fragments.vendorSignUpDetails"
     android:background="@color/darkBackground"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".fragments.vendorSignUpDetails"
+        tools:context=".views.fragments.vendorSignUpDetails"
         android:orientation="vertical">
 
         <com.google.android.material.textview.MaterialTextView

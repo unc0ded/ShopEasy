@@ -1,6 +1,5 @@
-package com.unc0ded.shopdeliver.fragments;
+package com.unc0ded.shopdeliver.views.fragments;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,9 +18,9 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.unc0ded.shopdeliver.adapters.InventoryItemAdapter;
+import com.unc0ded.shopdeliver.views.adapters.InventoryItemAdapter;
 import com.unc0ded.shopdeliver.databinding.FragmentVendorInventoryBinding;
-import com.unc0ded.shopdeliver.widgets.AddItemDialog;
+import com.unc0ded.shopdeliver.views.widgets.AddItemDialog;
 
 import java.util.Objects;
 
