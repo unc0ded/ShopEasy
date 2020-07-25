@@ -70,27 +70,30 @@ public class vendorInventoryFragment extends Fragment {
                     .show();
         });
 
-        listenerRegistration = db.collection("Inventory").whereEqualTo("vendorId", Objects.requireNonNull(vendorAuth.getCurrentUser()).getUid())
-                .addSnapshotListener(((value, error) -> {
-                    if (error != null)
-                        Log.e("Failed", error.toString());
-                    else {
-                        int size = inventoryArray.size();
-                        for (int i = 0; i < size; i++) {
-                            inventoryArray.remove(0);
+        if (vendorAuth.getUid() != null){
+            listenerRegistration = db.collection("Inventory").whereEqualTo("vendorId", Objects.requireNonNull(vendorAuth.getCurrentUser()).getUid())
+                    .addSnapshotListener(((value, error) -> {
+                        if (error != null)
+                            Log.e("Failed", error.toString());
+                        else {
+                            int size = inventoryArray.size();
+                            for (int i = 0; i < size; i++) {
+                                inventoryArray.remove(0);
+                            }
+                            for (QueryDocumentSnapshot documentSnapshot: value) {
+                                inventoryArray.add(new Gson().toJsonTree(documentSnapshot.getData()).getAsJsonObject());
+                            }
+                            adapter.notifyDataSetChanged();
                         }
-                        for (QueryDocumentSnapshot documentSnapshot: value) {
-                            inventoryArray.add(new Gson().toJsonTree(documentSnapshot.getData()).getAsJsonObject());
-                        }
-                        adapter.notifyDataSetChanged();
-                    }
-                }));
+                    }));
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-        listenerRegistration.remove();
+        if (vendorAuth.getUid() != null)
+            listenerRegistration.remove();
     }
 }

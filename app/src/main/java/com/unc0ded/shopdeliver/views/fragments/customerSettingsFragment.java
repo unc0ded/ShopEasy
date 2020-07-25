@@ -60,9 +60,11 @@ public class customerSettingsFragment extends Fragment {
             if (userAuth.getCurrentUser() != null) {
                 Toast.makeText(getContext(), userAuth.getCurrentUser().getDisplayName() + "Logged Out", Toast.LENGTH_SHORT).show();
                 userAuth.signOut();
-                startActivity(new Intent(requireActivity(), LoginActivity.class));
-                requireActivity().finish();
+            }else{
+                Toast.makeText(requireContext(), "Exiting debug mode", Toast.LENGTH_LONG).show();
             }
+            startActivity(new Intent(requireActivity(), LoginActivity.class));
+            requireActivity().finish();
             return true;
         }
         else return super.onOptionsItemSelected(item);

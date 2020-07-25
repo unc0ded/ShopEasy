@@ -7,67 +7,59 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.unc0ded.shopdeliver.OnCompleteFetchListener;
 import com.unc0ded.shopdeliver.R;
-import com.unc0ded.shopdeliver.viewmodels.CustomerMainActivityViewModel;
+import com.unc0ded.shopdeliver.viewmodels.CustomerShopsListFragmentViewModel;
 import com.unc0ded.shopdeliver.views.adapters.VendorListAdapter;
 import com.unc0ded.shopdeliver.databinding.FragmentCustomerShopsListBinding;
-import com.unc0ded.shopdeliver.models.Vendor;
-
-import java.util.ArrayList;
-import java.util.Objects;
 
 public class customerShopsListFragment extends Fragment {
 
-    private CustomerMainActivityViewModel mCustomerMainActivityViewModel;
+    private CustomerShopsListFragmentViewModel customerShopsListFragmentVM;
     private VendorListAdapter adapter = new VendorListAdapter();
 
     FragmentCustomerShopsListBinding binding;
-    Gson gsonInstance;
+    Gson gsonInstance =  new GsonBuilder().setPrettyPrinting().create();
 
     FirebaseAuth customerAuth = FirebaseAuth.getInstance();
-    CollectionReference customerFdb;
+    CollectionReference customerFdb = FirebaseFirestore.getInstance().collection("Customers");
 
     //hardcode here for debugging
-    String PIN_CODE = "411007";
+    String PIN_CODE = "411008";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        customerFdb = FirebaseFirestore.getInstance().collection("Customers");
-        gsonInstance = new GsonBuilder().setPrettyPrinting().create();
-        mCustomerMainActivityViewModel = new ViewModelProvider(this).get(CustomerMainActivityViewModel.class);
+        customerShopsListFragmentVM = new ViewModelProvider(this).get(CustomerShopsListFragmentViewModel.class);
 
-        mCustomerMainActivityViewModel.getVendors().observe(this, vendors -> {
-            adapter.notifyDataSetChanged();
-            populateVendorsList();
-        });
-
-        mCustomerMainActivityViewModel.getIsFetching().observe(this, isLoading -> {
+        customerShopsListFragmentVM.getIsFetching().observe(this, isLoading -> {
             if (isLoading)
                 binding.swipeRefresh.setRefreshing(true);
             else
                 binding.swipeRefresh.setRefreshing(false);
+        });
+
+        customerShopsListFragmentVM.getVendors().observe(this, vendors -> {
+            adapter.notifyDataSetChanged();
+            populateVendorsList();
+        });
+
+        customerShopsListFragmentVM.getCustomerPinCode().observe(this, pinCode -> {
+            PIN_CODE = pinCode;
+            customerShopsListFragmentVM.fetchVendorList(pinCode);
         });
     }
 
@@ -84,19 +76,15 @@ public class customerShopsListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (customerAuth.getCurrentUser() != null){
-            customerFdb.document(Objects.requireNonNull(customerAuth.getCurrentUser()).getUid())
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
-                            PIN_CODE = gsonInstance.toJsonTree(documentSnapshot.getData()).getAsJsonObject().getAsJsonObject("Address").get("Pin code").getAsString();
-                            mCustomerMainActivityViewModel.initializeVendorList(PIN_CODE);
-                        }
-                    });
+            customerShopsListFragmentVM.fetchCustomerPinCode(customerAuth.getUid());
+        } else {
+            customerShopsListFragmentVM.fetchVendorList(PIN_CODE);
         }
-        else
-            mCustomerMainActivityViewModel.initializeVendorList(PIN_CODE);
 
-        binding.swipeRefresh.setOnRefreshListener(() -> mCustomerMainActivityViewModel.initializeVendorList(PIN_CODE));
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            customerShopsListFragmentVM.fetchVendorList(PIN_CODE);
+            binding.message.setText(R.string.no_vendors_found_text);
+        });
     }
 
 
@@ -125,7 +113,7 @@ public class customerShopsListFragment extends Fragment {
 
     private void populateVendorsList() {
 
-        adapter = new VendorListAdapter(requireContext(), mCustomerMainActivityViewModel.getVendors().getValue());
+        adapter = new VendorListAdapter(requireContext(), customerShopsListFragmentVM.getVendors().getValue());
         binding.listRv.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.listRv.setAdapter(adapter);
 

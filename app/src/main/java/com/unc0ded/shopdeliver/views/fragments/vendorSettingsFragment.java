@@ -60,9 +60,11 @@ public class vendorSettingsFragment extends Fragment {
             if (auth.getCurrentUser() != null) {
                 Toast.makeText(requireActivity(), auth.getCurrentUser().getDisplayName() + " logged out.", Toast.LENGTH_SHORT).show();
                 auth.signOut();
-                startActivity(new Intent(requireActivity(), LoginActivity.class));
-                requireActivity().finish();
+            }else{
+                Toast.makeText(requireContext(), "Exiting debug mode", Toast.LENGTH_LONG).show();
             }
+            startActivity(new Intent(requireActivity(), LoginActivity.class));
+            requireActivity().finish();
             return true;
         }
         else return super.onOptionsItemSelected(item);

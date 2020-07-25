@@ -1,73 +1,42 @@
 package com.unc0ded.shopdeliver.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Customer {
-    String Name, SocietyName, Flat, Locality, Phone, Email;
 
-    public Customer(String name, String societyName, String flat, String locality, String phone, String email) {
-        Name = name;
-        SocietyName = societyName;
-        Flat = flat;
-        Locality = locality;
-        Phone = phone;
-        Email = email;
+    @SerializedName("Address")
+    @Expose
+    private Address address;
+    @SerializedName("Credentials")
+    @Expose
+    private Credentials credentials;
+    @SerializedName("Name")
+    @Expose
+    private Name name;
+
+    public Address getAddress() {
+        return address;
     }
 
-    public Customer(String name, String societyName, String flat, String locality, String phone) {
-        Name = name;
-        SocietyName = societyName;
-        Flat = flat;
-        Locality = locality;
-        Phone = phone;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
-    public Customer() {
+    public Credentials getCredentials() {
+        return credentials;
     }
 
-    public String getName() {
-        return Name;
+    public void setCredentials(Credentials credentials) {
+        this.credentials = credentials;
     }
 
-    public void setName(String name) {
-        Name = name;
+    public Name getName() {
+        return name;
     }
 
-    public String getSocietyName() {
-        return SocietyName;
+    public void setName(Name name) {
+        this.name = name;
     }
 
-    public void setSocietyName(String societyName) {
-        SocietyName = societyName;
-    }
-
-    public String getFlat() {
-        return Flat;
-    }
-
-    public void setFlat(String flat) {
-        Flat = flat;
-    }
-
-    public String getLocality() {
-        return Locality;
-    }
-
-    public void setLocality(String locality) {
-        Locality = locality;
-    }
-
-    public String getPhone() {
-        return Phone;
-    }
-
-    public void setPhone(String phone) {
-        Phone = phone;
-    }
-
-    public String getEmail() {
-        return Email;
-    }
-
-    public void setEmail(String email) {
-        Email = email;
-    }
 }
