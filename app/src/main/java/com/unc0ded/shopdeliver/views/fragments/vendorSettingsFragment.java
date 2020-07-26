@@ -16,8 +16,8 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.unc0ded.shopdeliver.R;
-import com.unc0ded.shopdeliver.views.activities.LoginActivity;
 import com.unc0ded.shopdeliver.databinding.FragmentVendorSettingsBinding;
+import com.unc0ded.shopdeliver.views.activities.LoginActivity;
 
 public class vendorSettingsFragment extends Fragment {
 

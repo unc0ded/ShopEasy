@@ -5,19 +5,19 @@ import com.google.gson.annotations.SerializedName;
 
 public class Address {
 
-    @SerializedName("State")
+    @SerializedName("state")
     @Expose
     private String state;
-    @SerializedName("Pin code")
+    @SerializedName("pinCode")
     @Expose
     private String pinCode;
-    @SerializedName("City")
+    @SerializedName("city")
     @Expose
     private String city;
-    @SerializedName("Address Line 1")
+    @SerializedName("addressLine1")
     @Expose
     private String addressLine1;
-    @SerializedName("Address Line 2")
+    @SerializedName("addressLine2")
     @Expose
     private String addressLine2;
 

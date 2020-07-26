@@ -32,9 +32,9 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.databinding.FragmentLoginBinding;
 import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
 import com.unc0ded.shopdeliver.views.activities.vendorMainActivity;
-import com.unc0ded.shopdeliver.databinding.FragmentLoginBinding;
 import com.unc0ded.shopdeliver.views.widgets.OtpWidget;
 
 import java.util.Objects;

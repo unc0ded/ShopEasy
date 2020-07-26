@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class Customer {
 
-    @SerializedName("Address")
+    @SerializedName("address")
     @Expose
     private Address address;
-    @SerializedName("Credentials")
+    @SerializedName("credentials")
     @Expose
     private Credentials credentials;
-    @SerializedName("Name")
+    @SerializedName("name")
     @Expose
     private Name name;
 
@@ -35,8 +35,6 @@ public class Customer {
         return name;
     }
 
-    public void setName(Name name) {
-        this.name = name;
-    }
+    public void setName(Name name) { this.name = name; }
 
 }

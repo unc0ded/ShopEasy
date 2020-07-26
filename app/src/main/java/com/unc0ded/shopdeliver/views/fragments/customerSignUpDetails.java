@@ -15,14 +15,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unc0ded.shopdeliver.R;
-import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
 import com.unc0ded.shopdeliver.databinding.FragmentCustomerSignUpDetailsBinding;
+import com.unc0ded.shopdeliver.models.Address;
+import com.unc0ded.shopdeliver.models.Credentials;
+import com.unc0ded.shopdeliver.models.Customer;
+import com.unc0ded.shopdeliver.models.Name;
+import com.unc0ded.shopdeliver.viewmodels.CustomerAuthenticationViewModel;
+import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -30,14 +36,39 @@ import java.util.Objects;
 public class customerSignUpDetails extends Fragment {
 
     FragmentCustomerSignUpDetailsBinding binding;
+    CustomerAuthenticationViewModel mCustomerAuthenticationVM = new CustomerAuthenticationViewModel();
 
     private String phone;
 
     private FirebaseAuth customerAuth;
-    private FirebaseFirestore newUser;
 
     //empty constructor
     public customerSignUpDetails(){
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mCustomerAuthenticationVM.getIsUploading().observe(this, isUploading -> {
+            switch (isUploading){
+                case "failed":
+                    Toast.makeText(requireContext(), "Authentication failed! Please try again", Toast.LENGTH_LONG).show();
+                    binding.progressbar.setVisibility(View.GONE);
+                    break;
+                case "success":
+                    Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
+                    binding.progressbar.setVisibility(View.GONE);
+                    startActivity(new Intent(requireContext(), customerMainActivity.class));
+                    requireActivity().finish();
+                    break;
+                case "start":
+                    binding.progressbar.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    binding.progressbar.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -53,7 +84,6 @@ public class customerSignUpDetails extends Fragment {
         phone = customerSignUpDetailsArgs.fromBundle(requireArguments()).getPhone();
 
         customerAuth = FirebaseAuth.getInstance();
-        newUser = FirebaseFirestore.getInstance();
 
         /*BUILDINGS.new_user("A");
         BUILDINGS.new_user("B");
@@ -186,65 +216,42 @@ public class customerSignUpDetails extends Fragment {
 
     private void addCustomerWithoutEmail(String first_name, String last_name, String line1, String line2, final String pin_code, String city
             , String state) {
-        final HashMap<String, Object> new_user = new HashMap<>();
-        final HashMap<String, String> name = new HashMap<>()
-                , address = new HashMap<>()
-                , credentials = new HashMap<>();
+        Customer newCustomer = new Customer();
 
-        name.put("First Name", first_name);
-        name.put("Last Name", last_name);
+        newCustomer.setName(new Name());
+        newCustomer.setAddress(new Address());
+        newCustomer.setCredentials(new Credentials());
 
-        address.put("Address Line 1", line1);
-        address.put("Address Line 2", line2);
-        address.put("Pin code", pin_code);
-        address.put("City", city);
-        address.put("State", state);
+        newCustomer.getName().setFirstName(first_name);
+        newCustomer.getName().setLastName(last_name);
+        newCustomer.getAddress().setAddressLine1(line1);
+        newCustomer.getAddress().setAddressLine2(line2);
+        newCustomer.getAddress().setPinCode(pin_code);
+        newCustomer.getAddress().setCity(city);
+        newCustomer.getAddress().setState(state);
+        newCustomer.getCredentials().setPhone(phone);
 
-        credentials.put("Phone", phone);
-
-        new_user.put("Name", name);
-        new_user.put("Address", address);
-        new_user.put("Credentials", credentials);
-
-        newUser.collection("Customers").document(Objects.requireNonNull(customerAuth.getUid())).set(new_user)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(requireContext(), customerMainActivity.class));
-                    requireActivity().finish();
-                })
-                .addOnFailureListener(e -> Toast.makeText(getActivity(), "There was some problem registering you\nPlease try again later", Toast.LENGTH_LONG).show());
+        mCustomerAuthenticationVM.registerUser(newCustomer, customerAuth.getUid());
     }
 
     private void addCustomerWithEmail(String first_name, String last_name, String line1, String line2, final String pin_code, String city
             , String state, String email_id) {
-        final HashMap<String, Object> new_user = new HashMap<>();
-        final HashMap<String, String> name = new HashMap<>()
-                , address = new HashMap<>()
-                , credentials = new HashMap<>();
+        Customer newCustomer = new Customer();
 
-        name.put("First Name", first_name);
-        name.put("Last Name", last_name);
+        newCustomer.setName(new Name());
+        newCustomer.setAddress(new Address());
+        newCustomer.setCredentials(new Credentials());
 
-        address.put("Address Line 1", line1);
-        address.put("Address Line 2", line2);
-        address.put("Pin code", pin_code);
-        address.put("City", city);
-        address.put("State", state);
+        newCustomer.getName().setFirstName(first_name);
+        newCustomer.getName().setLastName(last_name);
+        newCustomer.getAddress().setAddressLine1(line1);
+        newCustomer.getAddress().setAddressLine2(line2);
+        newCustomer.getAddress().setPinCode(pin_code);
+        newCustomer.getAddress().setCity(city);
+        newCustomer.getAddress().setState(state);
+        newCustomer.getCredentials().setPhone(phone);
+        newCustomer.getCredentials().setEmailId(email_id);
 
-        credentials.put("Phone", phone);
-        credentials.put("Email ID", email_id);
-
-        new_user.put("Name", name);
-        new_user.put("Address", address);
-        new_user.put("Credentials", credentials);
-
-        newUser.collection("Customers").document(Objects.requireNonNull(customerAuth.getUid())).set(new_user)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(requireContext(), customerMainActivity.class));
-                    requireActivity().finish();
-                })
-                .addOnFailureListener(e -> Toast.makeText(getActivity(), "There was some problem registering you\nPlease try again later", Toast.LENGTH_LONG).show());
+        mCustomerAuthenticationVM.registerUser(newCustomer, customerAuth.getUid());
     }
-
 }

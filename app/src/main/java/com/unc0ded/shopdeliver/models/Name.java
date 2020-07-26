@@ -5,10 +5,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class Name {
 
-    @SerializedName("First Name")
+    @SerializedName("firstName")
     @Expose
     private String firstName;
-    @SerializedName("Last Name")
+    @SerializedName("lastName")
     @Expose
     private String lastName;
 

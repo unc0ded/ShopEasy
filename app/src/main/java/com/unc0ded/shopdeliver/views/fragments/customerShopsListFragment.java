@@ -16,25 +16,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.unc0ded.shopdeliver.R;
-import com.unc0ded.shopdeliver.viewmodels.CustomerShopsListFragmentViewModel;
-import com.unc0ded.shopdeliver.views.adapters.VendorListAdapter;
 import com.unc0ded.shopdeliver.databinding.FragmentCustomerShopsListBinding;
+import com.unc0ded.shopdeliver.viewmodels.CustomerMainActivityViewModel;
+import com.unc0ded.shopdeliver.views.adapters.VendorListAdapter;
 
 public class customerShopsListFragment extends Fragment {
 
-    private CustomerShopsListFragmentViewModel customerShopsListFragmentVM;
+    private CustomerMainActivityViewModel mCustomerMainActivityVM;
     private VendorListAdapter adapter = new VendorListAdapter();
 
     FragmentCustomerShopsListBinding binding;
-    Gson gsonInstance =  new GsonBuilder().setPrettyPrinting().create();
 
     FirebaseAuth customerAuth = FirebaseAuth.getInstance();
-    CollectionReference customerFdb = FirebaseFirestore.getInstance().collection("Customers");
 
     //hardcode here for debugging
     String PIN_CODE = "411008";
@@ -43,23 +37,23 @@ public class customerShopsListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        customerShopsListFragmentVM = new ViewModelProvider(this).get(CustomerShopsListFragmentViewModel.class);
+        mCustomerMainActivityVM = new ViewModelProvider(this).get(CustomerMainActivityViewModel.class);
 
-        customerShopsListFragmentVM.getIsFetching().observe(this, isLoading -> {
+        mCustomerMainActivityVM.getIsFetching().observe(this, isLoading -> {
             if (isLoading)
                 binding.swipeRefresh.setRefreshing(true);
             else
                 binding.swipeRefresh.setRefreshing(false);
         });
 
-        customerShopsListFragmentVM.getVendors().observe(this, vendors -> {
+        mCustomerMainActivityVM.getVendors().observe(this, vendors -> {
             adapter.notifyDataSetChanged();
             populateVendorsList();
         });
 
-        customerShopsListFragmentVM.getCustomerPinCode().observe(this, pinCode -> {
+        mCustomerMainActivityVM.getCustomerPinCode().observe(this, pinCode -> {
             PIN_CODE = pinCode;
-            customerShopsListFragmentVM.fetchVendorList(pinCode);
+            mCustomerMainActivityVM.fetchVendorList(pinCode);
         });
     }
 
@@ -76,14 +70,13 @@ public class customerShopsListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (customerAuth.getCurrentUser() != null){
-            customerShopsListFragmentVM.fetchCustomerPinCode(customerAuth.getUid());
+            mCustomerMainActivityVM.fetchCustomerPinCode(customerAuth.getUid());
         } else {
-            customerShopsListFragmentVM.fetchVendorList(PIN_CODE);
+            mCustomerMainActivityVM.fetchVendorList(PIN_CODE);
         }
 
         binding.swipeRefresh.setOnRefreshListener(() -> {
-            customerShopsListFragmentVM.fetchVendorList(PIN_CODE);
-            binding.message.setText(R.string.no_vendors_found_text);
+            mCustomerMainActivityVM.fetchVendorList(PIN_CODE);
         });
     }
 
@@ -113,13 +106,16 @@ public class customerShopsListFragment extends Fragment {
 
     private void populateVendorsList() {
 
-        adapter = new VendorListAdapter(requireContext(), customerShopsListFragmentVM.getVendors().getValue());
-        binding.listRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        binding.listRv.setAdapter(adapter);
+        if (mCustomerMainActivityVM.getVendors().getValue() != null){
+            adapter = new VendorListAdapter(requireContext(), mCustomerMainActivityVM.getVendors().getValue());
+            binding.listRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+            binding.listRv.setAdapter(adapter);
 
-        if (adapter.getItemCount() == 0)
+            binding.message.setText(R.string.shops_in_the_area_text);
+            binding.message.append(PIN_CODE);
+        }else{
             binding.message.setText(R.string.no_vendors_found_text);
-        else
-            binding.message.setText("Shops in the area " + PIN_CODE);
+        }
+
     }
 }

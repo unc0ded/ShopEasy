@@ -65,4 +65,5 @@
     <string name="search">Search</string>
     <string name="no_vendors_found_text">No vendors found in your area :(</string>
     <string name="vendor_name">Vendor Name</string>
+    <string name="shops_in_the_area_text">"Shops in the area "</string>
 </resources>

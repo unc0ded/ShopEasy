@@ -21,8 +21,8 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unc0ded.shopdeliver.R;
-import com.unc0ded.shopdeliver.views.activities.vendorMainActivity;
 import com.unc0ded.shopdeliver.databinding.FragmentVendorSignUpDetailsBinding;
+import com.unc0ded.shopdeliver.views.activities.vendorMainActivity;
 
 import java.util.Calendar;
 import java.util.Date;

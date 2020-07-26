@@ -8,6 +8,9 @@ public class Credentials {
     @SerializedName("Phone")
     @Expose
     private String phone;
+    @SerializedName("emailId")
+    @Expose
+    private String emailId;
 
     public String getPhone() {
         return phone;
@@ -17,4 +20,11 @@ public class Credentials {
         this.phone = phone;
     }
 
+    public String getEmailId() {
+        return emailId;
+    }
+
+    public void setEmailId(String emailId) {
+        this.emailId = emailId;
+    }
 }

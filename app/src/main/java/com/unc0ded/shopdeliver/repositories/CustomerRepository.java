@@ -1,18 +1,19 @@
 package com.unc0ded.shopdeliver.repositories;
 
+import android.content.Intent;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
-
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.unc0ded.shopdeliver.OnCompleteFetchListener;
+import com.unc0ded.shopdeliver.OnCompletePostListener;
 import com.unc0ded.shopdeliver.models.Customer;
+import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
 
 import java.util.Objects;
 
@@ -29,6 +30,15 @@ public class CustomerRepository {
         return instance;
     }
 
+    public void registerCustomer(Customer customer, String uid, OnCompletePostListener listener){
+        listener.onStart();
+        customerFdb.document(uid).set(customer)
+                .addOnSuccessListener(aVoid -> {
+                    listener.onSuccess(new Throwable("Upload success"));
+                })
+                .addOnFailureListener(listener::onFailure);
+    }
+
     public void getCustomer(String uid, OnCompleteFetchListener listener){
         listener.onStart();
 
@@ -42,4 +52,5 @@ public class CustomerRepository {
                 }
             }).addOnFailureListener(listener::onFailure);/*Same is doing listener.onFailure(e)*/
     }
+
 }

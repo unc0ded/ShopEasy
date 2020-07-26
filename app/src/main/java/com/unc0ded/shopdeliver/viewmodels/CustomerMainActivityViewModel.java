@@ -14,7 +14,7 @@ import com.unc0ded.shopdeliver.repositories.VendorRepository;
 
 import java.util.ArrayList;
 
-public class CustomerShopsListFragmentViewModel extends ViewModel {
+public class CustomerMainActivityViewModel extends ViewModel {
 
     private VendorRepository vendorRepo = VendorRepository.getInstance();
     private CustomerRepository customerRepo = CustomerRepository.getInstance();
@@ -56,6 +56,7 @@ public class CustomerShopsListFragmentViewModel extends ViewModel {
             @Override
             public void onFailure(Exception e) {
                 Log.i("FetchDataException", "" + e.getMessage());
+                vendorsList.setValue(null);
                 isFetching.setValue(false);
             }
         });
@@ -90,10 +91,8 @@ public class CustomerShopsListFragmentViewModel extends ViewModel {
 
             @Override
             public void onSuccess(Object result) {
-                if (result != null){
-                    Customer customerForPinCode = (Customer) result;
-                    customerPinCode.setValue(customerForPinCode.getAddress().getPinCode());
-                }
+                    customerPinCode.setValue(((Customer) result).getAddress().getPinCode());
+                    Log.i("pin code retrieved", "" + customerPinCode.getValue());
             }
 
             @Override
