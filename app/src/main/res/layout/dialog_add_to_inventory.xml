@@ -14,7 +14,7 @@
             android:background="#92DCE5"
             android:fontFamily="@font/sora_light"
             android:gravity="center"
-            android:paddingVertical="5dp"
+            android:padding="5dp"
             android:layout_marginBottom="5dp"
             android:text="@string/add_item_to_inventory"
             android:textColor="@color/Black"

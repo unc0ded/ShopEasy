@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.navigation.Navigation;
 
 import com.google.android.material.button.MaterialButton;
@@ -33,6 +34,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.databinding.FragmentLoginBinding;
+import com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel;
 import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
 import com.unc0ded.shopdeliver.views.activities.vendorMainActivity;
 import com.unc0ded.shopdeliver.views.widgets.OtpWidget;
@@ -45,15 +47,18 @@ public class LoginFragment extends Fragment {
 
     FragmentLoginBinding binding;
     View root;
-    MaterialButton switchLoginMethod;
-    TextInputLayout usernameLayout, passwordLayout;
-    TextInputEditText emailOrPhone, password;
     private static final int METHOD_EMAIL = 0;
     private static final int METHOD_PHONE = 1;
+    private static final String STATUS_SUCCESS_CUSTOMER = "Success.customer";
+    private static final String STATUS_SUCCESS_VENDOR = "Success.vendor";
+    private static final String STATUS_FAILED = "failed";
+    private static final String STATUS_WRONG_OTP = "WrongOTP";
+    private static final String STATUS_PROCESSING = "processing";
+
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private String verificationId;
-    FirebaseAuth auth;
-    FirebaseFirestore db;
+
+    private LoginActivityViewModel loginActivityVM = new LoginActivityViewModel();
 
     androidx.appcompat.app.AlertDialog enter_otp;
 
@@ -63,6 +68,50 @@ public class LoginFragment extends Fragment {
 
     //empty constructor
     public LoginFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        loginActivityVM.getAuthStatus().observe(this, status -> {
+            switch (status){
+                case STATUS_SUCCESS_CUSTOMER:
+                    Toast.makeText(requireContext(), "Welcome!", Toast.LENGTH_SHORT).show();
+                    if (enter_otp != null && enter_otp.isShowing()){
+                        enter_otp.dismiss();
+                    }
+                    startActivity(new Intent(requireContext(), customerMainActivity.class));
+                    requireActivity().finish();
+                    break;
+                case STATUS_SUCCESS_VENDOR:
+                    Toast.makeText(requireContext(), "Welcome!", Toast.LENGTH_SHORT).show();
+                    if (enter_otp != null && enter_otp.isShowing()){
+                        enter_otp.dismiss();
+                    }
+                    startActivity(new Intent(requireContext(), vendorMainActivity.class));
+                    requireActivity().finish();
+                    break;
+                case STATUS_WRONG_OTP:
+                    Toast.makeText(requireContext(), "Invalid OTP!", Toast.LENGTH_LONG).show();
+                    binding.progressBar.setVisibility(View.GONE);
+                    //This is done because the dialog box is hidden but not dismissed
+                    if (enter_otp != null && enter_otp.isShowing())
+                        enter_otp.show();
+                    break;
+                case STATUS_FAILED:
+                default:
+                    Toast.makeText(requireContext(), "Something went wrong! Check if phone number or email and password are correct", Toast.LENGTH_LONG).show();
+                    binding.progressBar.setVisibility(View.GONE);
+                    //This is done because the dialog box is hidden but not dismissed
+                    if (enter_otp != null && enter_otp.isShowing())
+                        enter_otp.show();
+                    break;
+                case STATUS_PROCESSING:
+                    binding.progressBar.setVisibility(View.VISIBLE);
+                    break;
+            }
+        });
     }
 
     @Override
@@ -76,32 +125,24 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         root = view;
-        usernameLayout = binding.usernameLayout;
-        passwordLayout = binding.passwordLayout;
-        emailOrPhone = binding.emailOrPhone;
-        password = binding.password;
-        switchLoginMethod = binding.switchMethod;
 
-        auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        binding.switchMethod.setTag(METHOD_PHONE);
 
-        switchLoginMethod.setTag(METHOD_PHONE);
-
-        switchLoginMethod.setOnClickListener(v -> {
-            switch (Integer.parseInt(switchLoginMethod.getTag().toString())) {
+        binding.switchMethod.setOnClickListener(v -> {
+            switch (Integer.parseInt(binding.switchMethod.getTag().toString())) {
                 case METHOD_PHONE:
-                    switchLoginMethod.setTag(METHOD_EMAIL);
-                    switchLoginMethod.setText(getResources().getString(R.string.use_phone_number_text));
-                    usernameLayout.setHint(getResources().getString(R.string.email_text));
-                    emailOrPhone.setInputType(InputType.TYPE_CLASS_TEXT);
-                    passwordLayout.setVisibility(View.VISIBLE);
+                    binding.switchMethod.setTag(METHOD_EMAIL);
+                    binding.switchMethod.setText(getResources().getString(R.string.use_phone_number_text));
+                    binding.usernameLayout.setHint(getResources().getString(R.string.email_text));
+                    binding.emailOrPhone.setInputType(InputType.TYPE_CLASS_TEXT);
+                    binding.passwordLayout.setVisibility(View.VISIBLE);
                     break;
                 case METHOD_EMAIL:
-                    switchLoginMethod.setTag(METHOD_PHONE);
-                    switchLoginMethod.setText(getResources().getString(R.string.use_email_text));
-                    usernameLayout.setHint(getResources().getString(R.string.phone_number_text));
-                    emailOrPhone.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    passwordLayout.setVisibility(View.GONE);
+                    binding.switchMethod.setTag(METHOD_PHONE);
+                    binding.switchMethod.setText(getResources().getString(R.string.use_email_text));
+                    binding.usernameLayout.setHint(getResources().getString(R.string.phone_number_text));
+                    binding.emailOrPhone.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    binding.passwordLayout.setVisibility(View.GONE);
                     break;
             }
         });
@@ -128,7 +169,7 @@ public class LoginFragment extends Fragment {
         });
 
         binding.signInBtn.setOnClickListener(v -> {
-            if (emailOrPhone.getText().toString().isEmpty() && password.getText().toString().isEmpty()) {
+            if (binding.emailOrPhone.getText().toString().isEmpty() && binding.password.getText().toString().isEmpty()) {
                 AlertDialog.Builder choose = new AlertDialog.Builder(requireContext());
                 choose.setCancelable(true);
                 choose.setTitle("Debug");
@@ -145,24 +186,24 @@ public class LoginFragment extends Fragment {
                 choose.show();
             }
             else {
-                switch (Integer.parseInt(switchLoginMethod.getTag().toString())) {
+                ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+                switch (Integer.parseInt(binding.switchMethod.getTag().toString())) {
                     case METHOD_PHONE: {
-                        ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-                        NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
-                        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-
                         if (isConnected) {
                             MaterialAlertDialogBuilder otpAlertBuilder = new MaterialAlertDialogBuilder(requireContext());
                             otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
                                     .setCancelable(true)
                                     .setPositiveButton("OK",
                                             (dialog, which) -> {
-                                                if((Objects.requireNonNull(Objects.requireNonNull(emailOrPhone.getText()).toString().trim()).length()) != 10) {
+                                                if((Objects.requireNonNull(Objects.requireNonNull(binding.emailOrPhone.getText()).toString().trim()).length()) != 10) {
                                                     Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
                                                 }
                                                 else {
-                                                    sendOTP();
-                                                    emailOrPhone.setEnabled(false);
+                                                    PhoneAuthProvider.getInstance().verifyPhoneNumber("+91" + Objects.requireNonNull(Objects.requireNonNull(binding.emailOrPhone.getText()).toString().trim()),
+                                                            60, TimeUnit.SECONDS, requireActivity(), mCallbacks);
+                                                    binding.progressBar.setVisibility(View.VISIBLE);
                                                 }
                                                 dialog.cancel();
                                             })
@@ -172,25 +213,12 @@ public class LoginFragment extends Fragment {
                             Toast.makeText(getContext(), "No internet connection!", Toast.LENGTH_LONG).show();
                     }
                         break;
-                    case METHOD_EMAIL:
-                        auth.signInWithEmailAndPassword(Objects.requireNonNull(Objects.requireNonNull(emailOrPhone.getText()).toString().trim())
-                                , Objects.requireNonNull(password.getText()).toString())
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    db.collection("Customers").document(Objects.requireNonNull(auth.getCurrentUser()).getUid()).get()
-                                            .addOnSuccessListener(documentSnapshot -> {
-                                                if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
-                                                    startActivity(new Intent(requireContext(), customerMainActivity.class));
-                                                }
-                                                else {
-                                                    startActivity(new Intent(requireContext(), vendorMainActivity.class));
-                                                }
-                                                requireActivity().finish();
-                                            })
-                            .addOnFailureListener(e -> Log.e("Cred Search", "Failed: " + e.getMessage()));
-                                }
-                            });
+                    case METHOD_EMAIL: {if (isConnected)
+                            loginActivityVM.signInWithEmail(binding.emailOrPhone.getText().toString().trim(), binding.password.getText().toString().trim());
+                        else
+                            Toast.makeText(getContext(), "No internet connection!", Toast.LENGTH_LONG).show();
                         break;
+                    }
                 }
             }
         });
@@ -199,14 +227,16 @@ public class LoginFragment extends Fragment {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
                 Log.d("customerCallbacks", "onVerificationCompleted:" + phoneAuthCredential);
+                binding.progressBar.setVisibility(View.GONE);
                 //signInWithPhoneAuthCredentials(phoneAuthCredential);
             }
 
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
+                binding.progressBar.setVisibility(View.GONE);
                 Log.d("customerCallbacks", "onVerificationFailed", e);
                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                emailOrPhone.setEnabled(true);
+                binding.emailOrPhone.setEnabled(true);
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     Log.d("customerCallbacks","onVerificationFailed: Invalid Number");
                 }
@@ -217,8 +247,27 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                binding.progressBar.setVisibility(View.GONE);
                 super.onCodeSent(s, forceResendingToken);
                 verificationId = s;
+
+                Toast.makeText(requireContext(), "OTP has been sent", Toast.LENGTH_SHORT).show();
+
+                OtpWidget otpView = new OtpWidget(requireContext());
+                otpView.getVerifyBtn().setOnClickListener(view -> {
+                    if (Objects.requireNonNull(otpView.getOtpView().getText()).toString().length() == 6) {
+                        PhoneAuthCredential customerCredential = PhoneAuthProvider.getCredential(verificationId, otpView.getOtpView().getText().toString());
+                        loginActivityVM.signInWithPhone(customerCredential);
+                        enter_otp.hide();
+                    }
+                    else
+                        Toast.makeText(requireContext(), "Please enter complete OTP", Toast.LENGTH_SHORT).show();
+                });
+                enter_otp = new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Enter OTP")
+                        .setCancelable(true)
+                        .setView(otpView)
+                        .show();
             }
         };
     }
@@ -230,53 +279,4 @@ public class LoginFragment extends Fragment {
         binding = null;
     }
 
-    private void sendOTP() {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber("+91" + Objects.requireNonNull(Objects.requireNonNull(emailOrPhone.getText()).toString().trim()),
-                60, TimeUnit.SECONDS, requireActivity(), mCallbacks);
-
-        OtpWidget otpView = new OtpWidget(requireContext());
-        otpView.getVerifyBtn().setOnClickListener(view -> {
-            if (Objects.requireNonNull(otpView.getOtpView().getText()).toString().length() == 6) {
-                PhoneAuthCredential customerCredential = PhoneAuthProvider.getCredential(verificationId, otpView.getOtpView().getText().toString());
-                signInWithPhoneAuthCredentials(customerCredential);
-            }
-            else
-                Toast.makeText(requireContext(), "Please enter complete OTP", Toast.LENGTH_SHORT).show();
-        });
-        enter_otp = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Enter OTP")
-                .setCancelable(false)
-                .setView(otpView)
-                .show();
-    }
-
-    private void signInWithPhoneAuthCredentials(PhoneAuthCredential customerCredential) {
-        auth.signInWithCredential(customerCredential)
-                .addOnCompleteListener(requireActivity(), task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("signInWithCredential:", "success");
-
-                        Toast.makeText(getContext(), "Phone number verified!", Toast.LENGTH_LONG).show();
-
-                        db.collection("Customers").document(Objects.requireNonNull(auth.getCurrentUser()).getUid()).get()
-                                .addOnSuccessListener(documentSnapshot -> {
-                                    if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
-                                        startActivity(new Intent(requireContext(), customerMainActivity.class));
-                                    }
-                                    else {
-                                        startActivity(new Intent(requireContext(), vendorMainActivity.class));
-                                    }
-                                    enter_otp.dismiss();
-                                    requireActivity().finish();
-                                })
-                                .addOnFailureListener(e -> Log.e("Cred Search", "Failed: " + e.getMessage()));
-                    }
-                    else {
-                        Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
-                        if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                            Toast.makeText(getContext(), "Incorrect OTP", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
 }

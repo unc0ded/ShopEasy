@@ -8,18 +8,6 @@
     tools:context=".views.fragments.LoginFragment"
     android:background="@color/darkBackground">
 
-    <LinearLayout
-        android:id="@+id/progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#C4973037"
-        android:gravity="center"
-        android:visibility="gone">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -89,6 +77,8 @@
             app:boxCornerRadiusBottomEnd="4dp"
             app:boxCornerRadiusBottomStart="4dp"
             app:boxCornerRadiusTopStart="4dp"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/darkBgTextColor"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -148,5 +138,17 @@
         </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/ProgressbarBackground"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
 </FrameLayout>

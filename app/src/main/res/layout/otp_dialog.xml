@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <com.chaos.view.PinView
         android:id="@+id/otp_et"
@@ -17,7 +17,7 @@
         android:inputType="number"
         android:textColor="@color/line_colors"
         app:itemCount="6"
-        app:itemRadius="5dp"
+        app:itemRadius="20dp"
         app:lineColor="@color/line_colors"
         app:viewType="rectangle" />
 
@@ -26,9 +26,11 @@
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:fontFamily="@font/sora_light"
         android:text="@string/verify_otp"
         android:textColor="@color/Black"
-        app:backgroundTint="@color/colorAccent" />
+        app:backgroundTint="@color/colorAccent"
+        app:cornerRadius="5dp" />
 
 </LinearLayout>

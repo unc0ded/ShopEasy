@@ -86,6 +86,16 @@ public class customerSignUpMain extends Fragment {
                 Toast.makeText(getContext(), "No internet connection!", Toast.LENGTH_LONG).show();
         });
 
+
+        binding.validateOtpBtn.setOnClickListener(v -> {
+            if(Objects.requireNonNull(binding.otp.getText()).toString().isEmpty()) {
+                Toast.makeText(getContext(), "Please enter OTP.", Toast.LENGTH_SHORT).show();
+            } else {
+                binding.progressbar.setVisibility(View.VISIBLE);
+                validateOTPFunc();
+            }
+        });
+
         customerCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
@@ -116,14 +126,6 @@ public class customerSignUpMain extends Fragment {
             }
         };
 
-        binding.validateOtpBtn.setOnClickListener(v -> {
-            if(Objects.requireNonNull(binding.otp.getText()).toString().isEmpty()) {
-                Toast.makeText(getContext(), "Please enter OTP.", Toast.LENGTH_SHORT).show();
-            } else {
-                validateOTPFunc();
-            }
-        });
-
     }
 
     @Override
@@ -153,9 +155,11 @@ public class customerSignUpMain extends Fragment {
         customerAuth.signInWithCredential(customerCredential)
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
-                        Log.d("signInWithCredential:", "success");
+                        Log.d("signInWithCredential", "success");
 
                         Toast.makeText(getContext(), "Phone number verified!", Toast.LENGTH_LONG).show();
+
+                        binding.progressbar.setVisibility(View.GONE);
 
                         binding.otp.setEnabled(false);
                         binding.validateOtpBtn.setEnabled(false);
@@ -169,12 +173,12 @@ public class customerSignUpMain extends Fragment {
                         Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
                         if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                             Toast.makeText(getContext(), "Incorrect OTP", Toast.LENGTH_SHORT).show();
-
                             binding.phoneNumber.setEnabled(true);
                             binding.otp.setEnabled(true);
                             binding.otpBtn.setEnabled(true);
                             binding.validateOtpBtn.setEnabled(true);
                         }
+                        binding.progressbar.setVisibility(View.GONE);
                     }
                 });
     }

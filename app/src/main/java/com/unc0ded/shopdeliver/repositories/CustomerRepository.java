@@ -1,10 +1,5 @@
 package com.unc0ded.shopdeliver.repositories;
 
-import android.content.Intent;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
-
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
@@ -13,9 +8,6 @@ import com.google.gson.JsonObject;
 import com.unc0ded.shopdeliver.OnCompleteFetchListener;
 import com.unc0ded.shopdeliver.OnCompletePostListener;
 import com.unc0ded.shopdeliver.models.Customer;
-import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
-
-import java.util.Objects;
 
 public class CustomerRepository {
 
