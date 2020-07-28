@@ -73,7 +73,7 @@ public class LoginActivityViewModel extends ViewModel {
         });
     }
 
-    //customerSignUpMain
+    //customerSignUpMain & TODO:implement for vendorSignUpMain
     public  void signUpWithPhone(PhoneAuthCredential credential){
         authenticationRepo.authenticateForSignUp(credential, new OnAuthenticationListener() {
             @Override
@@ -98,7 +98,7 @@ public class LoginActivityViewModel extends ViewModel {
         });
     }
 
-    //customerSignUpDetails
+    //customerSignUpDetails & TODO: implement for vendorSignUpDetails
     public void linkEmail(String email, String password){
         authenticationRepo.linkEmail(email, password, new OnAuthenticationListener() {
             @Override
@@ -119,6 +119,8 @@ public class LoginActivityViewModel extends ViewModel {
             }
         });
     }
+
+    //customerSignUpDetails
     public void registerUser(Customer newCustomer, String uid){
         customerRepo.registerCustomer(newCustomer, uid, new OnCompletePostListener() {
             @Override

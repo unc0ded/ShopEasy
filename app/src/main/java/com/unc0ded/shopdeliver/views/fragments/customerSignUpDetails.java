@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,23 +14,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.databinding.FragmentCustomerSignUpDetailsBinding;
 import com.unc0ded.shopdeliver.models.Address;
 import com.unc0ded.shopdeliver.models.Credentials;
 import com.unc0ded.shopdeliver.models.Customer;
 import com.unc0ded.shopdeliver.models.Name;
-import com.unc0ded.shopdeliver.viewmodels.CustomerAuthenticationViewModel;
 import com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel;
 import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 public class customerSignUpDetails extends Fragment {

@@ -87,7 +87,7 @@ public class AuthenticationRepository {
         });
     }
 
-    //customerSignUpMain & vendorSignUpMain
+    //customerSignUpMain & TODO: implement for vendorSignUpMain
     public void authenticateForSignUp(PhoneAuthCredential credential, OnAuthenticationListener listener){
         listener.onStart();
         auth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -106,7 +106,7 @@ public class AuthenticationRepository {
         });
     }
 
-    //customerSignUpDetails & vendorSignUpDetails
+    //customerSignUpDetails & TODO: implement for vendorSignUpDetails
     public void linkEmail(String email, String password, OnAuthenticationListener listener){
         listener.onStart();
         AuthCredential emailCredential = EmailAuthProvider.getCredential(email, password);
