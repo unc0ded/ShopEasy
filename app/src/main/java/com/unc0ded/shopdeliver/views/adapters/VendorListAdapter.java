@@ -56,7 +56,7 @@ public class VendorListAdapter extends RecyclerView.Adapter<VendorListAdapter.Ve
         public void populate(Vendor vendor) {
             binding.vendorNameTv.setText(vendor.getShopName());
             binding.vendorTypeTv.setText(vendor.getType());
-            binding.vendorAddressTv.setText(vendor.getAddress());
+            binding.vendorAddressTv.setText(vendor.getAddress().getLocality());
             binding.deliveryStatus.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.available), PorterDuff.Mode.SRC_ATOP);
         }
     }

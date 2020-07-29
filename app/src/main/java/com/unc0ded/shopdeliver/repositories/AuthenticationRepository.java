@@ -1,12 +1,6 @@
 package com.unc0ded.shopdeliver.repositories;
 
-import android.content.Intent;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -17,12 +11,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.unc0ded.shopdeliver.OnAuthenticationListener;
-import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
-import com.unc0ded.shopdeliver.views.activities.vendorMainActivity;
-import com.unc0ded.shopdeliver.views.fragments.customerSignUpMainDirections;
+import com.unc0ded.shopdeliver.listenerinterfaces.OnAuthenticationListener;
 
-import java.util.EventListener;
 import java.util.Objects;
 
 public class AuthenticationRepository {
@@ -39,28 +29,7 @@ public class AuthenticationRepository {
     }
 
     //Login Fragment
-    public void authenticateForSignIn(String email, String password, OnAuthenticationListener listener){
-        listener.onStart();
-        auth.signInWithEmailAndPassword(Objects.requireNonNull(Objects.requireNonNull(email))
-                , Objects.requireNonNull(password))
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        db.collection("Customers").document(Objects.requireNonNull(auth.getCurrentUser()).getUid()).get()
-                                .addOnSuccessListener(documentSnapshot -> {
-                                    if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
-                                        listener.onSuccess(new Throwable("customer"));
-                                    }
-                                    else {
-                                        listener.onSuccess(new Throwable("vendor"));
-                                    }
-                                })
-                                .addOnFailureListener(listener::onFailure);
-                    }else{
-                        listener.onFailure(new Exception("signInWithEmailAndPassword failed"));
-                    }
-                });
-    }
-    public void authenticateForSignIn(PhoneAuthCredential credentials, OnAuthenticationListener listener){
+    public void authenticateForSignIn(PhoneAuthCredential credentials, @NonNull OnAuthenticationListener listener){
         listener.onStart();
         auth.signInWithCredential(credentials).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -86,9 +55,30 @@ public class AuthenticationRepository {
             }
         });
     }
+    public void authenticateForSignIn(String email, String password, @NonNull OnAuthenticationListener listener){
+        listener.onStart();
+        auth.signInWithEmailAndPassword(Objects.requireNonNull(Objects.requireNonNull(email))
+                , Objects.requireNonNull(password))
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        db.collection("Customers").document(Objects.requireNonNull(auth.getCurrentUser()).getUid()).get()
+                                .addOnSuccessListener(documentSnapshot -> {
+                                    if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
+                                        listener.onSuccess(new Throwable("customer"));
+                                    }
+                                    else {
+                                        listener.onSuccess(new Throwable("vendor"));
+                                    }
+                                })
+                                .addOnFailureListener(listener::onFailure);
+                    }else{
+                        listener.onFailure(new Exception("signInWithEmailAndPassword failed"));
+                    }
+                });
+    }
 
-    //customerSignUpMain & TODO: implement for vendorSignUpMain
-    public void authenticateForSignUp(PhoneAuthCredential credential, OnAuthenticationListener listener){
+    //customerSignUpMain & vendorSignUpMain
+    public void authenticateForSignUp(PhoneAuthCredential credential, @NonNull OnAuthenticationListener listener){
         listener.onStart();
         auth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -106,20 +96,17 @@ public class AuthenticationRepository {
         });
     }
 
-    //customerSignUpDetails & TODO: implement for vendorSignUpDetails
-    public void linkEmail(String email, String password, OnAuthenticationListener listener){
+    //customerSignUpDetails & vendorSignUpDetails
+    public void linkEmail(String email, String password, @NonNull OnAuthenticationListener listener){
         listener.onStart();
         AuthCredential emailCredential = EmailAuthProvider.getCredential(email, password);
         Objects.requireNonNull(auth.getCurrentUser()).linkWithCredential(emailCredential)
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
                         listener.onSuccess(new Throwable("Email link success"));
-//                        Toast.makeText(getContext(), "Email Linked Successfully", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         listener.onFailure(task.getException());
-//                        Toast.makeText(getContext(), "Email Link Failed try again later", Toast.LENGTH_LONG).show();
-//                        Log.d("Email Linking", String.valueOf(task.getException()));
                     }
                 });
     }

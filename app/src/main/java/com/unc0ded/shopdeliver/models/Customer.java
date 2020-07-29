@@ -5,15 +5,26 @@ import com.google.gson.annotations.SerializedName;
 
 public class Customer {
 
+    @SerializedName("firstName")
+    @Expose
+    private String firstName;
+    @SerializedName("lastName")
+    @Expose
+    private String lastName;
+    @SerializedName("email")
+    @Expose
+    private String email;
+    @SerializedName("phone")
+    @Expose
+    private String phone;
     @SerializedName("address")
     @Expose
     private Address address;
-    @SerializedName("credentials")
-    @Expose
-    private Credentials credentials;
-    @SerializedName("name")
-    @Expose
-    private Name name;
+
+
+    public Customer(){
+        address = new Address();
+    }
 
     public Address getAddress() {
         return address;
@@ -23,18 +34,35 @@ public class Customer {
         this.address = address;
     }
 
-    public Credentials getCredentials() {
-        return credentials;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setCredentials(Credentials credentials) {
-        this.credentials = credentials;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public Name getName() {
-        return name;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setName(Name name) { this.name = name; }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 }

@@ -20,6 +20,9 @@ public class Address {
     @SerializedName("addressLine2")
     @Expose
     private String addressLine2;
+    @SerializedName("locality")
+    @Expose
+    private String locality;
 
     public String getState() {
         return state;
@@ -61,4 +64,11 @@ public class Address {
         this.addressLine2 = addressLine2;
     }
 
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
+    }
 }

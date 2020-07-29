@@ -18,10 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.databinding.FragmentCustomerSignUpDetailsBinding;
-import com.unc0ded.shopdeliver.models.Address;
-import com.unc0ded.shopdeliver.models.Credentials;
 import com.unc0ded.shopdeliver.models.Customer;
-import com.unc0ded.shopdeliver.models.Name;
 import com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel;
 import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
 
@@ -176,27 +173,26 @@ public class customerSignUpDetails extends Fragment {
             boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
             if (isConnected){
-                newCustomer.setName(new Name());
-                newCustomer.setAddress(new Address());
-                newCustomer.setCredentials(new Credentials());
-                newCustomer.getName().setFirstName(binding.firstName.getText().toString().trim());
-                newCustomer.getName().setLastName(binding.lastName.getText().toString().trim());
+                newCustomer.setFirstName(binding.firstName.getText().toString().trim());
+                newCustomer.setLastName(binding.lastName.getText().toString().trim());
                 newCustomer.getAddress().setAddressLine1(binding.firstLine.getText().toString().trim());
                 newCustomer.getAddress().setAddressLine2(binding.secondLine.getText().toString().trim());
                 newCustomer.getAddress().setPinCode(binding.pinCode.getText().toString().trim());
                 newCustomer.getAddress().setCity(binding.city.getText().toString().trim());
                 newCustomer.getAddress().setState(binding.state.getText().toString().trim());
-                newCustomer.getCredentials().setEmailId(binding.emailId.getText().toString().trim());
-                newCustomer.getCredentials().setPhone(phone);
+                newCustomer.setEmail(binding.emailId.getText().toString().trim());
+                newCustomer.setPhone(phone);
                 final String password = binding.password.getText().toString().trim();
                 final String re_enter_password = binding.reEnterPassword.getText().toString().trim();
 
 
-                if (newCustomer.getName().getFirstName().isEmpty() || newCustomer.getName().getLastName().isEmpty() || newCustomer.getAddress().getAddressLine1().isEmpty() || newCustomer.getAddress().getAddressLine2().isEmpty() || newCustomer.getAddress().getCity().isEmpty() || newCustomer.getAddress().getState().isEmpty() || newCustomer.getAddress().getPinCode().isEmpty())
+                if (newCustomer.getFirstName().isEmpty() || newCustomer.getLastName().isEmpty() || newCustomer.getAddress().getAddressLine1().isEmpty()
+                        || newCustomer.getAddress().getAddressLine2().isEmpty() || newCustomer.getAddress().getCity().isEmpty()
+                        || newCustomer.getAddress().getState().isEmpty() || newCustomer.getAddress().getPinCode().isEmpty())
                     Toast.makeText(getContext(), "Please fill all the compulsory fields", Toast.LENGTH_LONG).show();
-                else if (newCustomer.getCredentials().getEmailId().isEmpty()) {
+                else if (newCustomer.getEmail().isEmpty()) {
                     if (validatePinCode(newCustomer.getAddress().getPinCode())){
-                        newCustomer.getCredentials().setEmailId(null);
+                        newCustomer.setEmail(null);
                         loginActivityViewModel.registerUser(newCustomer, customerAuth.getUid());
                     }
                     else
@@ -205,7 +201,7 @@ public class customerSignUpDetails extends Fragment {
                 else if ((password.isEmpty() || re_enter_password.isEmpty()))
                     Toast.makeText(getContext(), "Please fill all the fields", Toast.LENGTH_LONG).show();
                 else if (password.equals(re_enter_password)) {
-                    loginActivityViewModel.linkEmail(newCustomer.getCredentials().getEmailId(), re_enter_password);
+                    loginActivityViewModel.linkEmail(newCustomer.getEmail(), re_enter_password);
                 }
                 else
                     Toast.makeText(getContext(), "Passwords don't match", Toast.LENGTH_LONG).show();
@@ -223,9 +219,10 @@ public class customerSignUpDetails extends Fragment {
     }
 
     private boolean validatePinCode(String pin_code) {
-        boolean valid = false;
-        if (pin_code.length() == 6){ valid = pin_code.charAt(0) != '0'; }
-        return valid;
+        if (pin_code.length() == 6 && !pin_code.startsWith("0"))
+            return true;
+        else
+            return false;
     }
 
 }

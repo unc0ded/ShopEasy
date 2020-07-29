@@ -7,16 +7,19 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.PhoneAuthCredential;
-import com.unc0ded.shopdeliver.OnAuthenticationListener;
-import com.unc0ded.shopdeliver.OnCompletePostListener;
+import com.unc0ded.shopdeliver.listenerinterfaces.OnAuthenticationListener;
+import com.unc0ded.shopdeliver.listenerinterfaces.OnCompletePostListener;
 import com.unc0ded.shopdeliver.models.Customer;
+import com.unc0ded.shopdeliver.models.Vendor;
 import com.unc0ded.shopdeliver.repositories.AuthenticationRepository;
 import com.unc0ded.shopdeliver.repositories.CustomerRepository;
+import com.unc0ded.shopdeliver.repositories.VendorRepository;
 
 public class LoginActivityViewModel extends ViewModel {
 
     private AuthenticationRepository authenticationRepo = AuthenticationRepository.getInstance();
     private CustomerRepository customerRepo = CustomerRepository.getInstance();
+    private VendorRepository vendorRepo = VendorRepository.getInstance();
 
     private MutableLiveData<String> authStatus = new MutableLiveData<>();
     public LiveData<String> getAuthStatus(){
@@ -73,7 +76,7 @@ public class LoginActivityViewModel extends ViewModel {
         });
     }
 
-    //customerSignUpMain & TODO:implement for vendorSignUpMain
+    //customerSignUpMain & vendorSignUpMain
     public  void signUpWithPhone(PhoneAuthCredential credential){
         authenticationRepo.authenticateForSignUp(credential, new OnAuthenticationListener() {
             @Override
@@ -98,7 +101,7 @@ public class LoginActivityViewModel extends ViewModel {
         });
     }
 
-    //customerSignUpDetails & TODO: implement for vendorSignUpDetails
+    //customerSignUpDetails & vendorSignUpDetails
     public void linkEmail(String email, String password){
         authenticationRepo.linkEmail(email, password, new OnAuthenticationListener() {
             @Override
@@ -123,6 +126,28 @@ public class LoginActivityViewModel extends ViewModel {
     //customerSignUpDetails
     public void registerUser(Customer newCustomer, String uid){
         customerRepo.registerCustomer(newCustomer, uid, new OnCompletePostListener() {
+            @Override
+            public void onStart() {
+                isUploading.setValue("start");
+            }
+
+            @Override
+            public void onSuccess(Throwable t) {
+                isUploading.setValue("success");
+                Log.i("RegisterUserThrowable", "" + t.getMessage());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                isUploading.setValue("failed");
+                Log.i("RegisterUserException", "" + e.getMessage());
+            }
+        });
+    }
+
+    //vendorSignUpDetails
+    public void registerUser(Vendor newVendor, String uid){
+        vendorRepo.registerVendor(newVendor, uid, new OnCompletePostListener() {
             @Override
             public void onStart() {
                 isUploading.setValue("start");

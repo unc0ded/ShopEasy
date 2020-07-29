@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.unc0ded.shopdeliver.OnCompleteFetchListener;
+import com.unc0ded.shopdeliver.listenerinterfaces.OnCompleteFetchListener;
 import com.unc0ded.shopdeliver.models.Customer;
 import com.unc0ded.shopdeliver.models.Vendor;
 import com.unc0ded.shopdeliver.repositories.CustomerRepository;

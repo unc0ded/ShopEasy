@@ -5,8 +5,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.unc0ded.shopdeliver.OnCompleteFetchListener;
-import com.unc0ded.shopdeliver.OnCompletePostListener;
+import com.unc0ded.shopdeliver.listenerinterfaces.OnCompleteFetchListener;
+import com.unc0ded.shopdeliver.listenerinterfaces.OnCompletePostListener;
 import com.unc0ded.shopdeliver.models.Customer;
 
 public class CustomerRepository {
