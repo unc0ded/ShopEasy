@@ -1,4 +1,4 @@
-package com.unc0ded.shopdeliver.activities;
+package com.unc0ded.shopdeliver.views.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +20,6 @@ public class SplashScreen extends AppCompatActivity {
                 startActivity(new Intent(SplashScreen.this, LoginActivity.class));
                 finish();
             }
-        }, 500);
+        }, 0); //TODO: Change this back to 500ms after testing
     }
 }

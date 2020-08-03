@@ -1,4 +1,4 @@
-package com.unc0ded.shopdeliver.fragments;
+package com.unc0ded.shopdeliver.views.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

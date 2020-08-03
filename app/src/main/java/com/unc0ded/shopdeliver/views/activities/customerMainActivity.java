@@ -1,4 +1,4 @@
-package com.unc0ded.shopdeliver.activities;
+package com.unc0ded.shopdeliver.views.activities;
 
 import android.os.Bundle;
 import android.view.View;
@@ -12,31 +12,32 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.unc0ded.shopdeliver.R;
-import com.unc0ded.shopdeliver.databinding.ActivityVendorMainBinding;
+import com.unc0ded.shopdeliver.databinding.ActivityCustomerMainBinding;
 
-public class vendorMainActivity extends AppCompatActivity {
+public class customerMainActivity extends AppCompatActivity {
 
-    ActivityVendorMainBinding binding;
-    BottomNavigationView bottomNav;
+    ActivityCustomerMainBinding binding;
     Toolbar toolbar;
+    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityVendorMainBinding.inflate(getLayoutInflater());
+        binding = ActivityCustomerMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
 
-        bottomNav = binding.bottomNav;
         toolbar = binding.toolbar;
+        bottomNavigationView = binding.bottomNav;
 
         setSupportActionBar(toolbar);
-
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.vendor_inventory, R.id.vendor_orders, R.id.vendor_settings)
+                R.id.customer_shops_list, R.id.customer_orders, R.id.customer_settings)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.vendor_nav_host_fragment);
+        NavController navController = Navigation.findNavController(this, R.id.customer_nav_host_fragment);
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(bottomNav, navController);
     }
 }

@@ -1,81 +1,57 @@
 package com.unc0ded.shopdeliver.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Vendor {
-    String ShopName,Type, PropName, Phone, Email, Address;
-
-    public Vendor(String shopName, String type, String propName, String phone, String email, String address) {
-        ShopName = shopName;
-        Type = type;
-        PropName = propName;
-        Phone = phone;
-        Email = email;
-        Address = address;
-    }
-
-    public Vendor(String shopName, String type, String propName, String phone, String address) {
-        ShopName = shopName;
-        Type = type;
-        PropName = propName;
-        Phone = phone;
-        Address = address;
-    }
-
-    public Vendor(String name, String type, String area, String s) {
-        ShopName = name;
-        Type = type;
-        Address = area;
-        Phone = s;
-    }
+    @SerializedName("shopName")
+    @Expose
+    private String shopName;
+    @SerializedName("type")
+    @Expose
+    private String type;
+    @SerializedName("address")
+    @Expose
+    private Address address;
+    @SerializedName("proprietor")
+    @Expose
+    private Proprietor proprietor;
 
     public Vendor() {
+        address = new Address();
+        proprietor = new Proprietor();
     }
 
     public String getShopName() {
-        return ShopName;
+        return this.shopName;
     }
 
     public void setShopName(String shopName) {
-        ShopName = shopName;
+        this.shopName = shopName;
     }
 
     public String getType() {
-        return Type;
+        return this.type;
     }
 
     public void setType(String type) {
-        Type = type;
+        this.type = type;
     }
 
-    public String getPropName() {
-        return PropName;
+    public Address getAddress(){
+        return address;
     }
 
-    public void setPropName(String propName) {
-        PropName = propName;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
-    public String getPhone() {
-        return Phone;
+    public Proprietor getProprietor() {
+        return proprietor;
     }
 
-    public void setPhone(String phone) {
-        Phone = phone;
-    }
-
-    public String getEmail() {
-        return Email;
-    }
-
-    public void setEmail(String email) {
-        Email = email;
-    }
-
-    public String getAddress() {
-        return Address;
-    }
-
-    public void setAddress(String address) {
-        Address = address;
+    public void setProprietor(Proprietor proprietor) {
+        this.proprietor = proprietor;
     }
 }
 

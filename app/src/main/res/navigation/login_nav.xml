@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/customer_sign_up_main"
-        android:name="com.unc0ded.shopdeliver.fragments.customerSignUpMain"
+        android:name="com.unc0ded.shopdeliver.views.fragments.customerSignUpMain"
         tools:layout="@layout/fragment_customer_sign_up_main">
         <action
             android:id="@+id/action_customer_sign_up_main_to_customer_sign_up_details"
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/customer_sign_up_details"
-        android:name="com.unc0ded.shopdeliver.fragments.customerSignUpDetails"
+        android:name="com.unc0ded.shopdeliver.views.fragments.customerSignUpDetails"
         tools:layout="@layout/fragment_customer_sign_up_details">
         <argument
             android:name="phone"
@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/login"
-        android:name="com.unc0ded.shopdeliver.fragments.LoginFragment"
+        android:name="com.unc0ded.shopdeliver.views.fragments.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -48,7 +48,7 @@
 
     <fragment
         android:id="@+id/vendor_sign_up_main"
-        android:name="com.unc0ded.shopdeliver.fragments.vendorSignUpMain"
+        android:name="com.unc0ded.shopdeliver.views.fragments.vendorSignUpMain"
         android:label="fragment_vendor_sign_up_main"
         tools:layout="@layout/fragment_vendor_sign_up_main" >
         <action
@@ -62,7 +62,7 @@
     </fragment>
     <fragment
         android:id="@+id/vendor_sign_up_details"
-        android:name="com.unc0ded.shopdeliver.fragments.vendorSignUpDetails"
+        android:name="com.unc0ded.shopdeliver.views.fragments.vendorSignUpDetails"
         android:label="fragment_vendor_sign_up_details"
         tools:layout="@layout/fragment_vendor_sign_up_details" >
         <argument

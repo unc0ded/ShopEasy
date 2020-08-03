@@ -1,23 +1,23 @@
-package com.unc0ded.shopdeliver.adapters;
+package com.unc0ded.shopdeliver.views.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.unc0ded.shopdeliver.databinding.InventoryListItemBinding;
+import com.unc0ded.shopdeliver.models.Product;
+
+import java.util.ArrayList;
 
 public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdapter.InventoryVH> {
 
-    JsonArray inventoryList;
+    private ArrayList<Product> inventoryList;
     Context context;
 
-    public InventoryItemAdapter(JsonArray inventoryList, Context context) {
+    public InventoryItemAdapter(ArrayList<Product> inventoryList, Context context) {
         this.inventoryList = inventoryList;
         this.context = context;
     }
@@ -30,7 +30,7 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
 
     @Override
     public void onBindViewHolder(@NonNull InventoryVH holder, int position) {
-        holder.populate(inventoryList.get(position).getAsJsonObject());
+        holder.populate(inventoryList.get(position));
     }
 
     @Override
@@ -38,7 +38,7 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
         return inventoryList.size();
     }
 
-    class InventoryVH extends RecyclerView.ViewHolder {
+    static class InventoryVH extends RecyclerView.ViewHolder {
 
         InventoryListItemBinding binding;
 
@@ -47,10 +47,10 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
             this.binding = binding;
         }
 
-        public void populate(JsonObject inventoryItem) {
-            binding.itemNameTv.setText(inventoryItem.get("name").getAsString());
-            binding.priceTv.setText(inventoryItem.get("price").getAsString());
-            binding.quantityTv.setText(inventoryItem.get("quantity").getAsString());
+        public void populate(Product product) {
+            binding.itemNameTv.setText(product.getName());
+            binding.priceTv.setText(String.valueOf(product.getPrice()));
+            binding.quantityTv.setText(String.valueOf(product.getQuantity()));
         }
     }
 }

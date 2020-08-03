@@ -1,4 +1,4 @@
-package com.unc0ded.shopdeliver.widgets;
+package com.unc0ded.shopdeliver.views.widgets;
 
 import android.content.Context;
 import android.text.Editable;

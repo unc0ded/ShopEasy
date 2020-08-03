@@ -1,7 +1,6 @@
-package com.unc0ded.shopdeliver.fragments;
+package com.unc0ded.shopdeliver.views.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -17,34 +16,70 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.unc0ded.shopdeliver.databinding.FragmentVendorSignUpMainBinding;
+import com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_FAILED;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_PROCESSING;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_VERIFIED;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_WRONG_OTP;
+
 public class vendorSignUpMain extends Fragment {
 
     FragmentVendorSignUpMainBinding binding;
+    LoginActivityViewModel loginActivityVM = new LoginActivityViewModel();
 
     private String sentOTP;
 
     private View rootView;
 
     //Firebase Objects
-    private FirebaseAuth vendorAuth;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks vendorCallbacks;
 
     //empty constructor
     public vendorSignUpMain() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        loginActivityVM.getAuthStatus().observe(this, status -> {
+            switch(status){
+                case STATUS_VERIFIED:
+                    Toast.makeText(requireContext(), "Phone number verified!", Toast.LENGTH_SHORT).show();
+                    vendorSignUpMainDirections.ActionVendorSignUpMainToVendorSignUpDetails action = vendorSignUpMainDirections.actionVendorSignUpMainToVendorSignUpDetails("+91 "+binding.phoneNumber.getText().toString().trim());
+                    Navigation.findNavController(rootView).navigate(action);
+                    binding.progressbar.setVisibility(View.GONE);
+                    break;
+                case STATUS_WRONG_OTP:
+                    binding.otp.setEnabled(true);
+                    binding.validateOtpBtn.setEnabled(true);
+                    binding.progressbar.setVisibility(View.GONE);
+                    Toast.makeText(requireContext(), "Invalid OTP!", Toast.LENGTH_SHORT).show();
+                    break;
+                case STATUS_FAILED:
+                    binding.otp.setEnabled(false);
+                    binding.validateOtpBtn.setEnabled(false);
+                    binding.phoneNumber.setEnabled(true);
+                    binding.otpBtn.setEnabled(true);
+                    Toast.makeText(requireContext(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                    binding.progressbar.setVisibility(View.GONE);
+                    break;
+                case STATUS_PROCESSING:
+                    binding.progressbar.setVisibility(View.VISIBLE);
+                    break;
+            }
+        });
+
     }
 
     @Override
@@ -57,8 +92,6 @@ public class vendorSignUpMain extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rootView = view;
-
-        vendorAuth = FirebaseAuth.getInstance();
 
         binding.otp.setEnabled(false);
         binding.validateOtpBtn.setEnabled(false);
@@ -80,9 +113,11 @@ public class vendorSignUpMain extends Fragment {
                                     }
                                     else
                                     {
-                                        sendOTP();
-                                        binding.phoneNumber.setEnabled(false);
-                                        binding.otpBtn.setEnabled(false);
+                                        PhoneAuthProvider.getInstance().verifyPhoneNumber("+91"+ Objects.requireNonNull(binding.phoneNumber.getText()).toString()
+                                                ,60, TimeUnit.SECONDS
+                                                ,requireActivity()
+                                                ,vendorCallbacks);
+                                        binding.progressbar.setVisibility(View.VISIBLE);
                                     }
                                     dialog.cancel();
                                 }).setNegativeButton("Cancel",
@@ -95,12 +130,15 @@ public class vendorSignUpMain extends Fragment {
 
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+                binding.progressbar.setVisibility(View.GONE);
                 Log.d("customerCallbacks", "onVerificationCompleted:" + phoneAuthCredential);
-                signInWithPhoneAuthCredentials(phoneAuthCredential);
+                loginActivityVM.signUpWithPhone(phoneAuthCredential);
+//                signInWithPhoneAuthCredentials(phoneAuthCredential);
             }
 
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
+                binding.progressbar.setVisibility(View.GONE);
                 Log.d("vendorCallbacks", "onVerificationFailed", e);
                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 binding.phoneNumber.setEnabled(true);
@@ -116,9 +154,11 @@ public class vendorSignUpMain extends Fragment {
             @Override
             public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                 super.onCodeSent(s, forceResendingToken);
+                binding.progressbar.setVisibility(View.GONE);
+                Toast.makeText(requireContext(), "OTP has been sent", Toast.LENGTH_SHORT).show();
                 sentOTP = s;
-                binding.otp.setEnabled(true);
                 binding.validateOtpBtn.setEnabled(true);
+                binding.otp.setEnabled(true);
             }
         };
 
@@ -127,7 +167,8 @@ public class vendorSignUpMain extends Fragment {
                 Toast.makeText(getContext(), "Please enter OTP.", Toast.LENGTH_SHORT).show();
             }
             else {
-                validateOTPFunc();
+                PhoneAuthCredential vendorCredential = PhoneAuthProvider.getCredential(sentOTP, Objects.requireNonNull(binding.otp.getText()).toString());
+                loginActivityVM.signUpWithPhone(vendorCredential);
             }
         });
 
@@ -147,44 +188,5 @@ public class vendorSignUpMain extends Fragment {
         super.onDestroyView();
         //de-initialize binding object
         binding = null;
-    }
-
-    private void validateOTPFunc() {
-        PhoneAuthCredential vendorCredential = PhoneAuthProvider.getCredential(sentOTP, Objects.requireNonNull(binding.otp.getText()).toString());
-        signInWithPhoneAuthCredentials(vendorCredential);
-    }
-
-    private void signInWithPhoneAuthCredentials(PhoneAuthCredential vendorCredential) {
-        vendorAuth.signInWithCredential(vendorCredential)
-                .addOnCompleteListener(requireActivity(), task -> {
-                    if(task.isSuccessful()) {
-                        Log.d("SIGN UP Success", "signInWithCredential:success");
-
-                        Toast.makeText(getContext(), "Phone number verified!", Toast.LENGTH_SHORT).show();
-
-                        binding.otp.setEnabled(false);
-                        binding.validateOtpBtn.setEnabled(false);
-                        binding.otpBtn.setEnabled(false);
-                        binding.validateOtpBtn.setEnabled(false);
-
-                        vendorSignUpMainDirections.ActionVendorSignUpMainToVendorSignUpDetails action = vendorSignUpMainDirections.actionVendorSignUpMainToVendorSignUpDetails("+91"+ Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim());
-                        Navigation.findNavController(rootView).navigate(action);
-                    }
-                    else {
-                        Log.d("SIGN UP Failure", Objects.requireNonNull(task.getException()).toString());
-
-                        binding.phoneNumber.setEnabled(true);
-                        binding.otp.setEnabled(true);
-                        binding.otpBtn.setEnabled(true);
-                        binding.validateOtpBtn.setEnabled(true);
-                    }
-                });
-    }
-
-    private void sendOTP() {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber("+91"+ Objects.requireNonNull(binding.phoneNumber.getText()).toString()
-                ,60, TimeUnit.SECONDS
-                ,requireActivity()
-                ,vendorCallbacks);
     }
 }

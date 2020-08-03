@@ -1,4 +1,4 @@
-package com.unc0ded.shopdeliver.fragments;
+package com.unc0ded.shopdeliver.views.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,8 +16,8 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.unc0ded.shopdeliver.R;
-import com.unc0ded.shopdeliver.activities.LoginActivity;
 import com.unc0ded.shopdeliver.databinding.FragmentVendorSettingsBinding;
+import com.unc0ded.shopdeliver.views.activities.LoginActivity;
 
 public class vendorSettingsFragment extends Fragment {
 
@@ -60,9 +60,11 @@ public class vendorSettingsFragment extends Fragment {
             if (auth.getCurrentUser() != null) {
                 Toast.makeText(requireActivity(), auth.getCurrentUser().getDisplayName() + " logged out.", Toast.LENGTH_SHORT).show();
                 auth.signOut();
-                startActivity(new Intent(requireActivity(), LoginActivity.class));
-                requireActivity().finish();
+            }else{
+                Toast.makeText(requireContext(), "Exiting debug mode", Toast.LENGTH_LONG).show();
             }
+            startActivity(new Intent(requireActivity(), LoginActivity.class));
+            requireActivity().finish();
             return true;
         }
         else return super.onOptionsItemSelected(item);

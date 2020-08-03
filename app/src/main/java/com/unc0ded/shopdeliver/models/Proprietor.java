@@ -3,8 +3,7 @@ package com.unc0ded.shopdeliver.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Customer {
-
+public class Proprietor {
     @SerializedName("firstName")
     @Expose
     private String firstName;
@@ -17,22 +16,8 @@ public class Customer {
     @SerializedName("phone")
     @Expose
     private String phone;
-    @SerializedName("address")
-    @Expose
-    private Address address;
 
-
-    public Customer(){
-        address = new Address();
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
+    public Proprietor(){ }
 
     public String getFirstName() {
         return firstName;
