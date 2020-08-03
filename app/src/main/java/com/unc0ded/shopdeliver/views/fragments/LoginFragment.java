@@ -36,6 +36,12 @@ import com.unc0ded.shopdeliver.views.widgets.OtpWidget;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_FAILED;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_PROCESSING;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_SUCCESS_CUSTOMER;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_SUCCESS_VENDOR;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_WRONG_OTP;
+
 
 public class LoginFragment extends Fragment {
 
@@ -43,11 +49,6 @@ public class LoginFragment extends Fragment {
     View root;
     private static final int METHOD_EMAIL = 0;
     private static final int METHOD_PHONE = 1;
-    private static final String STATUS_SUCCESS_CUSTOMER = "Success.customer";
-    private static final String STATUS_SUCCESS_VENDOR = "Success.vendor";
-    private static final String STATUS_FAILED = "failed";
-    private static final String STATUS_WRONG_OTP = "WrongOTP";
-    private static final String STATUS_PROCESSING = "processing";
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private String verificationId;

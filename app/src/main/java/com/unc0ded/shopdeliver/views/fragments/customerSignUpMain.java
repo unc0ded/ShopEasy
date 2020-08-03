@@ -28,6 +28,11 @@ import com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_FAILED;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_PROCESSING;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_VERIFIED;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_WRONG_OTP;
+
 public class customerSignUpMain extends Fragment {
 
     FragmentCustomerSignUpMainBinding binding;
@@ -35,11 +40,6 @@ public class customerSignUpMain extends Fragment {
 
     private String verificationId;
     private View rootView;
-
-    private static final String STATUS_VERIFIED = "verified";
-    private static final String STATUS_FAILED = "failed";
-    private static final String STATUS_WRONG_OTP = "WrongOTP";
-    private static final String STATUS_PROCESSING = "processing";
 
     //Firebase
     private FirebaseAuth customerAuth = FirebaseAuth.getInstance();

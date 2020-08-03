@@ -17,7 +17,7 @@
         android:inputType="number"
         android:textColor="@color/line_colors"
         app:itemCount="6"
-        app:itemRadius="20dp"
+        app:itemRadius="5dp"
         app:lineColor="@color/line_colors"
         app:viewType="rectangle" />
 
@@ -31,6 +31,6 @@
         android:text="@string/verify_otp"
         android:textColor="@color/Black"
         app:backgroundTint="@color/colorAccent"
-        app:cornerRadius="5dp" />
+        app:cornerRadius="3dp" />
 
 </LinearLayout>

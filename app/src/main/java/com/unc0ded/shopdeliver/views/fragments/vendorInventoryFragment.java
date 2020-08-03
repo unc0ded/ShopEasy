@@ -1,10 +1,10 @@
 package com.unc0ded.shopdeliver.views.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,25 +13,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.unc0ded.shopdeliver.databinding.FragmentVendorInventoryBinding;
+import com.unc0ded.shopdeliver.models.Product;
+import com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel;
 import com.unc0ded.shopdeliver.views.adapters.InventoryItemAdapter;
 import com.unc0ded.shopdeliver.views.widgets.AddItemDialog;
 
-import java.util.Objects;
+import java.util.ArrayList;
+
+import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_FAILED;
+import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_IS_UPLOADING;
+import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_SUCCESS;
 
 
 public class vendorInventoryFragment extends Fragment {
 
     FragmentVendorInventoryBinding binding;
-    FirebaseFirestore db;
-    ListenerRegistration listenerRegistration;
     FirebaseAuth vendorAuth;
-    JsonArray inventoryArray;
+    private ArrayList<Product> inventoryList = new ArrayList<>();
+
+    VendorMainActivityViewModel vendorMainActivityViewModel = new VendorMainActivityViewModel();
 
     InventoryItemAdapter adapter;
 
@@ -42,9 +43,40 @@ public class vendorInventoryFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = FirebaseFirestore.getInstance();
         vendorAuth = FirebaseAuth.getInstance();
-        inventoryArray = new JsonArray();
+
+        vendorMainActivityViewModel.getIsFetching().observe(this, status -> {
+            binding.swipeRefreshItemList.setRefreshing(status);
+        });
+
+        vendorMainActivityViewModel.getVendorList().observe(this, inventory -> {
+            inventoryList = inventory;
+            if(inventoryList.size() > 0){
+                binding.message.setVisibility(View.GONE);
+            }else{
+                binding.message.setVisibility(View.VISIBLE);
+            }
+            refreshRv();
+        });
+
+        vendorMainActivityViewModel.getIsUploading().observe(this, status -> {
+            switch (status){
+                case STATUS_IS_UPLOADING:
+                    binding.swipeRefreshItemList.setRefreshing(true);
+                    break;
+                case STATUS_SUCCESS:
+                    Toast.makeText(requireContext(), "Item added successfully", Toast.LENGTH_SHORT).show();
+                    vendorMainActivityViewModel.fetchVendorInventory(vendorAuth);
+                    break;
+                case STATUS_FAILED:
+                    Toast.makeText(requireContext(), "Could not add item", Toast.LENGTH_SHORT).show();
+                    binding.swipeRefreshItemList.setRefreshing(false);
+                    break;
+                default:
+                    binding.swipeRefreshItemList.setRefreshing(false);
+                    break;
+            }
+        });
     }
 
     @Override
@@ -56,44 +88,43 @@ public class vendorInventoryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        adapter = new InventoryItemAdapter(inventoryArray, requireContext());
 
         binding.inventoryRv.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.inventoryRv.setAdapter(adapter);
+        refreshRv();
+
+        binding.swipeRefreshItemList.setOnRefreshListener(() -> {
+            if (vendorAuth.getUid() != null)
+                vendorMainActivityViewModel.fetchVendorInventory(vendorAuth);
+            else{
+                binding.swipeRefreshItemList.setRefreshing(false);
+                binding.message.setVisibility(View.VISIBLE);
+            }
+        });
 
         binding.addFab.setOnClickListener(view1 -> {
             final AddItemDialog addItemDialog = new AddItemDialog(requireContext());
             new MaterialAlertDialogBuilder(requireContext()).setView(addItemDialog)
                     .setCancelable(false)
-                    .setPositiveButton("Save", (dialogInterface, i) -> addItemDialog.save(db, vendorAuth))
+                    .setPositiveButton("Save", (dialogInterface, i) -> addItemDialog.save(dialogInterface, vendorAuth))
                     .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
                     .show();
         });
 
         if (vendorAuth.getUid() != null){
-            listenerRegistration = db.collection("Inventory").whereEqualTo("vendorId", Objects.requireNonNull(vendorAuth.getCurrentUser()).getUid())
-                    .addSnapshotListener(((value, error) -> {
-                        if (error != null)
-                            Log.e("Failed", error.toString());
-                        else {
-                            int size = inventoryArray.size();
-                            for (int i = 0; i < size; i++) {
-                                inventoryArray.remove(0);
-                            }
-                            for (QueryDocumentSnapshot documentSnapshot: value) {
-                                inventoryArray.add(new Gson().toJsonTree(documentSnapshot.getData()).getAsJsonObject());
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-                    }));
+            vendorMainActivityViewModel.fetchVendorInventory(vendorAuth);
+        }else{
+            binding.message.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void refreshRv(){
+        adapter = new InventoryItemAdapter(inventoryList, requireContext());
+        binding.inventoryRv.setAdapter(adapter);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-        if (vendorAuth.getUid() != null)
-            listenerRegistration.remove();
     }
 }

@@ -1,122 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#92DCE5"
-            android:fontFamily="@font/sora_light"
-            android:gravity="center"
-            android:padding="5dp"
-            android:layout_marginBottom="5dp"
-            android:text="@string/add_item_to_inventory"
-            android:textColor="@color/Black"
-            android:textSize="20sp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginHorizontal="10dp"
-            android:hint="@string/new_item_name">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/item_name_et"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/montserrat_regular" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_marginHorizontal="10dp"
-            android:hint="@string/new_item_type">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/item_type_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/montserrat_regular" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginHorizontal="10dp"
-            android:hint="@string/quantity">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/quantity_et"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/montserrat_regular"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginHorizontal="10dp"
-            android:hint="@string/new_item_price">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/price_et"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/montserrat_regular"
-                android:inputType="numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginHorizontal="10dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/montserrat_regular"
-                android:gravity="center"
-                android:text="@string/labels"
-                android:textColor="@color/Black"
-                android:textStyle="bold" />
-
-            <com.google.android.material.chip.ChipGroup
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#92DCE5"
+                android:fontFamily="@font/sora_light"
+                android:gravity="center"
+                android:padding="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/add_item_to_inventory"
+                android:textColor="@color/Black"
+                android:textSize="20sp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginHorizontal="10dp"
+                android:hint="@string/new_item_name">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/item_name_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/montserrat_regular" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_marginHorizontal="10dp"
+                android:hint="@string/new_item_type">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/item_type_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/montserrat_regular" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginHorizontal="10dp"
+                android:hint="@string/quantity">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/quantity_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginHorizontal="10dp"
+                android:hint="@string/new_item_price">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/price_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginHorizontal="10dp">
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/new_label"
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
+                    android:layout_height="match_parent"
                     android:fontFamily="@font/montserrat_regular"
-                    android:text="@string/label_new" />
+                    android:gravity="center"
+                    android:text="@string/labels"
+                    android:textColor="@color/Black"
+                    android:textStyle="bold" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/popular_label"
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:fontFamily="@font/montserrat_regular"
-                    android:text="@string/label_popular" />
+                    android:layout_marginHorizontal="10dp">
 
-            </com.google.android.material.chip.ChipGroup>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/new_label"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:text="@string/label_new" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/popular_label"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:text="@string/label_popular" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="@color/ProgressbarBackground"
+        android:visibility="gone">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

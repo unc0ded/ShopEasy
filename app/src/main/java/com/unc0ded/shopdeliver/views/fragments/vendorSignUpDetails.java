@@ -24,14 +24,14 @@ import com.unc0ded.shopdeliver.views.activities.vendorMainActivity;
 
 import java.util.Objects;
 
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_FAILED;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_STARTS;
+import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_SUCCESS;
+
 public class vendorSignUpDetails extends Fragment {
 
     FragmentVendorSignUpDetailsBinding binding;
     LoginActivityViewModel loginActivityVM = new LoginActivityViewModel();
-
-    private static final String STATUS_FAILED = "failed";
-    private static final String STATUS_SUCCESS = "success";
-    private static final String STATUS_STARTS = "start";
 
     String phone;
 

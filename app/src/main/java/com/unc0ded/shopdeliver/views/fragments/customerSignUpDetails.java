@@ -24,13 +24,14 @@ import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
 
 import java.util.Objects;
 
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_FAILED;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_STARTS;
+import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_SUCCESS;
+
 public class customerSignUpDetails extends Fragment {
 
     FragmentCustomerSignUpDetailsBinding binding;
     LoginActivityViewModel loginActivityViewModel = new LoginActivityViewModel();
-    private static final String STATUS_FAILED = "failed";
-    private static final String STATUS_SUCCESS = "success";
-    private static final String STATUS_STARTS = "start";
 
     Customer newCustomer = new Customer();
 

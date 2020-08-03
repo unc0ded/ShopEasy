@@ -27,15 +27,15 @@ import com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_FAILED;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_PROCESSING;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_VERIFIED;
+import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_WRONG_OTP;
+
 public class vendorSignUpMain extends Fragment {
 
     FragmentVendorSignUpMainBinding binding;
     LoginActivityViewModel loginActivityVM = new LoginActivityViewModel();
-
-    private static final String STATUS_VERIFIED = "verified";
-    private static final String STATUS_FAILED = "failed";
-    private static final String STATUS_WRONG_OTP = "WrongOTP";
-    private static final String STATUS_PROCESSING = "processing";
 
     private String sentOTP;
 

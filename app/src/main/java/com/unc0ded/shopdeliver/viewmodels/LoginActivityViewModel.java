@@ -31,6 +31,15 @@ public class LoginActivityViewModel extends ViewModel {
         return isUploading;
     }
 
+    public static final String STATUS_SUCCESS = "success";
+    public static final String STATUS_SUCCESS_CUSTOMER = "Success.customer";
+    public static final String STATUS_SUCCESS_VENDOR = "Success.vendor";
+    public static final String STATUS_FAILED = "failed";
+    public static final String STATUS_WRONG_OTP = "WrongOTP";
+    public static final String STATUS_PROCESSING = "processing";
+    public static final String STATUS_VERIFIED = "verified";
+    public static final String STATUS_STARTS = "start";
+
     //LoginFragment
     public void signInWithEmail(String email, String password){
         authenticationRepo.authenticateForSignIn(email, password, new OnAuthenticationListener() {
@@ -48,7 +57,7 @@ public class LoginActivityViewModel extends ViewModel {
             @Override
             public void onFailure(Exception e) {
                 Log.i("AuthenticationException", "" + e.getMessage());
-                authStatus.setValue("failed");
+                authStatus.setValue(STATUS_FAILED);
             }
         });
     }
@@ -69,9 +78,9 @@ public class LoginActivityViewModel extends ViewModel {
             public void onFailure(Exception e) {
                 Log.i("AuthenticationException", "" + e.getMessage());
                 if (("" + e.getMessage()).equals("WrongOTP"))
-                    authStatus.setValue("WrongOTP");
+                    authStatus.setValue(STATUS_WRONG_OTP);
                 else
-                    authStatus.setValue("failed");
+                    authStatus.setValue(STATUS_FAILED);
             }
         });
     }
@@ -87,16 +96,16 @@ public class LoginActivityViewModel extends ViewModel {
             @Override
             public void onSuccess(Throwable t) {
                 Log.i("AuthSuccess", "" + t.getMessage());
-                authStatus.setValue("verified");
+                authStatus.setValue(STATUS_VERIFIED);
             }
 
             @Override
             public void onFailure(Exception e) {
                 Log.i("AuthenticationException", "" + e.getMessage());
-                if (("" + e.getMessage()).equals("WrongOTP"))
+                if (("" + e.getMessage()).equals(STATUS_WRONG_OTP))
                     authStatus.setValue(e.getMessage());
                 else
-                    authStatus.setValue("failed");
+                    authStatus.setValue(STATUS_FAILED);
             }
         });
     }
@@ -106,18 +115,18 @@ public class LoginActivityViewModel extends ViewModel {
         authenticationRepo.linkEmail(email, password, new OnAuthenticationListener() {
             @Override
             public void onStart() {
-                authStatus.setValue("start");
+                authStatus.setValue(STATUS_STARTS);
             }
 
             @Override
             public void onSuccess(Throwable t) {
-                authStatus.setValue("success");
+                authStatus.setValue(STATUS_SUCCESS);
                 Log.i("EmailLinkSuccess", "" + t.getMessage());
             }
 
             @Override
             public void onFailure(Exception e) {
-                authStatus.setValue("failed");
+                authStatus.setValue(STATUS_FAILED);
                 Log.i("LinkEmailException", "" + e.getMessage());
             }
         });
@@ -128,18 +137,18 @@ public class LoginActivityViewModel extends ViewModel {
         customerRepo.registerCustomer(newCustomer, uid, new OnCompletePostListener() {
             @Override
             public void onStart() {
-                isUploading.setValue("start");
+                isUploading.setValue(STATUS_STARTS);
             }
 
             @Override
             public void onSuccess(Throwable t) {
-                isUploading.setValue("success");
+                isUploading.setValue(STATUS_SUCCESS);
                 Log.i("RegisterUserThrowable", "" + t.getMessage());
             }
 
             @Override
             public void onFailure(Exception e) {
-                isUploading.setValue("failed");
+                isUploading.setValue(STATUS_FAILED);
                 Log.i("RegisterUserException", "" + e.getMessage());
             }
         });
@@ -155,13 +164,13 @@ public class LoginActivityViewModel extends ViewModel {
 
             @Override
             public void onSuccess(Throwable t) {
-                isUploading.setValue("success");
+                isUploading.setValue(STATUS_SUCCESS);
                 Log.i("RegisterUserThrowable", "" + t.getMessage());
             }
 
             @Override
             public void onFailure(Exception e) {
-                isUploading.setValue("failed");
+                isUploading.setValue(STATUS_FAILED);
                 Log.i("RegisterUserException", "" + e.getMessage());
             }
         });
