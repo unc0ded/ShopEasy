@@ -9,7 +9,7 @@
     <string name="orders_received">Orders Received</string>
     <string name="inventory">Inventory</string>
 
-<!--    Sign up flow-->
+    <!--    Sign up flow-->
     <string name="sign_up_customer">Customer Sign Up</string>
     <string name="sign_up_vendor">Vendor Sign Up</string>
     <string name="additional_details">Additional Details</string>
@@ -48,7 +48,7 @@
     <string name="about_shop_text">About Shop</string>
     <string name="verify_otp">Verify</string>
 
-<!--    Inventory item-->
+    <!--    Inventory item-->
     <string name="add_item_to_inventory">Add new item to Inventory</string>
     <string name="new_item_name">Item Name</string>
     <string name="new_item_type">Item Type</string>
@@ -59,11 +59,13 @@
     <string name="label_popular">Popular</string>
     <string name="rupee_symbol">₹</string>
 
-<!--    Toolbar action items-->
+    <!--    Toolbar action items-->
     <string name="log_out">Log Out</string>
     <string name="shopping_cart">Shopping Cart</string>
     <string name="search">Search</string>
     <string name="no_vendors_found_text">No vendors found in your area :(</string>
     <string name="vendor_name">Vendor Name</string>
     <string name="shops_in_the_area_text">"Shops in the area "</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="save_text">Save</string>
 </resources>
