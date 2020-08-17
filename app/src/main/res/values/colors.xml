@@ -26,5 +26,5 @@
     <color name="White">#FFF</color>
     <color name="CardTextColor">@color/colorPrimary</color>
 
-    <color name="ProgressbarBackground">#78D64550</color>
+    <color name="ProgressbarBackground">#78D75C66</color>
 </resources>

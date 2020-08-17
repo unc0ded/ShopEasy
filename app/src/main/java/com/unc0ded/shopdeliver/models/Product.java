@@ -25,6 +25,9 @@ public class Product {
     @SerializedName("popularLabel")
     @Expose
     private Boolean popularLabel;
+    @SerializedName("downloadUrl")
+    @Expose
+    private String downloadUrl;
 
     public String getName() {
         return name;
@@ -80,5 +83,13 @@ public class Product {
 
     public void setPopularLabel(Boolean popularLabel) {
         this.popularLabel = popularLabel;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUri) {
+        this.downloadUrl = downloadUrl;
     }
 }

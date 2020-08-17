@@ -23,5 +23,6 @@
     <dialog
         android:id="@+id/addToInventoryDialogFragment"
         android:name="com.unc0ded.shopdeliver.views.fragments.AddToInventoryDialogFragment"
-        android:label="AddToInventoryDialogFragment" />
+        android:label="AddToInventoryDialogFragment"
+        tools:layout="@layout/fragment_add_to_inventory"/>
 </navigation>

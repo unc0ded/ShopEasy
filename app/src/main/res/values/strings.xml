@@ -68,4 +68,7 @@
     <string name="shops_in_the_area_text">"Shops in the area "</string>
     <string name="cancel_text">Cancel</string>
     <string name="save_text">Save</string>
+    <string name="upload_from_text">Upload from</string>
+    <string name="gallery_text">Gallery</string>
+    <string name="camera_text">Camera</string>
 </resources>

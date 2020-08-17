@@ -1,5 +1,6 @@
 package com.unc0ded.shopdeliver.viewmodels;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -20,8 +21,10 @@ public class VendorMainActivityViewModel extends ViewModel {
 
     private MutableLiveData<Boolean> isFetching = new MutableLiveData<>(false);
     public LiveData<Boolean> getIsFetching(){ return isFetching; }
+
     private MutableLiveData<String> isUploading = new MutableLiveData<>();
     public LiveData<String> getIsUploading(){ return isUploading; }
+
     private MutableLiveData<ArrayList<Product>> vendorList = new MutableLiveData<>();
     public LiveData<ArrayList<Product>> getVendorList(){ return vendorList; }
 
@@ -51,8 +54,8 @@ public class VendorMainActivityViewModel extends ViewModel {
         });
     }
 
-    public void addProduct(Product newProduct){
-        inventoryRepo.addProduct(newProduct, new OnCompletePostListener() {
+    public void addProduct(Product newProduct, FirebaseAuth auth, Uri uploadUri){
+        inventoryRepo.addProduct(newProduct, uploadUri, auth,  new OnCompletePostListener() {
             @Override
             public void onStart() {
                 isUploading.setValue(STATUS_IS_UPLOADING);
@@ -71,5 +74,4 @@ public class VendorMainActivityViewModel extends ViewModel {
             }
         });
     }
-
 }
