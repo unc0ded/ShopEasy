@@ -1,6 +1,7 @@
 package com.unc0ded.shopdeliver.views.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,10 +41,14 @@ public class customerShopsListFragment extends Fragment {
         mCustomerMainActivityVM = new ViewModelProvider(this).get(CustomerMainActivityViewModel.class);
 
         mCustomerMainActivityVM.getIsFetching().observe(this, isLoading -> {
-            if (isLoading)
+            if (isLoading){
                 binding.swipeRefresh.setRefreshing(true);
-            else
-                binding.swipeRefresh.setRefreshing(false);
+            }
+            else{
+                new Handler().postDelayed(() -> {
+                    binding.swipeRefresh.setRefreshing(false);
+                }, 1000);
+            }
         });
 
         mCustomerMainActivityVM.getVendors().observe(this, vendors -> {

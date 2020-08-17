@@ -1,10 +1,17 @@
 package com.unc0ded.shopdeliver.repositories;
 
+import android.net.Uri;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.unc0ded.shopdeliver.listenerinterfaces.OnCompleteFetchListener;
@@ -18,6 +25,7 @@ public class InventoryRepository {
 
     private static InventoryRepository instance;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private StorageReference sr = FirebaseStorage.getInstance().getReference().child("Inventory/");
 
     private ArrayList<Product> dataSet = new ArrayList<>();
     private static Gson gsonInstance = new GsonBuilder().setPrettyPrinting().create();
@@ -50,10 +58,36 @@ public class InventoryRepository {
                 });
     }
 
-    public void addProduct(Product newProduct, OnCompletePostListener listener){
+    public void addProduct(Product newProduct, Uri uploadUri, FirebaseAuth vendor, @NonNull OnCompletePostListener listener){
         listener.onStart();
         db.collection("Inventory").add(newProduct)
-                .addOnSuccessListener(documentReference -> listener.onSuccess(new Throwable("Added product successfully")))
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        listener.onSuccess(new Throwable("Added product(" + documentReference.getId() +") successfully"));
+                        if (uploadUri != null)
+                            uploadImage(vendor.getUid() + "/" + documentReference.getId() + ".jpeg", uploadUri, documentReference.getId());
+                    }
+                })
                 .addOnFailureListener(listener::onFailure);
+    }
+
+    public void uploadImage(String path, Uri image, String documentReferenceId){
+        StorageReference filePath = sr.child(path);
+        filePath.putFile(image).addOnSuccessListener(taskSnapshot -> {
+            filePath.getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null){
+                    db.collection("Inventory").document(documentReferenceId)
+                            .update("downloadUrl", task.getResult().toString())
+                            .addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful())
+                                    Log.i("Upload product " + documentReferenceId + " image", "SUCCESS");
+                                else
+                                    Log.i("Upload product " + documentReferenceId + " image", "FAILED - " + task.getException());
+                            });
+                }else
+                    Log.i("Upload product " + documentReferenceId + " image", "FAILED - " + task.getException());
+            });
+        });
     }
 }

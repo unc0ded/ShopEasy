@@ -1,6 +1,7 @@
 package com.unc0ded.shopdeliver.views.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +10,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
+import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.databinding.FragmentVendorInventoryBinding;
 import com.unc0ded.shopdeliver.models.Product;
 import com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel;
 import com.unc0ded.shopdeliver.views.adapters.InventoryItemAdapter;
-import com.unc0ded.shopdeliver.views.widgets.AddItemDialog;
 
 import java.util.ArrayList;
 
@@ -46,7 +48,13 @@ public class vendorInventoryFragment extends Fragment {
         vendorAuth = FirebaseAuth.getInstance();
 
         vendorMainActivityViewModel.getIsFetching().observe(this, status -> {
-            binding.swipeRefreshItemList.setRefreshing(status);
+            if (status){
+                binding.swipeRefreshItemList.setRefreshing(true);
+            }else{
+                new Handler().postDelayed(() -> {
+                    binding.swipeRefreshItemList.setRefreshing(false);
+                }, 1000);
+            }
         });
 
         vendorMainActivityViewModel.getVendorList().observe(this, inventory -> {
@@ -96,18 +104,21 @@ public class vendorInventoryFragment extends Fragment {
             if (vendorAuth.getUid() != null)
                 vendorMainActivityViewModel.fetchVendorInventory(vendorAuth);
             else{
-                binding.swipeRefreshItemList.setRefreshing(false);
-                binding.message.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(() -> {
+                    binding.swipeRefreshItemList.setRefreshing(false);
+                    binding.message.setVisibility(View.VISIBLE);
+                }, 1000);
             }
         });
 
         binding.addFab.setOnClickListener(view1 -> {
-            final AddItemDialog addItemDialog = new AddItemDialog(requireContext());
-            new MaterialAlertDialogBuilder(requireContext()).setView(addItemDialog)
-                    .setCancelable(false)
-                    .setPositiveButton("Save", (dialogInterface, i) -> addItemDialog.save(dialogInterface, vendorAuth))
-                    .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
-                    .show();
+            FragmentManager fragmentManager = getParentFragmentManager();
+            AddToInventoryDialogFragment addToInventoryDialogFragment  = new AddToInventoryDialogFragment();
+
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            transaction.add(R.id.vendor_nav_host_fragment, addToInventoryDialogFragment)
+                    .addToBackStack(null).commit();
         });
 
         if (vendorAuth.getUid() != null){
