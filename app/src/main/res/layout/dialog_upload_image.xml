@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/compColor"
     android:orientation="vertical">
 
@@ -10,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:fontFamily="@font/sora_light"
+        android:fontFamily="@font/sora_regular"
         android:text="@string/upload_from_text"
         android:textAlignment="center"
         android:textColor="#000"
@@ -25,18 +26,20 @@
             android:id="@+id/gallery_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:icon="@drawable/ic_photo_24px"
             android:layout_margin="10dp"
             android:backgroundTint="@color/bgColor"
-            android:fontFamily="@font/sora_light"
+            android:fontFamily="@font/sora_regular"
             android:text="@string/gallery_text"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/camera_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:icon="@drawable/ic_photo_camera_24px"
             android:layout_margin="10dp"
             android:backgroundTint="@color/bgColor"
-            android:fontFamily="@font/sora_light"
+            android:fontFamily="@font/sora_regular"
             android:text="@string/camera_text" />
     </LinearLayout>
 

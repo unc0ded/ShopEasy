@@ -8,12 +8,10 @@
     tools:context=".views.fragments.LoginFragment"
     android:background="@color/darkBackground">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
 
         <LinearLayout
             android:layout_width="match_parent"

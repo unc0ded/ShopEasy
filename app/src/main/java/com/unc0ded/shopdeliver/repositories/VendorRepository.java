@@ -2,6 +2,9 @@ package com.unc0ded.shopdeliver.repositories;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -10,13 +13,20 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.unc0ded.shopdeliver.listenerinterfaces.OnCompleteFetchListener;
 import com.unc0ded.shopdeliver.listenerinterfaces.OnCompletePostListener;
+import com.unc0ded.shopdeliver.models.Customer;
 import com.unc0ded.shopdeliver.models.Vendor;
+import com.unc0ded.shopdeliver.retrofit.RetrofitClient;
+import com.unc0ded.shopdeliver.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class VendorRepository {
 
@@ -26,13 +36,32 @@ public class VendorRepository {
     private CollectionReference vendorFdb = FirebaseFirestore.getInstance().collection("Vendors");
     FirebaseAuth vendorAuth = FirebaseAuth.getInstance();
 
-    Gson gsonInstance = new GsonBuilder().setPrettyPrinting().create();
+    private Gson gsonInstance = new GsonBuilder().setPrettyPrinting().create();
 
     public static VendorRepository getInstance(){
         if(instance == null){
             instance = new VendorRepository();
         }
         return instance;
+    }
+
+    public MutableLiveData<Vendor> registerVendor(SessionManager sessionManager, Vendor vendor) {
+        MutableLiveData<Vendor> createdVendor = new MutableLiveData<>();
+        RetrofitClient.getClient(sessionManager).createVendor(vendor).enqueue(new Callback<Vendor>() {
+            @Override
+            public void onResponse(@NonNull Call<Vendor> call, @NonNull Response<Vendor> response) {
+                if (response.isSuccessful())
+                    createdVendor.postValue(response.body());
+                else
+                    createdVendor.postValue(null);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Vendor> call, @NonNull Throwable t) {
+                createdVendor.postValue(null);
+            }
+        });
+        return createdVendor;
     }
 
     public void fetchVendorList(String PIN_CODE, OnCompleteFetchListener fetchListener){
@@ -56,27 +85,5 @@ public class VendorRepository {
             }
 
         }).addOnFailureListener(fetchListener::onFailure); /* This is equivalent to fetchListener.onFailure(e) */
-    }
-
-    public void registerVendor(Vendor newVendor, String uid, OnCompletePostListener listener) {
-        listener.onStart();
-        vendorFdb.document(newVendor.getAddress().getPinCode()).get().addOnSuccessListener(documentSnapshot -> {
-            if (!documentSnapshot.exists()){
-                HashMap<String, Date> timeStamp = new HashMap<>();
-                timeStamp.put("New pin code available:", Calendar.getInstance().getTime());
-                vendorFdb.document(newVendor.getAddress().getPinCode()).set(timeStamp)
-                        .addOnSuccessListener(aVoid -> vendorFdb.document(newVendor.getAddress().getPinCode()).update(Objects.requireNonNull(vendorAuth.getCurrentUser()).getUid(), newVendor)
-                                .addOnSuccessListener(aVoid1 -> {
-                                    listener.onSuccess(new Throwable("Upload success"));
-                                })
-                                .addOnFailureListener(listener::onFailure));
-            }else{
-                vendorFdb.document(newVendor.getAddress().getPinCode()).update(Objects.requireNonNull(vendorAuth.getCurrentUser()).getUid(), newVendor)
-                        .addOnSuccessListener(aVoid -> {
-                            listener.onSuccess(new Throwable("Upload success"));
-                        })
-                        .addOnFailureListener(listener::onFailure);
-            }
-        });
     }
 }

@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.unc0ded.shopdeliver.databinding.InventoryListItemBinding;
+import com.unc0ded.shopdeliver.databinding.ItemInventoryListBinding;
 import com.unc0ded.shopdeliver.models.Product;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
     @NonNull
     @Override
     public InventoryVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new InventoryVH(InventoryListItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        return new InventoryVH(ItemInventoryListBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -40,9 +40,9 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
 
     static class InventoryVH extends RecyclerView.ViewHolder {
 
-        InventoryListItemBinding binding;
+        ItemInventoryListBinding binding;
 
-        public InventoryVH(@NonNull InventoryListItemBinding binding) {
+        public InventoryVH(@NonNull ItemInventoryListBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

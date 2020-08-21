@@ -1,26 +1,24 @@
 package com.unc0ded.shopdeliver.repositories;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.unc0ded.shopdeliver.listenerinterfaces.OnAuthenticationListener;
+import com.google.gson.JsonObject;
+import com.unc0ded.shopdeliver.retrofit.RetrofitClient;
+import com.unc0ded.shopdeliver.utils.SessionManager;
 
+import java.util.Map;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AuthenticationRepository {
 
     private static AuthenticationRepository instance;
-
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public static AuthenticationRepository getInstance(){
         if (instance == null)
@@ -28,86 +26,93 @@ public class AuthenticationRepository {
         return instance;
     }
 
-    //Login Fragment
-    public void authenticateForSignIn(PhoneAuthCredential credentials, @NonNull OnAuthenticationListener listener){
-        listener.onStart();
-        auth.signInWithCredential(credentials).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+    public MutableLiveData<JsonObject> requestOtpForSignUp(SessionManager sessionManager, String type, Map<String, Object> body) {
+        MutableLiveData<JsonObject> requestStatus = new MutableLiveData<>();
+        RetrofitClient.getClient(sessionManager).getOtp(type, body).enqueue(new Callback<JsonObject>() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
-                    db.collection("Customers").document(Objects.requireNonNull(auth.getCurrentUser()).getUid()).get()
-                            .addOnSuccessListener(documentSnapshot -> {
-                                if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
-                                    listener.onSuccess(new Throwable("customer"));
-                                }
-                                else {
-                                    listener.onSuccess(new Throwable("vendor"));
-                                }
-                            })
-                            .addOnFailureListener(listener::onFailure);
-                }else{
-                    if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                        listener.onFailure(new Exception("WrongOTP"));
-                    }else{
-                        listener.onFailure(new Exception("signInWithPhone failed"));
-                    }
+            public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    requestStatus.postValue(response.body());
+                }
+                else {
+                    Log.e("OtpRequest", response.message());
+                    requestStatus.postValue(null);
                 }
             }
-        });
-    }
-    public void authenticateForSignIn(String email, String password, @NonNull OnAuthenticationListener listener){
-        listener.onStart();
-        auth.signInWithEmailAndPassword(Objects.requireNonNull(Objects.requireNonNull(email))
-                , Objects.requireNonNull(password))
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        db.collection("Customers").document(Objects.requireNonNull(auth.getCurrentUser()).getUid()).get()
-                                .addOnSuccessListener(documentSnapshot -> {
-                                    if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
-                                        listener.onSuccess(new Throwable("customer"));
-                                    }
-                                    else {
-                                        listener.onSuccess(new Throwable("vendor"));
-                                    }
-                                })
-                                .addOnFailureListener(listener::onFailure);
-                    }else{
-                        listener.onFailure(new Exception("signInWithEmailAndPassword failed"));
-                    }
-                });
-    }
 
-    //customerSignUpMain & vendorSignUpMain
-    public void authenticateForSignUp(PhoneAuthCredential credential, @NonNull OnAuthenticationListener listener){
-        listener.onStart();
-        auth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
-                    listener.onSuccess(new Throwable("Authentication with phone successful"));
-                }else{
-                    if (task.getException() instanceof FirebaseAuthInvalidCredentialsException){
-                        listener.onFailure(new Exception("WrongOTP"));
-                    }else{
-                        listener.onFailure(new Exception("signUpWithPhone failed"));
-                    }
-                }
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("OtpRequest", Objects.requireNonNull(t.getMessage()));
+                requestStatus.postValue(null);
             }
         });
+        return requestStatus;
     }
 
-    //customerSignUpDetails & vendorSignUpDetails
-    public void linkEmail(String email, String password, @NonNull OnAuthenticationListener listener){
-        listener.onStart();
-        AuthCredential emailCredential = EmailAuthProvider.getCredential(email, password);
-        Objects.requireNonNull(auth.getCurrentUser()).linkWithCredential(emailCredential)
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        listener.onSuccess(new Throwable("Email link success"));
-                    }
-                    else {
-                        listener.onFailure(task.getException());
-                    }
-                });
+    public MutableLiveData<JsonObject> verifyOtpForSignUp(SessionManager sessionManager, Map<String, Object> body) {
+        MutableLiveData<JsonObject> verificationResult = new MutableLiveData<>();
+        RetrofitClient.getClient(sessionManager).verifyOtp(body).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    verificationResult.postValue(response.body());
+                }
+                else {
+                    Log.e("VerificationResult", response.message());
+                    verificationResult.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("VerificationResult", Objects.requireNonNull(t.getMessage()));
+                verificationResult.postValue(null);
+            }
+        });
+        return verificationResult;
+    }
+
+    public MutableLiveData<JsonObject> requestOtpForLogin(SessionManager sessionManager, Map<String, Object> body) {
+        MutableLiveData<JsonObject> requestStatus = new MutableLiveData<>();
+        RetrofitClient.getClient(sessionManager).getLoginOtp(body).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
+                if (response.isSuccessful())
+                    requestStatus.postValue(response.body());
+                else {
+                    Log.e("LoginOtpRequest", response.message());
+                    requestStatus.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("LoginOtpRequest", Objects.requireNonNull(t.getMessage()));
+                requestStatus.postValue(null);
+            }
+        });
+        return requestStatus;
+    }
+
+    public MutableLiveData<JsonObject> verifyOtpForLogin(SessionManager sessionManager, Map<String, Object> body) {
+        MutableLiveData<JsonObject> verificationResult = new MutableLiveData<>();
+        RetrofitClient.getClient(sessionManager).verifyLoginOtp(body).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
+                if (response.isSuccessful())
+                    verificationResult.postValue(response.body());
+                else {
+                    Log.e("LoginVerificationResult", response.message());
+                    verificationResult.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("LoginVerificationResult", Objects.requireNonNull(t.getMessage()));
+                verificationResult.postValue(null);
+            }
+        });
+        return verificationResult;
     }
 }

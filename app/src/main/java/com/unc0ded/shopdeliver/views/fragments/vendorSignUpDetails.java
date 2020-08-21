@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,30 +15,28 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.ShopEasy;
 import com.unc0ded.shopdeliver.databinding.FragmentVendorSignUpDetailsBinding;
 import com.unc0ded.shopdeliver.models.Vendor;
+import com.unc0ded.shopdeliver.utils.SessionManager;
 import com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel;
 import com.unc0ded.shopdeliver.views.activities.vendorMainActivity;
 
 import java.util.Objects;
 
-import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_FAILED;
-import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_STARTS;
-import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_SUCCESS;
-
 public class vendorSignUpDetails extends Fragment {
 
     FragmentVendorSignUpDetailsBinding binding;
-    LoginActivityViewModel loginActivityVM = new LoginActivityViewModel();
+    LoginActivityViewModel loginActivityVM;
+    private SessionManager sessionManager;
 
-    String phone;
+    private String phone;
 
     FirebaseAuth vendorAuth;
-
-    Vendor newVendor = new Vendor();
 
     //empty constructor
     public vendorSignUpDetails() {
@@ -46,44 +45,6 @@ public class vendorSignUpDetails extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        loginActivityVM.getIsUploading().observe(this, isUploading -> {
-            switch (isUploading){
-                case STATUS_FAILED:
-                    Toast.makeText(requireContext(), "Authentication failed! Please try again", Toast.LENGTH_LONG).show();
-                    binding.progressbar.setVisibility(View.GONE);
-                    break;
-                case STATUS_SUCCESS:
-                    Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
-                    binding.progressbar.setVisibility(View.GONE);
-                    startActivity(new Intent(requireContext(), vendorMainActivity.class));
-                    requireActivity().finish();
-                    break;
-                case STATUS_STARTS:
-                    binding.progressbar.setVisibility(View.VISIBLE);
-                    break;
-                default:
-                    binding.progressbar.setVisibility(View.GONE);
-                    break;
-            }
-        });
-
-        loginActivityVM.getAuthStatus().observe(this, status -> {
-            switch (status){
-                case STATUS_SUCCESS:
-                    binding.progressbar.setVisibility(View.GONE);
-                    Toast.makeText(requireContext(), "Email linked successfully", Toast.LENGTH_SHORT).show();
-                    loginActivityVM.registerUser(newVendor, vendorAuth.getUid());
-                    break;
-                case STATUS_FAILED:
-                    binding.progressbar.setVisibility(View.GONE);
-                    Toast.makeText(requireContext(), "Could not link email! Try again later!", Toast.LENGTH_SHORT).show();
-                    break;
-                case STATUS_STARTS:
-                    binding.progressbar.setVisibility(View.VISIBLE);
-                    break;
-            }
-        });
     }
 
     @Override
@@ -97,17 +58,20 @@ public class vendorSignUpDetails extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         phone = vendorSignUpDetailsArgs.fromBundle(requireArguments()).getPhone();
+        sessionManager = ((ShopEasy)requireActivity().getApplication()).getSessionManager();
+        loginActivityVM = new ViewModelProvider(requireActivity()).get(LoginActivityViewModel.class);
 
         vendorAuth = FirebaseAuth.getInstance();
 
-        final String[] STATES = new String[]{"MAHARASHTRA", "GOA"};
-        ArrayAdapter<String> adapter_state = new ArrayAdapter<>(requireContext(), R.layout.dropdown_item, STATES);
-        binding.state.setAdapter(adapter_state);
+        ArrayAdapter<String> adapterState = new ArrayAdapter<>(requireContext(), R.layout.item_dropdown, getResources().getStringArray(R.array.states));
+        binding.state.setAdapter(adapterState);
         final String[] SHOP_TYPES = new String[]{"Grocery", "Medical Store", "Supermarket"};
-        ArrayAdapter<String> adapter_shop_type = new ArrayAdapter<>(requireContext(), R.layout.dropdown_item, SHOP_TYPES);
-        binding.shopType.setAdapter(adapter_shop_type);
+        ArrayAdapter<String> adapterShopType = new ArrayAdapter<>(requireContext(), R.layout.item_dropdown, SHOP_TYPES);
+        binding.shopType.setAdapter(adapterShopType);
 
         binding.signUpBtn.setOnClickListener(v -> {
+            binding.progressbar.setVisibility(View.VISIBLE);
+            Vendor newVendor = new Vendor();
             ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
             boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
@@ -117,32 +81,58 @@ public class vendorSignUpDetails extends Fragment {
                 newVendor.getProprietor().setLastName(binding.lastName.getText().toString().trim());
                 newVendor.setShopName(binding.shopName.getText().toString().trim());
                 newVendor.setType(binding.shopType.getText().toString().trim());
-                newVendor.getAddress().setAddressLine1(binding.firstLine.getText().toString().trim());
-                newVendor.getAddress().setAddressLine2(binding.secondLine.getText().toString().trim());
+                newVendor.getAddress().setLine1(binding.firstLine.getText().toString().trim());
+                newVendor.getAddress().setLine2(binding.secondLine.getText().toString().trim());
                 newVendor.getAddress().setPinCode(binding.pinCode.getText().toString().trim());
                 newVendor.getAddress().setCity(binding.city.getText().toString().trim());
                 newVendor.getAddress().setState(binding.state.getText().toString().trim());
                 newVendor.getProprietor().setEmail(binding.emailId.getText().toString().trim());
                 newVendor.getProprietor().setPhone(phone);
-                String password = binding.password.getText().toString().trim();
-                String re_enter_password = binding.reEnterPassword.getText().toString().trim();
+                final String password = binding.password.getText().toString().trim();
+                final String reEnterPassword = binding.reEnterPassword.getText().toString().trim();
 
                 if (newVendor.getProprietor().getFirstName().isEmpty() || newVendor.getProprietor().getLastName().isEmpty() || newVendor.getShopName().isEmpty()
-                        || newVendor.getType().isEmpty() || newVendor.getAddress().getAddressLine1().isEmpty() || newVendor.getAddress().getAddressLine2().isEmpty()
+                        || newVendor.getType().isEmpty() || newVendor.getAddress().getLine1().isEmpty() || newVendor.getAddress().getLine2().isEmpty()
                         || newVendor.getAddress().getCity().isEmpty() || newVendor.getAddress().getState().isEmpty() || newVendor.getAddress().getPinCode().isEmpty())
                     Toast.makeText(getContext(), "Please fill all the compulsory fields", Toast.LENGTH_LONG).show();
                 else if (newVendor.getProprietor().getEmail().isEmpty()) {
                     if (validatePinCode(newVendor.getAddress().getPinCode())){
                         newVendor.getProprietor().setEmail(null);
-                        loginActivityVM.registerUser(newVendor, vendorAuth.getUid());
+                        loginActivityVM.registerVendor(sessionManager, newVendor).observe(getViewLifecycleOwner(), vendor -> {
+                            if (vendor != null) {
+                                binding.progressbar.setVisibility(View.GONE);
+                                Toast.makeText(requireContext(), getResources().getString(R.string.welcome_vendor, vendor.getShopName()), Toast.LENGTH_SHORT).show();
+                                loginActivityVM.clearNewVendor();
+                                startActivity(new Intent(requireContext(), vendorMainActivity.class));
+                                requireActivity().finish();
+                            }
+                            else {
+                                Log.e("Vendor Registration", "Unknown error");
+                                Toast.makeText(requireContext(), "Unknown Error", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                     else
                         Toast.makeText(getContext(), "Please enter a valid pin code", Toast.LENGTH_SHORT).show();
                 }
-                else if ((password.isEmpty() || re_enter_password.isEmpty()))
+                else if ((password.isEmpty() || reEnterPassword.isEmpty()))
                     Toast.makeText(getContext(), "Please fill all the fields", Toast.LENGTH_LONG).show();
-                else if (password.equals(re_enter_password)) {
-                    loginActivityVM.linkEmail(newVendor.getProprietor().getEmail(), re_enter_password);
+                else if (password.equals(reEnterPassword)) {
+                    /*TODO Link Email
+                    if (validatePinCode(newVendor.getAddress().getPinCode())){
+                        loginActivityVM.registerVendor(sessionManager, newVendor).observe(getViewLifecycleOwner(), vendor -> {
+                            if (vendor != null) {
+                                binding.progressbar.setVisibility(View.GONE);
+                                Toast.makeText(requireContext(), getResources().getString(R.string.welcome_vendor, vendor.getShopName()), Toast.LENGTH_SHORT).show();
+                                loginActivityVM.clearNewVendor();
+                                startActivity(new Intent(requireContext(), vendorMainActivity.class));
+                                requireActivity().finish();
+                            }
+                        });
+                    }
+                    else
+                        Toast.makeText(getContext(), "Please enter a valid pin code", Toast.LENGTH_SHORT).show();
+                     */
                 }
                 else
                     Toast.makeText(getContext(), "Passwords don't match", Toast.LENGTH_LONG).show();
@@ -160,9 +150,6 @@ public class vendorSignUpDetails extends Fragment {
     }
 
     private boolean validatePinCode(String pin_code) {
-        if (pin_code.length() == 6 && !pin_code.startsWith("0"))
-            return true;
-        else
-            return false;
+        return pin_code.length() == 6 && !pin_code.startsWith("0");
     }
 }

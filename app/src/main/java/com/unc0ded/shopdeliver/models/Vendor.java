@@ -4,6 +4,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Vendor {
+
+    @SerializedName("_id")
+    @Expose
+    private String id;
     @SerializedName("shopName")
     @Expose
     private String shopName;
@@ -20,6 +24,10 @@ public class Vendor {
     public Vendor() {
         address = new Address();
         proprietor = new Proprietor();
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getShopName() {

@@ -1,5 +1,8 @@
 package com.unc0ded.shopdeliver.repositories;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
@@ -8,6 +11,12 @@ import com.google.gson.JsonObject;
 import com.unc0ded.shopdeliver.listenerinterfaces.OnCompleteFetchListener;
 import com.unc0ded.shopdeliver.listenerinterfaces.OnCompletePostListener;
 import com.unc0ded.shopdeliver.models.Customer;
+import com.unc0ded.shopdeliver.retrofit.RetrofitClient;
+import com.unc0ded.shopdeliver.utils.SessionManager;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CustomerRepository {
 
@@ -22,13 +31,23 @@ public class CustomerRepository {
         return instance;
     }
 
-    public void registerCustomer(Customer customer, String uid, OnCompletePostListener listener){
-        listener.onStart();
-        customerFdb.document(uid).set(customer)
-                .addOnSuccessListener(aVoid -> {
-                    listener.onSuccess(new Throwable("Upload success"));
-                })
-                .addOnFailureListener(listener::onFailure);
+    public MutableLiveData<Customer> registerCustomer(SessionManager sessionManager, Customer customer) {
+        MutableLiveData<Customer> createdCustomer = new MutableLiveData<>();
+        RetrofitClient.getClient(sessionManager).createCustomer(customer).enqueue(new Callback<Customer>() {
+            @Override
+            public void onResponse(@NonNull Call<Customer> call, @NonNull Response<Customer> response) {
+                if (response.isSuccessful())
+                    createdCustomer.postValue(response.body());
+                else
+                    createdCustomer.postValue(null);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Customer> call, @NonNull Throwable t) {
+                createdCustomer.postValue(null);
+            }
+        });
+        return createdCustomer;
     }
 
     public void getCustomer(String uid, OnCompleteFetchListener listener){

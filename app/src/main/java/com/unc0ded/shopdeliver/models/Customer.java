@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Customer {
 
+    @SerializedName("_id")
+    @Expose
+    private String id;
     @SerializedName("firstName")
     @Expose
     private String firstName;
@@ -21,13 +24,16 @@ public class Customer {
     @Expose
     private Address address;
 
-
     public Customer(){
         address = new Address();
     }
 
     public Address getAddress() {
         return address;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public void setAddress(Address address) {

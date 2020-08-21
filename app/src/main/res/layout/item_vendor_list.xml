@@ -68,7 +68,5 @@
                 android:textSize="20sp" />
 
         </RelativeLayout>
-
     </LinearLayout>
-
 </com.google.android.material.card.MaterialCardView>

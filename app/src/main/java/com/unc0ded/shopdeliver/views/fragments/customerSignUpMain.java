@@ -12,38 +12,30 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.firebase.FirebaseException;
-import com.google.firebase.FirebaseTooManyRequestsException;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthProvider;
+import com.unc0ded.shopdeliver.ShopEasy;
 import com.unc0ded.shopdeliver.databinding.FragmentCustomerSignUpMainBinding;
+import com.unc0ded.shopdeliver.utils.SessionManager;
 import com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel;
+import com.unc0ded.shopdeliver.views.widgets.OtpWidget;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
-import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_FAILED;
-import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_PROCESSING;
-import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_VERIFIED;
-import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_WRONG_OTP;
 
 public class customerSignUpMain extends Fragment {
 
     FragmentCustomerSignUpMainBinding binding;
-    LoginActivityViewModel loginActivityVM = new LoginActivityViewModel();
+    LoginActivityViewModel loginActivityVM;
+    SessionManager sessionManager;
 
-    private String verificationId;
-    private View rootView;
-
-    //Firebase
-    private FirebaseAuth customerAuth = FirebaseAuth.getInstance();
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks customerCallbacks;
+    private String phoneNumber;
+    AlertDialog otpDialog;
 
     //empty constructor
     public customerSignUpMain() {
@@ -52,34 +44,6 @@ public class customerSignUpMain extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        loginActivityVM.getAuthStatus().observe(this, status -> {
-            switch(status){
-                case STATUS_VERIFIED:
-                    Toast.makeText(requireContext(), "Phone number verified!", Toast.LENGTH_SHORT).show();
-                    customerSignUpMainDirections.ActionCustomerSignUpMainToCustomerSignUpDetails action = customerSignUpMainDirections.actionCustomerSignUpMainToCustomerSignUpDetails("+91 "+binding.phoneNumber.getText().toString().trim());
-                    Navigation.findNavController(rootView).navigate(action);
-                    binding.progressbar.setVisibility(View.GONE);
-                    break;
-                case STATUS_WRONG_OTP:
-                    binding.otp.setEnabled(true);
-                    binding.validateOtpBtn.setEnabled(true);
-                    binding.progressbar.setVisibility(View.GONE);
-                    Toast.makeText(requireContext(), "Invalid OTP!", Toast.LENGTH_SHORT).show();
-                    break;
-                case STATUS_FAILED:
-                    binding.otp.setEnabled(false);
-                    binding.validateOtpBtn.setEnabled(false);
-                    binding.phoneNumber.setEnabled(true);
-                    binding.otpBtn.setEnabled(true);
-                    Toast.makeText(requireContext(), "Something went wrong!", Toast.LENGTH_SHORT).show();
-                    binding.progressbar.setVisibility(View.GONE);
-                    break;
-                case STATUS_PROCESSING:
-                    binding.progressbar.setVisibility(View.VISIBLE);
-                    break;
-            }
-        });
     }
 
     @Override
@@ -91,13 +55,11 @@ public class customerSignUpMain extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rootView = view;
 
-        binding.otp.setEnabled(false);
-        binding.validateOtpBtn.setEnabled(false);
+        loginActivityVM = new ViewModelProvider(requireActivity()).get(LoginActivityViewModel.class);
+        sessionManager = ((ShopEasy)requireActivity().getApplication()).getSessionManager();
 
         binding.otpBtn.setOnClickListener(v -> {
-
             ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
             boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
@@ -105,80 +67,74 @@ public class customerSignUpMain extends Fragment {
             if (isConnected){
                 MaterialAlertDialogBuilder otpAlertBuilder = new MaterialAlertDialogBuilder(requireContext());
                 otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .setPositiveButton("Accept",
                                 (dialog, which) -> {
-                                    if((Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim().length()) != 10)
-                                    {
+                                    if((Objects.requireNonNull(binding.phoneNumber.getText()).toString().trim().length()) != 10) {
                                         Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
                                     }
-                                    else
-                                    {
-                                        PhoneAuthProvider.getInstance().verifyPhoneNumber("+91"+Objects.requireNonNull(binding.phoneNumber.getText()).toString()
-                                                ,60, TimeUnit.SECONDS
-                                                , requireActivity()
-                                                ,customerCallbacks);
+                                    else {
+                                        phoneNumber = "+91" + Objects.requireNonNull(binding.phoneNumber.getText()).toString();
+                                        Map<String, Object> bodyMap = new HashMap<>();
+                                        bodyMap.put("phone", phoneNumber);
+                                        loginActivityVM.requestOtp(sessionManager, "customer", bodyMap);
                                         binding.progressbar.setVisibility(View.VISIBLE);
                                     }
-                                    dialog.cancel();
+                                    dialog.dismiss();
                                 })
-                        .setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).show();
+                        .setNegativeButton("Cancel",
+                                (dialog, which) -> dialog.cancel()).show();
             }
             else
                 Toast.makeText(getContext(), "No internet connection!", Toast.LENGTH_LONG).show();
         });
 
+        loginActivityVM.getOtpRequestStatus().observe(getViewLifecycleOwner(), jsonObject -> {
+            if (jsonObject != null && jsonObject.get("error").isJsonNull()) {
+                binding.progressbar.setVisibility(View.GONE);
+                Toast.makeText(requireContext(), "OTP has been sent", Toast.LENGTH_SHORT).show();
 
-        binding.validateOtpBtn.setOnClickListener(v -> {
-            if(Objects.requireNonNull(binding.otp.getText()).toString().isEmpty()) {
-                Toast.makeText(getContext(), "Please enter OTP.", Toast.LENGTH_SHORT).show();
-            } else {
-                PhoneAuthCredential customerCredential = PhoneAuthProvider.getCredential(verificationId, Objects.requireNonNull(binding.otp.getText()).toString());
-                loginActivityVM.signUpWithPhone(customerCredential);
+                OtpWidget otpView = new OtpWidget(requireContext());
+                otpView.getVerifyBtn().setOnClickListener(v -> {
+                    if (!otpView.getOtpView().getText().toString().isEmpty() && otpView.getOtpView().getText().toString().length() == 6) {
+                        Map<String, Object> bodyMap = new HashMap<>();
+                        bodyMap.put("phone", phoneNumber);
+                        bodyMap.put("code", otpView.getOtpView().getText().toString());
+                        loginActivityVM.verifyOtp(sessionManager, bodyMap);
+                        loginActivityVM.clearOtpRequestStatus();
+                    }
+                    else
+                        Toast.makeText(requireContext(), "Please enter complete OTP", Toast.LENGTH_SHORT).show();
+                });
+                otpDialog = new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Enter OTP")
+                        .setCancelable(false)
+                        .setView(otpView)
+                        .show();
             }
+            else if (jsonObject != null && !jsonObject.get("error").isJsonNull()) {
+                binding.progressbar.setVisibility(View.GONE);
+                Toast.makeText(requireContext(), jsonObject.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+                loginActivityVM.clearOtpRequestStatus();
+            }
+            else Log.e("RequestStatus", "Empty");
         });
 
-        customerCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            @Override
-            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-                binding.progressbar.setVisibility(View.GONE);
-                Log.d("customerCallbacks", "onVerificationCompleted:" + phoneAuthCredential);
-                loginActivityVM.signUpWithPhone(phoneAuthCredential);
+        loginActivityVM.getVerificationResult().observe(getViewLifecycleOwner(), jsonObject -> {
+            if (jsonObject != null && jsonObject.get("success").getAsBoolean()) {
+                sessionManager.saveAuthToken(jsonObject.get("token").getAsString());
+                Toast.makeText(requireContext(), "Verified!", Toast.LENGTH_SHORT).show();
+                if (otpDialog.isShowing()) otpDialog.dismiss();
+                customerSignUpMainDirections.ActionCustomerSignUpMainToCustomerSignUpDetails action = customerSignUpMainDirections.actionCustomerSignUpMainToCustomerSignUpDetails("+91 "+binding.phoneNumber.getText().toString().trim());
+                Navigation.findNavController(view).navigate(action);
+                loginActivityVM.emptyVerificationResult();
             }
-
-            @Override
-            public void onVerificationFailed(@NonNull FirebaseException e) {
-                binding.progressbar.setVisibility(View.GONE);
-                Log.d("customerCallbacks", "onVerificationFailed", e);
-                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    Log.d("customerCallbacks","onVerificationFailed: Invalid Number");
-                }
-                else if (e instanceof FirebaseTooManyRequestsException) {
-                    Log.d("customerCallbacks","onVerificationFailed: SMS quota exceeded");
-                }
+            else if (jsonObject != null && !jsonObject.get("success").getAsBoolean()) {
+                Toast.makeText(requireContext(), jsonObject.get("status").getAsString(), Toast.LENGTH_SHORT).show();
+                loginActivityVM.emptyVerificationResult();
             }
-
-            @Override
-            public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                super.onCodeSent(s, forceResendingToken);
-                Toast.makeText(requireContext(), "OTP has been sent", Toast.LENGTH_SHORT).show();
-                binding.progressbar.setVisibility(View.GONE);
-                binding.validateOtpBtn.setEnabled(true);
-                binding.otp.setEnabled(true);
-                verificationId = s;
-            }
-        };
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        binding.phoneNumber.setEnabled(true);
-        binding.otp.setEnabled(true);
-        binding.otpBtn.setEnabled(true);
-        binding.validateOtpBtn.setEnabled(true);
+            else Log.e("VerificationResult", "Empty");
+        });
     }
 
     @Override

@@ -15,7 +15,7 @@
     <string name="additional_details">Additional Details</string>
     <string name="vendor_sign_up">Vendor Sign Up</string>
     <string name="phone_number_text">Phone Number</string>
-    <string name="get_otp_text">GET OTP</string>
+    <string name="request_otp_text">Request OTP</string>
     <string name="otp_text">OTP</string>
     <string name="validate_text">Validate</string>
     <string name="name_text">Name</string>
@@ -33,7 +33,7 @@
     <string name="use_phone_number_text">Use Phone</string>
     <string name="use_email_text">Use email</string>
     <string name="not_registered_text">Not registered?</string>
-    <string name="register_as">Register As</string>
+    <string name="register_as">How do you wish to register?</string>
     <string name="customer_text">Customer</string>
     <string name="vendor_text">Vendor</string>
     <string name="first_name_text">First Name</string>
@@ -47,6 +47,8 @@
     <string name="state_text">State</string>
     <string name="about_shop_text">About Shop</string>
     <string name="verify_otp">Verify</string>
+    <string name="welcome_message">Welcome to ShopEasy, %1$s!</string>
+    <string name="welcome_vendor">Yay, %1$s is now on ShopEasy!</string>
 
     <!--    Inventory item-->
     <string name="add_item_to_inventory">Add new item to Inventory</string>

@@ -1,33 +1,46 @@
 package com.unc0ded.shopdeliver.models;
 
+import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Product {
+
+    @SerializedName("_id")
+    @Expose
+    private String id;
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("price")
-    @Expose
-    private Double price;
-    @SerializedName("quantity")
-    @Expose
-    private Long quantity;
     @SerializedName("type")
     @Expose
     private String type;
-    @SerializedName("vendorId")
+    @SerializedName("price")
     @Expose
-    private String vendorId;
-    @SerializedName("newLabel")
+    private Double price;
+    @SerializedName("currency")
     @Expose
-    private Boolean newLabel;
-    @SerializedName("popularLabel")
+    private String currency;
+    @SerializedName("contents")
     @Expose
-    private Boolean popularLabel;
-    @SerializedName("downloadUrl")
+    private Contents contents;
+    @SerializedName("description")
     @Expose
-    private String downloadUrl;
+    private String description;
+    @SerializedName("quantity")
+    @Expose
+    private Integer quantity;
+    @SerializedName("tags")
+    @Expose
+    private List<String> tags = null;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -35,22 +48,6 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
     }
 
     public String getType() {
@@ -61,35 +58,52 @@ public class Product {
         this.type = type;
     }
 
-    public String getVendorId() {
-        return vendorId;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setVendorId(String vendorId) {
-        this.vendorId = vendorId;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
-    public Boolean getNewLabel() {
-        return newLabel;
+    public String getCurrency() {
+        return currency;
     }
 
-    public void setNewLabel(Boolean newLabel) {
-        this.newLabel = newLabel;
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
-    public Boolean getPopularLabel() {
-        return popularLabel;
+    public Contents getContents() {
+        return contents;
     }
 
-    public void setPopularLabel(Boolean popularLabel) {
-        this.popularLabel = popularLabel;
+    public void setContents(Contents contents) {
+        this.contents = contents;
     }
 
-    public String getDownloadUrl() {
-        return downloadUrl;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDownloadUrl(String downloadUri) {
-        this.downloadUrl = downloadUrl;
+    public void setDescription(String description) {
+        this.description = description;
     }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
 }

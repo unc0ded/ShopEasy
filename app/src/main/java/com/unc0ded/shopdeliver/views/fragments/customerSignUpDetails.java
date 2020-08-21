@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,30 +15,25 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.ShopEasy;
 import com.unc0ded.shopdeliver.databinding.FragmentCustomerSignUpDetailsBinding;
 import com.unc0ded.shopdeliver.models.Customer;
+import com.unc0ded.shopdeliver.utils.SessionManager;
 import com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel;
 import com.unc0ded.shopdeliver.views.activities.customerMainActivity;
 
 import java.util.Objects;
 
-import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_FAILED;
-import static com.unc0ded.shopdeliver.viewmodels.LoginActivityViewModel.STATUS_STARTS;
-import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_SUCCESS;
-
 public class customerSignUpDetails extends Fragment {
 
     FragmentCustomerSignUpDetailsBinding binding;
-    LoginActivityViewModel loginActivityViewModel = new LoginActivityViewModel();
-
-    Customer newCustomer = new Customer();
+    LoginActivityViewModel loginActivityViewModel;
+    private SessionManager sessionManager;
 
     private String phone;
-
-    private FirebaseAuth customerAuth;
 
     //empty constructor
     public customerSignUpDetails(){
@@ -46,44 +42,6 @@ public class customerSignUpDetails extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        loginActivityViewModel.getIsUploading().observe(this, isUploading -> {
-            switch (isUploading){
-                case STATUS_FAILED:
-                    Toast.makeText(requireContext(), "Authentication failed! Please try again", Toast.LENGTH_LONG).show();
-                    binding.progressbar.setVisibility(View.GONE);
-                    break;
-                case STATUS_SUCCESS:
-                    Toast.makeText(getActivity(), "You have been registered successfully!", Toast.LENGTH_LONG).show();
-                    binding.progressbar.setVisibility(View.GONE);
-                    startActivity(new Intent(requireContext(), customerMainActivity.class));
-                    requireActivity().finish();
-                    break;
-                case STATUS_STARTS:
-                    binding.progressbar.setVisibility(View.VISIBLE);
-                    break;
-                default:
-                    binding.progressbar.setVisibility(View.GONE);
-                    break;
-            }
-        });
-
-        loginActivityViewModel.getAuthStatus().observe(this, status -> {
-            switch (status){
-                case STATUS_SUCCESS:
-                    binding.progressbar.setVisibility(View.GONE);
-                    Toast.makeText(requireContext(), "Email linked successfully", Toast.LENGTH_SHORT).show();
-                    loginActivityViewModel.registerUser(newCustomer, customerAuth.getUid());
-                    break;
-                case STATUS_FAILED:
-                    binding.progressbar.setVisibility(View.GONE);
-                    Toast.makeText(requireContext(), "Could not link email! Try again later!", Toast.LENGTH_SHORT).show();
-                    break;
-                case STATUS_STARTS:
-                    binding.progressbar.setVisibility(View.VISIBLE);
-                    break;
-            }
-        });
     }
 
     @Override
@@ -97,78 +55,15 @@ public class customerSignUpDetails extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         phone = customerSignUpDetailsArgs.fromBundle(requireArguments()).getPhone();
+        sessionManager = ((ShopEasy)requireActivity().getApplication()).getSessionManager();
+        loginActivityViewModel = new ViewModelProvider(this).get(LoginActivityViewModel.class);
 
-        customerAuth = FirebaseAuth.getInstance();
-
-        /*BUILDINGS.new_user("A");
-        BUILDINGS.new_user("B");
-            private ArrayList<String> BUILDINGS = new ArrayList<>();*/
-        final String[] STATES = new String[]{"MAHARASHTRA", "GOA"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.dropdown_item, STATES);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.item_dropdown, getResources().getStringArray(R.array.states));
         binding.state.setAdapter(adapter);
 
-        /*binding.state.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                try{
-                    userReference.child("Customers").child(Objects.requireNonNull(binding.locality.getText().toString().trim())).child(Objects.requireNonNull(binding.societyName.getText().toString().trim())).addChildEventListener(new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                            BUILDINGS.clear();
-                            for(DataSnapshot shot : dataSnapshot.getChildren()){
-                                String[] flatSplit = shot.getValue(Customer.class).getFlat().split("-");
-                                BUILDINGS.new_user(flatSplit[0]);
-                            }
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item, BUILDINGS);
-                            binding.state.setAdapter(adapter);
-                        }
-                        @Override
-                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                            BUILDINGS.clear();
-                            for(DataSnapshot shot : dataSnapshot.getChildren()){
-                                String[] flatSplit = shot.getValue(Customer.class).getFlat().split("-");
-                                BUILDINGS.new_user(flatSplit[0]);
-                            }
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item, BUILDINGS);
-                            binding.state.setAdapter(adapter);
-                        }
-                        @Override
-                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                            BUILDINGS.clear();
-                            for(DataSnapshot shot : dataSnapshot.getChildren()){
-                                String[] flatSplit = shot.getValue(Customer.class).getFlat().split("-");
-                                BUILDINGS.new_user(flatSplit[0]);
-                            }
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item, BUILDINGS);
-                            binding.state.setAdapter(adapter);
-                        }
-                        @Override
-                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                            BUILDINGS.clear();
-                            for(DataSnapshot shot : dataSnapshot.getChildren()){
-                                String[] flatSplit = shot.getValue(Customer.class).getFlat().split("-");
-                                BUILDINGS.new_user(flatSplit[0]);
-                            }
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item, BUILDINGS);
-                            binding.state.setAdapter(adapter);
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Log.e("Data fetch error", databaseError.getMessage());
-                        }
-                    });
-                }
-                catch (Exception e){
-                    Toast.makeText(getContext(),"No previous entries for this society",Toast.LENGTH_SHORT).show();
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.dropdown_item, BUILDINGS);
-                    binding.state.setAdapter(adapter);
-                }
-
-                return true;
-            }
-        })*/
-
         binding.signUpBtn.setOnClickListener(v -> {
+            binding.progressbar.setVisibility(View.VISIBLE);
+            Customer newCustomer = new Customer();
             ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
             boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
@@ -176,33 +71,58 @@ public class customerSignUpDetails extends Fragment {
             if (isConnected){
                 newCustomer.setFirstName(binding.firstName.getText().toString().trim());
                 newCustomer.setLastName(binding.lastName.getText().toString().trim());
-                newCustomer.getAddress().setAddressLine1(binding.firstLine.getText().toString().trim());
-                newCustomer.getAddress().setAddressLine2(binding.secondLine.getText().toString().trim());
+                newCustomer.getAddress().setLine1(binding.firstLine.getText().toString().trim());
+                newCustomer.getAddress().setLine2(binding.secondLine.getText().toString().trim());
                 newCustomer.getAddress().setPinCode(binding.pinCode.getText().toString().trim());
                 newCustomer.getAddress().setCity(binding.city.getText().toString().trim());
                 newCustomer.getAddress().setState(binding.state.getText().toString().trim());
                 newCustomer.setEmail(binding.emailId.getText().toString().trim());
                 newCustomer.setPhone(phone);
                 final String password = binding.password.getText().toString().trim();
-                final String re_enter_password = binding.reEnterPassword.getText().toString().trim();
+                final String reEnterPassword = binding.reEnterPassword.getText().toString().trim();
 
-
-                if (newCustomer.getFirstName().isEmpty() || newCustomer.getLastName().isEmpty() || newCustomer.getAddress().getAddressLine1().isEmpty()
-                        || newCustomer.getAddress().getAddressLine2().isEmpty() || newCustomer.getAddress().getCity().isEmpty()
+                if (newCustomer.getFirstName().isEmpty() || newCustomer.getLastName().isEmpty() || newCustomer.getAddress().getLine1().isEmpty()
+                        || newCustomer.getAddress().getLine2().isEmpty() || newCustomer.getAddress().getCity().isEmpty()
                         || newCustomer.getAddress().getState().isEmpty() || newCustomer.getAddress().getPinCode().isEmpty())
                     Toast.makeText(getContext(), "Please fill all the compulsory fields", Toast.LENGTH_LONG).show();
                 else if (newCustomer.getEmail().isEmpty()) {
                     if (validatePinCode(newCustomer.getAddress().getPinCode())){
                         newCustomer.setEmail(null);
-                        loginActivityViewModel.registerUser(newCustomer, customerAuth.getUid());
+                        loginActivityViewModel.registerCustomer(sessionManager, newCustomer).observe(getViewLifecycleOwner(), customer -> {
+                            if (customer != null) {
+                                binding.progressbar.setVisibility(View.GONE);
+                                Toast.makeText(requireContext(), getResources().getString(R.string.welcome_message, customer.getFirstName()), Toast.LENGTH_SHORT).show();
+                                loginActivityViewModel.clearNewCustomer();
+                                startActivity(new Intent(requireContext(), customerMainActivity.class));
+                                requireActivity().finish();
+                            }
+                            else {
+                                Log.e("Customer Registration", "Unknown error");
+                                Toast.makeText(requireContext(), "Unknown Error", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                     else
                         Toast.makeText(getContext(), "Please enter a valid pin code", Toast.LENGTH_SHORT).show();
                 }
-                else if ((password.isEmpty() || re_enter_password.isEmpty()))
-                    Toast.makeText(getContext(), "Please fill all the fields", Toast.LENGTH_LONG).show();
-                else if (password.equals(re_enter_password)) {
-                    loginActivityViewModel.linkEmail(newCustomer.getEmail(), re_enter_password);
+                else if ((password.isEmpty() || reEnterPassword.isEmpty()))
+                    Toast.makeText(getContext(), "Passwords are required!", Toast.LENGTH_LONG).show();
+                else if (password.equals(reEnterPassword)) {
+                    /*TODO link email
+                    if (validatePinCode(newCustomer.getAddress().getPinCode())){
+                        loginActivityViewModel.registerCustomer(sessionManager, newCustomer).observe(getViewLifecycleOwner(), customer -> {
+                            if (customer != null) {
+                                binding.progressbar.setVisibility(View.GONE);
+                                Toast.makeText(requireContext(), getResources().getString(R.string.welcome_message, customer.getFirstName()), Toast.LENGTH_SHORT).show();
+                                loginActivityViewModel.clearNewCustomer();
+                                startActivity(new Intent(requireContext(), customerMainActivity.class));
+                                requireActivity().finish();
+                            }
+                        });
+                    }
+                    else
+                        Toast.makeText(getContext(), "Please enter a valid pin code", Toast.LENGTH_SHORT).show();
+                    */
                 }
                 else
                     Toast.makeText(getContext(), "Passwords don't match", Toast.LENGTH_LONG).show();
@@ -219,11 +139,8 @@ public class customerSignUpDetails extends Fragment {
         binding = null;
     }
 
-    private boolean validatePinCode(String pin_code) {
-        if (pin_code.length() == 6 && !pin_code.startsWith("0"))
-            return true;
-        else
-            return false;
+    private boolean validatePinCode(String code) {
+        return code.length() == 6 && !code.startsWith("0");
     }
 
 }

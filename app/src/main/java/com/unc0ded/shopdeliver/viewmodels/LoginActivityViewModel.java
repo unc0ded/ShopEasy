@@ -1,178 +1,116 @@
 package com.unc0ded.shopdeliver.viewmodels;
 
-import android.util.Log;
+import android.app.Application;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.unc0ded.shopdeliver.listenerinterfaces.OnAuthenticationListener;
-import com.unc0ded.shopdeliver.listenerinterfaces.OnCompletePostListener;
+import com.google.gson.JsonObject;
 import com.unc0ded.shopdeliver.models.Customer;
 import com.unc0ded.shopdeliver.models.Vendor;
 import com.unc0ded.shopdeliver.repositories.AuthenticationRepository;
 import com.unc0ded.shopdeliver.repositories.CustomerRepository;
 import com.unc0ded.shopdeliver.repositories.VendorRepository;
+import com.unc0ded.shopdeliver.utils.SessionManager;
 
-public class LoginActivityViewModel extends ViewModel {
+import java.util.Map;
+
+public class LoginActivityViewModel extends AndroidViewModel {
 
     private AuthenticationRepository authenticationRepo = AuthenticationRepository.getInstance();
     private CustomerRepository customerRepo = CustomerRepository.getInstance();
     private VendorRepository vendorRepo = VendorRepository.getInstance();
 
-    private MutableLiveData<String> authStatus = new MutableLiveData<>();
-    public LiveData<String> getAuthStatus(){
-        return authStatus;
+    private MutableLiveData<Integer> loginMethod = new MutableLiveData<>();
+    private MutableLiveData<JsonObject> otpRequestStatus = new MutableLiveData<>();
+    private MutableLiveData<JsonObject> verificationStatus = new MutableLiveData<>();
+    private MutableLiveData<Customer> newCustomerCreated = new MutableLiveData<>();
+    private MutableLiveData<Vendor> newVendorCreated = new MutableLiveData<>();
+    private MutableLiveData<JsonObject> loginOtpRequestStatus = new MutableLiveData<>();
+    private MutableLiveData<JsonObject> loginVerificationStatus = new MutableLiveData<>();
+
+    public LoginActivityViewModel(@NonNull Application application) {
+        super(application);
     }
 
-    private MutableLiveData<String> isUploading = new MutableLiveData<>();
-    public LiveData<String> getIsUploading(){
-        return isUploading;
+    // Switching between email and phone login in login fragment
+    public LiveData<Integer> getLoginMethod() {
+        return loginMethod;
     }
 
-    public static final String STATUS_SUCCESS = "success";
-    public static final String STATUS_SUCCESS_CUSTOMER = "Success.customer";
-    public static final String STATUS_SUCCESS_VENDOR = "Success.vendor";
-    public static final String STATUS_FAILED = "failed";
-    public static final String STATUS_WRONG_OTP = "WrongOTP";
-    public static final String STATUS_PROCESSING = "processing";
-    public static final String STATUS_VERIFIED = "verified";
-    public static final String STATUS_STARTS = "start";
-
-    //LoginFragment
-    public void signInWithEmail(String email, String password){
-        authenticationRepo.authenticateForSignIn(email, password, new OnAuthenticationListener() {
-            @Override
-            public void onStart() {
-                authStatus.setValue("processing");
-            }
-
-            @Override
-            public void onSuccess(Throwable t) {
-                Log.i("AuthSuccess", "" + t.getMessage());
-                authStatus.setValue("Success." + t.getMessage());
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.i("AuthenticationException", "" + e.getMessage());
-                authStatus.setValue(STATUS_FAILED);
-            }
-        });
-    }
-    public void signInWithPhone(PhoneAuthCredential credential){
-        authenticationRepo.authenticateForSignIn(credential, new OnAuthenticationListener() {
-            @Override
-            public void onStart() {
-                authStatus.setValue("processing");
-            }
-
-            @Override
-            public void onSuccess(Throwable t) {
-                Log.i("AuthSuccess", "" + t.getMessage());
-                authStatus.setValue("Success." + t.getMessage());
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.i("AuthenticationException", "" + e.getMessage());
-                if (("" + e.getMessage()).equals("WrongOTP"))
-                    authStatus.setValue(STATUS_WRONG_OTP);
-                else
-                    authStatus.setValue(STATUS_FAILED);
-            }
-        });
+    public void setLoginMethod(Integer method) {
+        loginMethod.postValue(method);
     }
 
-    //customerSignUpMain & vendorSignUpMain
-    public  void signUpWithPhone(PhoneAuthCredential credential){
-        authenticationRepo.authenticateForSignUp(credential, new OnAuthenticationListener() {
-            @Override
-            public void onStart() {
-                authStatus.setValue("processing");
-            }
-
-            @Override
-            public void onSuccess(Throwable t) {
-                Log.i("AuthSuccess", "" + t.getMessage());
-                authStatus.setValue(STATUS_VERIFIED);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.i("AuthenticationException", "" + e.getMessage());
-                if (("" + e.getMessage()).equals(STATUS_WRONG_OTP))
-                    authStatus.setValue(e.getMessage());
-                else
-                    authStatus.setValue(STATUS_FAILED);
-            }
-        });
+    // Phone verification for sign up, string parameter 'type' differentiates between vendor and customer registration
+    public void requestOtp(SessionManager sessionManager, String type, Map<String, Object> body) {
+        otpRequestStatus = authenticationRepo.requestOtpForSignUp(sessionManager, type, body);
     }
 
-    //customerSignUpDetails & vendorSignUpDetails
-    public void linkEmail(String email, String password){
-        authenticationRepo.linkEmail(email, password, new OnAuthenticationListener() {
-            @Override
-            public void onStart() {
-                authStatus.setValue(STATUS_STARTS);
-            }
-
-            @Override
-            public void onSuccess(Throwable t) {
-                authStatus.setValue(STATUS_SUCCESS);
-                Log.i("EmailLinkSuccess", "" + t.getMessage());
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                authStatus.setValue(STATUS_FAILED);
-                Log.i("LinkEmailException", "" + e.getMessage());
-            }
-        });
+    public LiveData<JsonObject> getOtpRequestStatus() {
+        return otpRequestStatus;
     }
 
-    //customerSignUpDetails
-    public void registerUser(Customer newCustomer, String uid){
-        customerRepo.registerCustomer(newCustomer, uid, new OnCompletePostListener() {
-            @Override
-            public void onStart() {
-                isUploading.setValue(STATUS_STARTS);
-            }
-
-            @Override
-            public void onSuccess(Throwable t) {
-                isUploading.setValue(STATUS_SUCCESS);
-                Log.i("RegisterUserThrowable", "" + t.getMessage());
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                isUploading.setValue(STATUS_FAILED);
-                Log.i("RegisterUserException", "" + e.getMessage());
-            }
-        });
+    public void clearOtpRequestStatus() {
+        otpRequestStatus.postValue(null);
     }
 
-    //vendorSignUpDetails
-    public void registerUser(Vendor newVendor, String uid){
-        vendorRepo.registerVendor(newVendor, uid, new OnCompletePostListener() {
-            @Override
-            public void onStart() {
-                isUploading.setValue("start");
-            }
+    public void verifyOtp(SessionManager sessionManager, Map<String, Object> bodyMap) {
+        verificationStatus = authenticationRepo.verifyOtpForSignUp(sessionManager, bodyMap);
+    }
 
-            @Override
-            public void onSuccess(Throwable t) {
-                isUploading.setValue(STATUS_SUCCESS);
-                Log.i("RegisterUserThrowable", "" + t.getMessage());
-            }
+    public LiveData<JsonObject> getVerificationResult() {
+        return verificationStatus;
+    }
 
-            @Override
-            public void onFailure(Exception e) {
-                isUploading.setValue(STATUS_FAILED);
-                Log.i("RegisterUserException", "" + e.getMessage());
-            }
-        });
+    public void emptyVerificationResult() {
+        verificationStatus.postValue(null);
+    }
+
+    // Register new customer in customerSignUpDetails fragment
+    public LiveData<Customer> registerCustomer(SessionManager sessionManager, Customer customer) {
+        newCustomerCreated = customerRepo.registerCustomer(sessionManager, customer);
+        return newCustomerCreated;
+    }
+
+    public void clearNewCustomer() {
+        newCustomerCreated.postValue(null);
+    }
+
+    // Register new vendor in vendorSignUpDetails fragment
+    public LiveData<Vendor> registerVendor(SessionManager sessionManager, Vendor vendor) {
+        newVendorCreated = vendorRepo.registerVendor(sessionManager, vendor);
+        return newVendorCreated;
+    }
+
+    public void clearNewVendor() {
+        newVendorCreated.postValue(null);
+    }
+
+    // Login (Common for Customer & Vendor)
+    public void loginOtpRequest(SessionManager sessionManager, Map<String, Object> body) {
+        loginOtpRequestStatus = authenticationRepo.requestOtpForLogin(sessionManager, body);
+    }
+
+    public LiveData<JsonObject> getLoginOtpRequestStatus() {
+        return loginOtpRequestStatus;
+    }
+
+    public void clearLoginOtpRequest() {
+        loginOtpRequestStatus.postValue(null);
+    }
+
+    public void verifyLoginOtp(SessionManager sessionManager, Map<String, Object> body) {
+        loginVerificationStatus = authenticationRepo.verifyOtpForLogin(sessionManager, body);
+    }
+
+    public LiveData<JsonObject> getLoginVerificationResult() {
+        return loginVerificationStatus;
+    }
+
+    public void clearLoginVerificationResult() {
+        loginVerificationStatus.postValue(null);
     }
 }

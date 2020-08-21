@@ -22,94 +22,45 @@
             android:textColor="@android:color/white"
             android:textSize="24sp" />
 
-        <RelativeLayout
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/vendor_sign_up_phone_text_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp">
+            android:layout_marginHorizontal="10dp"
+            android:hint="@string/phone_number_text"
+            android:textColorHint="@color/darkBgTextColor"
+            app:boxCornerRadiusBottomEnd="4dp"
+            app:boxCornerRadiusBottomStart="4dp"
+            app:boxCornerRadiusTopEnd="4dp"
+            app:boxCornerRadiusTopStart="4dp"
+            app:boxStrokeColor="@color/box_stroke"
+            app:hintTextColor="@color/bgColor">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/vendor_sign_up_phone_text_input_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/phone_number"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/phone_number_text"
-                android:textColorHint="@color/darkBgTextColor"
-                app:boxCornerRadiusBottomEnd="4dp"
-                app:boxCornerRadiusBottomStart="4dp"
-                app:boxCornerRadiusTopEnd="4dp"
-                app:boxCornerRadiusTopStart="4dp"
-                app:boxStrokeColor="@color/box_stroke"
-                app:hintTextColor="@color/bgColor">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/phone_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/montserrat_light"
-                    android:maxLength="10"
-                    android:paddingHorizontal="95dp"
-                    android:textColor="#ffffff"
-                    android:textColorHint="@color/bgColor" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/otp_btn"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/vendor_sign_up_phone_text_input_layout"
-                android:layout_marginTop="7dp"
-                android:layout_marginEnd="2dp"
+                android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat_light"
-                android:text="@string/get_otp_text"
-                android:textColor="@color/compColor" />
+                android:maxLength="10"
+                android:paddingHorizontal="95dp"
+                android:textColor="#ffffff"
+                android:textColorHint="@color/bgColor" />
 
-        </RelativeLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/otp_btn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/vendor_otp_text_input_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/otp_text"
-                android:textColorHint="@color/darkBgTextColor"
-                app:boxCornerRadiusBottomEnd="4dp"
-                app:boxCornerRadiusBottomStart="4dp"
-                app:boxCornerRadiusTopEnd="4dp"
-                app:boxCornerRadiusTopStart="4dp"
-                app:boxStrokeColor="@color/box_stroke"
-                app:hintTextColor="@color/bgColor">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/otp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/montserrat_light"
-                    android:paddingHorizontal="95dp"
-                    android:textColor="#ffffff"
-                    android:textColorHint="@color/bgColor" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/validate_otp_btn"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/vendor_otp_text_input_layout"
-                android:layout_marginTop="7dp"
-                android:layout_marginEnd="2dp"
-                android:fontFamily="@font/montserrat_light"
-                android:text="@string/validate_text"
-                android:textColor="@color/compColor" />
-
-        </RelativeLayout>
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/sora_regular"
+            android:text="@string/request_otp_text"
+            android:textColor="@color/White"
+            app:rippleColor="@color/btn_ripple"
+            app:strokeColor="@color/bgColor"/>
     </LinearLayout>
 
     <LinearLayout

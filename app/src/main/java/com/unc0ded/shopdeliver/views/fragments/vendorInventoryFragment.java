@@ -51,9 +51,7 @@ public class vendorInventoryFragment extends Fragment {
             if (status){
                 binding.swipeRefreshItemList.setRefreshing(true);
             }else{
-                new Handler().postDelayed(() -> {
-                    binding.swipeRefreshItemList.setRefreshing(false);
-                }, 1000);
+                new Handler().postDelayed(() -> binding.swipeRefreshItemList.setRefreshing(false), 1000);
             }
         });
 

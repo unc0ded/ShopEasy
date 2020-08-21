@@ -3,6 +3,7 @@ package com.unc0ded.shopdeliver.views.fragments;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.Glide;
@@ -33,8 +36,6 @@ import com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Objects;
-
-import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.app.Activity.RESULT_OK;
 import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_FAILED;
@@ -50,6 +51,8 @@ public class AddToInventoryDialogFragment extends DialogFragment {
 
     private static Dialog chooseMethod;
 
+    private static final String[] REQUIRED_PERMISSIONS_GALLERY = { Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE };
+    private static final String[] REQUIRED_PERMISSION_CAMERA = { Manifest.permission.CAMERA };
     private static final int PERMISSION_REQUEST_CODE = 777;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 778;
     private static final int GALLERY_REQUEST_CODE = 107;
@@ -83,23 +86,36 @@ public class AddToInventoryDialogFragment extends DialogFragment {
             chooseMethod.setCancelable(true);
 
             openGallery.setOnClickListener(buttonGallery -> {
-                if(EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                if (storagePermissionsGranted()){
                     openGallery();
-                }else{
-                    EasyPermissions.requestPermissions(requireActivity(), "Allow ShopEasy to access your Gallery?", PERMISSION_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                } else{
+                    ActivityCompat.requestPermissions(requireActivity(), REQUIRED_PERMISSIONS_GALLERY, PERMISSION_REQUEST_CODE);
                 }
             });
 
             openCamera.setOnClickListener(cameraButton -> {
-                if(EasyPermissions.hasPermissions(requireContext(), Manifest.permission.CAMERA)){
+                if(cameraPermissionGranted()) {
                     openCamera();
-                }else{
-                    EasyPermissions.requestPermissions(requireActivity(), "Allow this app to open your camera?", CAMERA_PERMISSION_REQUEST_CODE, Manifest.permission.CAMERA);
+                } else {
+                    ActivityCompat.requestPermissions(requireActivity(), REQUIRED_PERMISSION_CAMERA, CAMERA_PERMISSION_REQUEST_CODE);
                 }
             });
 
             chooseMethod.show();
         });
+    }
+
+    private boolean cameraPermissionGranted() {
+        return ContextCompat.checkSelfPermission(requireContext(), REQUIRED_PERMISSION_CAMERA[0]) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean storagePermissionsGranted() {
+        for (String permission : REQUIRED_PERMISSIONS_GALLERY) {
+            if (ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_DENIED) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -164,9 +180,9 @@ public class AddToInventoryDialogFragment extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
         Bitmap photo = null;
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        if (chooseMethod.isShowing()){ chooseMethod.dismiss();}
+        if (chooseMethod.isShowing()) chooseMethod.dismiss();
 
-        if(requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null){
+        if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null){
             Glide.with(requireContext()).load(data.getData()).into(binding.productImage);
             try {
                 photo = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), data.getData());
@@ -175,7 +191,7 @@ public class AddToInventoryDialogFragment extends DialogFragment {
             }
         }
 
-        if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && data != null && data.getExtras() != null){
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && data != null && data.getExtras() != null){
             photo = (Bitmap) data.getExtras().get("data");
             binding.productImage.setImageBitmap(photo);
         }
@@ -203,13 +219,14 @@ public class AddToInventoryDialogFragment extends DialogFragment {
     public void saveItem() {
         Product newProduct = new Product();
 
-        newProduct.setVendorId(Objects.requireNonNull(auth.getCurrentUser()).getUid());
         newProduct.setName(Objects.requireNonNull(Objects.requireNonNull(binding.itemNameEt.getText()).toString().trim()));
         newProduct.setType(binding.itemTypeSpinner.getText().toString());
-        newProduct.setQuantity(Long.valueOf(Objects.requireNonNull(binding.quantityEt.getText()).toString().trim()));
+        newProduct.setQuantity(Integer.parseInt(Objects.requireNonNull(binding.quantityEt.getText()).toString().trim()));
         newProduct.setPrice(Double.valueOf(Objects.requireNonNull(binding.priceEt.getText()).toString().trim()));
-        newProduct.setNewLabel(binding.newLabel.isChecked());
-        newProduct.setPopularLabel(binding.popularLabel.isChecked());
+        if (binding.newLabel.isChecked())
+            newProduct.getTags().add("new");
+        if (binding.popularLabel.isChecked())
+            newProduct.getTags().add("popular");
 
         vendorMainActivityViewModel.addProduct(newProduct, auth, uploadUri);
     }
