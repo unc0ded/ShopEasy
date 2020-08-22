@@ -2,12 +2,10 @@ package com.unc0ded.shopdeliver.views.fragments;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,102 +18,48 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
 import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.ShopEasy;
 import com.unc0ded.shopdeliver.databinding.FragmentAddToInventoryBinding;
 import com.unc0ded.shopdeliver.models.Product;
+import com.unc0ded.shopdeliver.utils.SessionManager;
 import com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-import static android.app.Activity.RESULT_OK;
 import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_FAILED;
 import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_IS_UPLOADING;
 import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_SUCCESS;
 
 public class AddToInventoryDialogFragment extends DialogFragment {
 
-    FirebaseAuth auth = FirebaseAuth.getInstance();
     FragmentAddToInventoryBinding binding;
+    VendorMainActivityViewModel vendorMainActivityViewModel;
+    SessionManager sessionManager;
 
-    VendorMainActivityViewModel vendorMainActivityViewModel = new VendorMainActivityViewModel();
-
+    private ActivityResultLauncher<String[]> cameraRequestPermissionLauncher;
+    private ActivityResultLauncher<String[]> galleryRequestPermissionLauncher;
+    private ActivityResultLauncher<String> pickImage;
+    private ActivityResultLauncher<Uri> takePicture;
     private static Dialog chooseMethod;
+    private Uri imageUri;
 
     private static final String[] REQUIRED_PERMISSIONS_GALLERY = { Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE };
-    private static final String[] REQUIRED_PERMISSION_CAMERA = { Manifest.permission.CAMERA };
-    private static final int PERMISSION_REQUEST_CODE = 777;
-    private static final int CAMERA_PERMISSION_REQUEST_CODE = 778;
-    private static final int GALLERY_REQUEST_CODE = 107;
-    private static final int CAMERA_REQUEST= 108;
-
-    private Uri uploadUri = null;
+    private static final String[] REQUIRED_PERMISSIONS_CAMERA = { Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE };
 
     public AddToInventoryDialogFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentAddToInventoryBinding.inflate(inflater, container, false);
-        setHasOptionsMenu(true);
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        binding.itemTypeSpinner.setAdapter(new ArrayAdapter<>(requireContext(), R.layout.support_simple_spinner_dropdown_item, new String[]{"Beverages", "Dairy", "Vegetables", "Fruits", "Grains", "Snacks", "Bathing"}));
-        binding.itemTypeSpinner.setDropDownBackgroundResource(R.color.White);
-
-        binding.productImage.setOnClickListener(v -> {
-            chooseMethod = new Dialog(requireContext());
-            chooseMethod.setContentView(R.layout.dialog_upload_image);
-            Button openGallery = chooseMethod.findViewById(R.id.gallery_button), openCamera = chooseMethod.findViewById(R.id.camera_button);
-            chooseMethod.setCancelable(true);
-
-            openGallery.setOnClickListener(buttonGallery -> {
-                if (storagePermissionsGranted()){
-                    openGallery();
-                } else{
-                    ActivityCompat.requestPermissions(requireActivity(), REQUIRED_PERMISSIONS_GALLERY, PERMISSION_REQUEST_CODE);
-                }
-            });
-
-            openCamera.setOnClickListener(cameraButton -> {
-                if(cameraPermissionGranted()) {
-                    openCamera();
-                } else {
-                    ActivityCompat.requestPermissions(requireActivity(), REQUIRED_PERMISSION_CAMERA, CAMERA_PERMISSION_REQUEST_CODE);
-                }
-            });
-
-            chooseMethod.show();
-        });
-    }
-
-    private boolean cameraPermissionGranted() {
-        return ContextCompat.checkSelfPermission(requireContext(), REQUIRED_PERMISSION_CAMERA[0]) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean storagePermissionsGranted() {
-        for (String permission : REQUIRED_PERMISSIONS_GALLERY) {
-            if (ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_DENIED) {
-                return false;
-            }
-        }
-        return true;
     }
 
     @Override
@@ -140,6 +84,56 @@ public class AddToInventoryDialogFragment extends DialogFragment {
                     break;
             }
         });
+
+        cameraRequestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+            boolean allGranted = true;
+            for (String permission: REQUIRED_PERMISSIONS_CAMERA) {
+                if (!result.get(permission)) {
+                    allGranted = false;
+                    break;
+                }
+            }
+            if (allGranted)
+                openCamera();
+            else Toast.makeText(requireContext(), "Camera permissions not granted by user", Toast.LENGTH_SHORT).show();
+        });
+
+        galleryRequestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+            boolean allGranted = true;
+            for (String permission: REQUIRED_PERMISSIONS_GALLERY) {
+                if (!result.get(permission)) {
+                    allGranted = false;
+                    break;
+                }
+            }
+            if (allGranted)
+                openGallery();
+            else Toast.makeText(requireContext(), "Storage permissions not granted by user", Toast.LENGTH_SHORT).show();
+        });
+
+        pickImage = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
+            if (result != null) {
+                imageUri = result;
+                if (chooseMethod.isShowing()) chooseMethod.dismiss();
+                Glide.with(requireContext()).load(result).into(binding.productImage);
+            }
+            else {
+                if (chooseMethod.isShowing()) chooseMethod.dismiss();
+                Toast.makeText(requireContext(), "No image picked.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        takePicture = registerForActivityResult(new ActivityResultContracts.TakePicture(), result -> {
+            if (result) {
+                Log.i("ImageCapture", "OK");
+                if (chooseMethod.isShowing()) chooseMethod.dismiss();
+                Glide.with(requireContext()).load(imageUri).into(binding.productImage);
+            }
+            else {
+                if (chooseMethod.isShowing()) chooseMethod.dismiss();
+                Toast.makeText(requireContext(), "Failed to save image.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @NonNull
@@ -148,6 +142,51 @@ public class AddToInventoryDialogFragment extends DialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dialog;
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        binding = FragmentAddToInventoryBinding.inflate(inflater, container, false);
+        setHasOptionsMenu(true);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        vendorMainActivityViewModel = new ViewModelProvider(requireActivity()).get(VendorMainActivityViewModel.class);
+        sessionManager = ((ShopEasy)requireActivity().getApplication()).getSessionManager();
+
+        binding.itemTypeSpinner.setAdapter(new ArrayAdapter<>(requireContext(), R.layout.support_simple_spinner_dropdown_item, new String[]{"Beverages", "Dairy", "Vegetables", "Fruits", "Grains", "Snacks", "Bathing"}));
+        binding.itemTypeSpinner.setDropDownBackgroundResource(R.color.White);
+
+        binding.productImage.setOnClickListener(v -> {
+            chooseMethod = new Dialog(requireContext());
+            chooseMethod.setContentView(R.layout.dialog_upload_image);
+            Button openGallery = chooseMethod.findViewById(R.id.gallery_button), openCamera = chooseMethod.findViewById(R.id.camera_button);
+            chooseMethod.setCancelable(true);
+
+            openGallery.setOnClickListener(buttonGallery -> {
+                if (storagePermissionsGranted()){
+                    openGallery();
+                }
+                else {
+                    galleryRequestPermissionLauncher.launch(REQUIRED_PERMISSIONS_GALLERY);
+                }
+            });
+
+            openCamera.setOnClickListener(cameraButton -> {
+                if(cameraPermissionGranted()) {
+                    openCamera();
+                }
+                else {
+                    cameraRequestPermissionLauncher.launch(REQUIRED_PERMISSIONS_CAMERA);
+                }
+            });
+            chooseMethod.show();
+        });
     }
 
     @Override
@@ -175,50 +214,36 @@ public class AddToInventoryDialogFragment extends DialogFragment {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Bitmap photo = null;
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        if (chooseMethod.isShowing()) chooseMethod.dismiss();
+    private boolean cameraPermissionGranted() {
+        return ContextCompat.checkSelfPermission(requireContext(), REQUIRED_PERMISSIONS_CAMERA[0]) == PackageManager.PERMISSION_GRANTED;
+    }
 
-        if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null){
-            Glide.with(requireContext()).load(data.getData()).into(binding.productImage);
-            try {
-                photo = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), data.getData());
-            } catch (IOException e) {
-                e.printStackTrace();
+    private boolean storagePermissionsGranted() {
+        for (String permission : REQUIRED_PERMISSIONS_GALLERY) {
+            if (ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_DENIED) {
+                return false;
             }
         }
-
-        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && data != null && data.getExtras() != null){
-            photo = (Bitmap) data.getExtras().get("data");
-            binding.productImage.setImageBitmap(photo);
-        }
-
-        if (photo != null) {
-            photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-            String path = MediaStore.Images.Media.insertImage(requireContext().getContentResolver(), photo, "Title", null);
-            uploadUri = Uri.parse(path);
-        }
+        return true;
     }
 
     private void openGallery() {
         Log.i("FUNCTION", "openGallery() started");
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK);
-        galleryIntent.setType("image/*");
-        startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE);
+        pickImage.launch("image/*");
     }
 
     private void openCamera() {
         Log.i("FUNCTION", "openCamera() started");
-        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        imageUri = getUriForImage();
+        takePicture.launch(imageUri);
+    }
+
+    private Uri getUriForImage() {
+        return Uri.withAppendedPath(Uri.fromFile(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss")));
     }
 
     public void saveItem() {
         Product newProduct = new Product();
-
         newProduct.setName(Objects.requireNonNull(Objects.requireNonNull(binding.itemNameEt.getText()).toString().trim()));
         newProduct.setType(binding.itemTypeSpinner.getText().toString());
         newProduct.setQuantity(Integer.parseInt(Objects.requireNonNull(binding.quantityEt.getText()).toString().trim()));
@@ -227,7 +252,9 @@ public class AddToInventoryDialogFragment extends DialogFragment {
             newProduct.getTags().add("new");
         if (binding.popularLabel.isChecked())
             newProduct.getTags().add("popular");
-
-        vendorMainActivityViewModel.addProduct(newProduct, auth, uploadUri);
+        String userId = sessionManager.fetchUserId();
+        if (userId != null)
+            vendorMainActivityViewModel.addProduct(newProduct, userId, imageUri);
+        else Toast.makeText(requireContext(), "Couldn't find user details", Toast.LENGTH_SHORT).show();
     }
 }

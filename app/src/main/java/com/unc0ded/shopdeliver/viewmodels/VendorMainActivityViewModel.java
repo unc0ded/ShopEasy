@@ -1,11 +1,13 @@
 package com.unc0ded.shopdeliver.viewmodels;
 
+import android.app.Application;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.unc0ded.shopdeliver.listenerinterfaces.OnCompleteFetchListener;
@@ -15,11 +17,12 @@ import com.unc0ded.shopdeliver.repositories.InventoryRepository;
 
 import java.util.ArrayList;
 
-public class VendorMainActivityViewModel extends ViewModel {
+public class VendorMainActivityViewModel extends AndroidViewModel {
 
     private InventoryRepository inventoryRepo = InventoryRepository.getInstance();
 
     private MutableLiveData<Boolean> isFetching = new MutableLiveData<>(false);
+
     public LiveData<Boolean> getIsFetching(){ return isFetching; }
 
     private MutableLiveData<String> isUploading = new MutableLiveData<>();
@@ -31,6 +34,10 @@ public class VendorMainActivityViewModel extends ViewModel {
     public static final String STATUS_IS_UPLOADING = "processing";
     public static final String STATUS_SUCCESS = "success";
     public static final String STATUS_FAILED = "failed";
+
+    public VendorMainActivityViewModel(@NonNull Application application) {
+        super(application);
+    }
 
     public void fetchVendorInventory(FirebaseAuth vendor){
         inventoryRepo.fetchInventory(vendor, new OnCompleteFetchListener() {
@@ -54,8 +61,8 @@ public class VendorMainActivityViewModel extends ViewModel {
         });
     }
 
-    public void addProduct(Product newProduct, FirebaseAuth auth, Uri uploadUri){
-        inventoryRepo.addProduct(newProduct, uploadUri, auth,  new OnCompletePostListener() {
+    public void addProduct(Product newProduct, String vendorId, Uri uploadUri){
+        inventoryRepo.addProduct(newProduct, uploadUri, vendorId,  new OnCompletePostListener() {
             @Override
             public void onStart() {
                 isUploading.setValue(STATUS_IS_UPLOADING);

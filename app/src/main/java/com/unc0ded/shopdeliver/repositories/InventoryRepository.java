@@ -5,9 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -58,36 +56,31 @@ public class InventoryRepository {
                 });
     }
 
-    public void addProduct(Product newProduct, Uri uploadUri, FirebaseAuth vendor, @NonNull OnCompletePostListener listener){
+    public void addProduct(Product newProduct, Uri imageUri, String vendorId, @NonNull OnCompletePostListener listener){
         listener.onStart();
         db.collection("Inventory").add(newProduct)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        listener.onSuccess(new Throwable("Added product(" + documentReference.getId() +") successfully"));
-                        if (uploadUri != null)
-                            uploadImage(vendor.getUid() + "/" + documentReference.getId() + ".jpeg", uploadUri, documentReference.getId());
-                    }
+                .addOnSuccessListener(documentReference -> {
+                    listener.onSuccess(new Throwable("Added product(" + documentReference.getId() +") successfully"));
+                    if (imageUri != null)
+                        uploadImage(vendorId + "/" + documentReference.getId() + ".jpeg", imageUri, documentReference.getId());
                 })
                 .addOnFailureListener(listener::onFailure);
     }
 
-    public void uploadImage(String path, Uri image, String documentReferenceId){
+    public void uploadImage(String path, Uri imageUri, String documentReferenceId){
         StorageReference filePath = sr.child(path);
-        filePath.putFile(image).addOnSuccessListener(taskSnapshot -> {
-            filePath.getDownloadUrl().addOnCompleteListener(task -> {
-                if (task.isSuccessful() && task.getResult() != null){
-                    db.collection("Inventory").document(documentReferenceId)
-                            .update("downloadUrl", task.getResult().toString())
-                            .addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful())
-                                    Log.i("Upload product " + documentReferenceId + " image", "SUCCESS");
-                                else
-                                    Log.i("Upload product " + documentReferenceId + " image", "FAILED - " + task.getException());
-                            });
-                }else
-                    Log.i("Upload product " + documentReferenceId + " image", "FAILED - " + task.getException());
-            });
-        });
+        filePath.putFile(imageUri).addOnSuccessListener(taskSnapshot -> filePath.getDownloadUrl().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null){
+                db.collection("Inventory").document(documentReferenceId)
+                        .update("downloadUrl", task.getResult().toString())
+                        .addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful())
+                                Log.i("Upload product " + documentReferenceId + " image", "SUCCESS");
+                            else
+                                Log.i("Upload product " + documentReferenceId + " image", "FAILED - " + task.getException());
+                        });
+            } else
+                Log.i("Upload product " + documentReferenceId + " image", "FAILED - " + task.getException());
+        }));
     }
 }

@@ -39,17 +39,16 @@ import java.util.Objects;
 public class LoginFragment extends Fragment {
 
     FragmentLoginBinding binding;
-    private static final int METHOD_EMAIL = 0;
-    private static final int METHOD_PHONE = 1;
-
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-    private String verificationId;
-    private String phoneNumber;
-
     private LoginActivityViewModel loginActivityVM;
+    private SessionManager sessionManager;
+
+    private String phoneNumber;
+    private String userId;
 
     AlertDialog otpDialog;
-    private SessionManager sessionManager;
+
+    private static final int METHOD_EMAIL = 0;
+    private static final int METHOD_PHONE = 1;
 
     //empty constructor
     public LoginFragment() {
@@ -157,7 +156,8 @@ public class LoginFragment extends Fragment {
                         Map<String, Object> bodyMap = new HashMap<>();
                         bodyMap.put("phone", phoneNumber);
                         bodyMap.put("code", otpView.getOtpView().getText().toString());
-                        bodyMap.put("user", jsonObject.get("user").getAsString());
+                        userId = jsonObject.get("user").getAsString();
+                        bodyMap.put("user", userId);
                         loginActivityVM.verifyLoginOtp(sessionManager, bodyMap);
                         loginActivityVM.clearLoginOtpRequest();
                     }
@@ -181,10 +181,13 @@ public class LoginFragment extends Fragment {
         loginActivityVM.getLoginVerificationResult().observe(getViewLifecycleOwner(), jsonObject -> {
             if (jsonObject != null && !jsonObject.get("token").isJsonNull()) {
                 sessionManager.saveAuthToken(jsonObject.get("token").getAsString());
+                if (userId != null)
+                    sessionManager.saveUserId(userId);
                 if (jsonObject.get("customer").getAsBoolean() && jsonObject.get("vendor").getAsBoolean()) {
                     otpDialog.dismiss();
                     Dialog loginOption = new Dialog(requireContext());
                     loginOption.setContentView(R.layout.dialog_register);
+                    loginOption.setCancelable(false);
                     loginOption.findViewById(R.id.popup_customer_sign_up_btn).setOnClickListener(v -> {
                         loginOption.dismiss();
                         startActivity(new Intent(requireContext(), customerMainActivity.class));
