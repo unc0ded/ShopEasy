@@ -1,7 +1,6 @@
 package com.unc0ded.shopdeliver.views.fragments;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,33 +9,32 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.unc0ded.shopdeliver.R;
+import com.unc0ded.shopdeliver.ShopEasy;
 import com.unc0ded.shopdeliver.databinding.FragmentVendorInventoryBinding;
 import com.unc0ded.shopdeliver.models.Product;
+import com.unc0ded.shopdeliver.utils.SessionManager;
 import com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel;
 import com.unc0ded.shopdeliver.views.adapters.InventoryItemAdapter;
 
 import java.util.ArrayList;
-
-import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_FAILED;
-import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_IS_UPLOADING;
-import static com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel.STATUS_SUCCESS;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class vendorInventoryFragment extends Fragment {
 
     FragmentVendorInventoryBinding binding;
-    FirebaseAuth vendorAuth;
+    VendorMainActivityViewModel vendorMainActivityViewModel;
+    SessionManager sessionManager;
+
     private ArrayList<Product> inventoryList = new ArrayList<>();
+    private Map<String, String> queryMap = new HashMap<>();
 
-    VendorMainActivityViewModel vendorMainActivityViewModel = new VendorMainActivityViewModel();
-
-    InventoryItemAdapter adapter;
 
     public vendorInventoryFragment() {
         // Required empty public constructor
@@ -45,44 +43,6 @@ public class vendorInventoryFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        vendorAuth = FirebaseAuth.getInstance();
-
-        vendorMainActivityViewModel.getIsFetching().observe(this, status -> {
-            if (status){
-                binding.swipeRefreshItemList.setRefreshing(true);
-            }else{
-                new Handler().postDelayed(() -> binding.swipeRefreshItemList.setRefreshing(false), 1000);
-            }
-        });
-
-        vendorMainActivityViewModel.getVendorList().observe(this, inventory -> {
-            inventoryList = inventory;
-            if(inventoryList.size() > 0){
-                binding.message.setVisibility(View.GONE);
-            }else{
-                binding.message.setVisibility(View.VISIBLE);
-            }
-            refreshRv();
-        });
-
-        vendorMainActivityViewModel.getIsUploading().observe(this, status -> {
-            switch (status){
-                case STATUS_IS_UPLOADING:
-                    binding.swipeRefreshItemList.setRefreshing(true);
-                    break;
-                case STATUS_SUCCESS:
-                    Toast.makeText(requireContext(), "Item added successfully", Toast.LENGTH_SHORT).show();
-                    vendorMainActivityViewModel.fetchVendorInventory(vendorAuth);
-                    break;
-                case STATUS_FAILED:
-                    Toast.makeText(requireContext(), "Could not add item", Toast.LENGTH_SHORT).show();
-                    binding.swipeRefreshItemList.setRefreshing(false);
-                    break;
-                default:
-                    binding.swipeRefreshItemList.setRefreshing(false);
-                    break;
-            }
-        });
     }
 
     @Override
@@ -95,40 +55,68 @@ public class vendorInventoryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.inventoryRv.setLayoutManager(new LinearLayoutManager(requireContext()));
-        refreshRv();
+        vendorMainActivityViewModel = new ViewModelProvider(requireActivity()).get(VendorMainActivityViewModel.class);
+        sessionManager = ((ShopEasy)requireActivity().getApplication()).getSessionManager();
 
-        binding.swipeRefreshItemList.setOnRefreshListener(() -> {
-            if (vendorAuth.getUid() != null)
-                vendorMainActivityViewModel.fetchVendorInventory(vendorAuth);
-            else{
-                new Handler().postDelayed(() -> {
-                    binding.swipeRefreshItemList.setRefreshing(false);
-                    binding.message.setVisibility(View.VISIBLE);
-                }, 1000);
+        binding.inventoryRv.setLayoutManager(new LinearLayoutManager(requireContext()));
+        InventoryItemAdapter rvAdapter = new InventoryItemAdapter(inventoryList, requireContext());
+        binding.inventoryRv.setAdapter(rvAdapter);
+
+        if (sessionManager.fetchUserId() != null) {
+            binding.swipeRefreshItemList.setRefreshing(true);
+            binding.message.setText(getResources().getString(R.string.loading_inventory));
+            binding.message.setVisibility(View.VISIBLE);
+            queryMap.put("vendor", sessionManager.fetchUserId());
+            vendorMainActivityViewModel.loadInventory(sessionManager, queryMap);
+        }
+        else {
+            Toast.makeText(requireContext(), "User details not found", Toast.LENGTH_SHORT).show();
+        }
+
+        vendorMainActivityViewModel.getInventoryList().observe(getViewLifecycleOwner(), products -> {
+            if (products != null) {
+                inventoryList = products;
+                rvAdapter.notifyDataSetChanged();
+                binding.message.setVisibility(View.GONE);
+                if (binding.swipeRefreshItemList.isRefreshing()) binding.swipeRefreshItemList.setRefreshing(false);
+            }
+            else {
+                Toast.makeText(requireContext(), "Empty Inventory/Unknown Error", Toast.LENGTH_SHORT).show();
+                if (binding.swipeRefreshItemList.isRefreshing()) binding.swipeRefreshItemList.setRefreshing(false);
+                binding.message.setText(getResources().getString(R.string.empty_inventory));
+                binding.message.setVisibility(View.VISIBLE);
             }
         });
 
-        binding.addFab.setOnClickListener(view1 -> {
-            FragmentManager fragmentManager = getParentFragmentManager();
-            AddToInventoryDialogFragment addToInventoryDialogFragment  = new AddToInventoryDialogFragment();
-
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            transaction.add(R.id.vendor_nav_host_fragment, addToInventoryDialogFragment)
-                    .addToBackStack(null).commit();
+        binding.swipeRefreshItemList.setOnRefreshListener(() -> {
+            if (queryMap.get("vendor") != null) {
+                vendorMainActivityViewModel.loadInventory(sessionManager, queryMap);
+            }
+            else {
+                Toast.makeText(requireContext(), "Blank query", Toast.LENGTH_SHORT).show();
+            }
         });
 
-        if (vendorAuth.getUid() != null){
-            vendorMainActivityViewModel.fetchVendorInventory(vendorAuth);
-        }else{
-            binding.message.setVisibility(View.VISIBLE);
-        }
+        binding.addFab.setOnClickListener(v -> Navigation.findNavController(view).navigate(R.id.action_add_to_inventory));
     }
 
-    private void refreshRv(){
-        adapter = new InventoryItemAdapter(inventoryList, requireContext());
-        binding.inventoryRv.setAdapter(adapter);
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (queryMap.get("vendor") != null) {
+            binding.swipeRefreshItemList.setRefreshing(true);
+            vendorMainActivityViewModel.loadInventory(sessionManager, queryMap);
+        }
+        else {
+            if (sessionManager.fetchUserId() != null) {
+                binding.swipeRefreshItemList.setRefreshing(true);
+                queryMap.put("vendor", sessionManager.fetchUserId());
+                vendorMainActivityViewModel.loadInventory(sessionManager, queryMap);
+            }
+            else {
+                Toast.makeText(requireContext(), "User details not found", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override

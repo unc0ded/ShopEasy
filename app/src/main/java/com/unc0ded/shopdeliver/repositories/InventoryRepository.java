@@ -4,20 +4,22 @@ import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.unc0ded.shopdeliver.listenerinterfaces.OnCompleteFetchListener;
 import com.unc0ded.shopdeliver.listenerinterfaces.OnCompletePostListener;
 import com.unc0ded.shopdeliver.models.Product;
+import com.unc0ded.shopdeliver.retrofit.RetrofitClient;
+import com.unc0ded.shopdeliver.utils.SessionManager;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class InventoryRepository {
 
@@ -25,35 +27,32 @@ public class InventoryRepository {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference sr = FirebaseStorage.getInstance().getReference().child("Inventory/");
 
-    private ArrayList<Product> dataSet = new ArrayList<>();
-    private static Gson gsonInstance = new GsonBuilder().setPrettyPrinting().create();
-
     public static InventoryRepository getInstance(){
         if (instance == null)
             instance = new InventoryRepository();
         return instance;
     }
 
-    public void fetchInventory(@NonNull FirebaseAuth vendor, @NonNull OnCompleteFetchListener listener){
-        listener.onStart();
-        db.collection("Inventory").whereEqualTo("vendorId", Objects.requireNonNull(vendor.getCurrentUser()).getUid())
-                .addSnapshotListener((value, error) -> {
-                    if (error != null){
-                        listener.onFailure(error);
-                    }
-                    else if (value == null){
-                        listener.onFailure(new Exception("Inventory is empty"));
-                    }
-                    else{
-                        if (dataSet.size() > 0) {
-                            dataSet.clear();
-                        }
-                        for (QueryDocumentSnapshot documentSnapshot : value) {
-                            dataSet.add(gsonInstance.fromJson(new Gson().toJsonTree(documentSnapshot.getData()).getAsJsonObject(), Product.class));
-                        }
-                        listener.onSuccess(dataSet);
-                    }
-                });
+    public MutableLiveData<ArrayList<Product>> loadInventory(SessionManager sessionManager, Map<String, String> query) {
+        MutableLiveData<ArrayList<Product>> productList = new MutableLiveData<>();
+        RetrofitClient.getClient(sessionManager).getProducts(query).enqueue(new Callback<ArrayList<Product>>() {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<Product>> call, @NonNull Response<ArrayList<Product>> response) {
+                if (response.isSuccessful())
+                    productList.postValue(response.body());
+                else {
+                    Log.e("Inventory", "Not received");
+                    productList.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArrayList<Product>> call, @NonNull Throwable t) {
+                Log.e("Inventory", "Not received: " + t.getMessage());
+                productList.postValue(null);
+            }
+        });
+        return productList;
     }
 
     public void addProduct(Product newProduct, Uri imageUri, String vendorId, @NonNull OnCompletePostListener listener){

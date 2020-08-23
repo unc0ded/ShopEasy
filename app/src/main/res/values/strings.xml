@@ -50,7 +50,9 @@
     <string name="welcome_message">Welcome to ShopEasy, %1$s!</string>
     <string name="welcome_vendor">Yay, %1$s is now on ShopEasy!</string>
 
-    <!--    Inventory item-->
+    <!--    Inventory-->
+    <string name="empty_inventory">Can\'t find your things… could they be empty?\nPress the + sign to start</string>
+    <string name="loading_inventory">Loading your things…</string>
     <string name="add_item_to_inventory">Add new item to Inventory</string>
     <string name="new_item_name">Item Name</string>
     <string name="new_item_type">Item Type</string>

@@ -5,6 +5,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -13,12 +14,15 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.unc0ded.shopdeliver.R;
 import com.unc0ded.shopdeliver.databinding.ActivityVendorMainBinding;
+import com.unc0ded.shopdeliver.viewmodels.VendorMainActivityViewModel;
 
 public class vendorMainActivity extends AppCompatActivity {
 
     ActivityVendorMainBinding binding;
     BottomNavigationView bottomNav;
     Toolbar toolbar;
+
+    VendorMainActivityViewModel vendorMainActivityViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,8 @@ public class vendorMainActivity extends AppCompatActivity {
         toolbar = binding.toolbar;
 
         setSupportActionBar(toolbar);
+
+        vendorMainActivityViewModel = new ViewModelProvider(this).get(VendorMainActivityViewModel.class);
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.vendor_inventory, R.id.vendor_orders, R.id.vendor_settings)

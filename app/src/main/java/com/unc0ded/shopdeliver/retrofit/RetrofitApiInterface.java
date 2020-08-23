@@ -2,8 +2,10 @@ package com.unc0ded.shopdeliver.retrofit;
 
 import com.google.gson.JsonObject;
 import com.unc0ded.shopdeliver.models.Customer;
+import com.unc0ded.shopdeliver.models.Product;
 import com.unc0ded.shopdeliver.models.Vendor;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -11,6 +13,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.QueryMap;
 
 public interface RetrofitApiInterface {
 
@@ -31,4 +34,7 @@ public interface RetrofitApiInterface {
 
     @POST("/vendors")
     Call<Vendor> createVendor(@Body Vendor newVendor);
+
+    @GET("/products")
+    Call<ArrayList<Product>> getProducts(@QueryMap Map<String, String> queryMap);
 }

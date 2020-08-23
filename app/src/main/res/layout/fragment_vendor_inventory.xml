@@ -10,35 +10,35 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <FrameLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/swipe_refresh_item_list">
 
-        <TextView
-            android:id="@+id/message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="So empty :'("
-            android:textSize="30sp"
-            android:fontFamily="@font/montserrat_regular"
-            android:textColor="@color/White"
-            android:layout_margin="5dp"
-            android:visibility="gone"/>
-
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_refresh_item_list"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                tools:text="@string/empty_inventory"
+                android:textAlignment="center"
+                android:fontFamily="@font/montserrat_regular"
+                android:textColor="@color/White"
+                android:visibility="gone"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/inventory_rv"
                 android:padding="10dp"/>
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-
-    </FrameLayout>
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_fab"

@@ -14,8 +14,10 @@ import com.unc0ded.shopdeliver.listenerinterfaces.OnCompleteFetchListener;
 import com.unc0ded.shopdeliver.listenerinterfaces.OnCompletePostListener;
 import com.unc0ded.shopdeliver.models.Product;
 import com.unc0ded.shopdeliver.repositories.InventoryRepository;
+import com.unc0ded.shopdeliver.utils.SessionManager;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class VendorMainActivityViewModel extends AndroidViewModel {
 
@@ -28,8 +30,7 @@ public class VendorMainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<String> isUploading = new MutableLiveData<>();
     public LiveData<String> getIsUploading(){ return isUploading; }
 
-    private MutableLiveData<ArrayList<Product>> vendorList = new MutableLiveData<>();
-    public LiveData<ArrayList<Product>> getVendorList(){ return vendorList; }
+    private MutableLiveData<ArrayList<Product>> inventoryList = new MutableLiveData<>();
 
     public static final String STATUS_IS_UPLOADING = "processing";
     public static final String STATUS_SUCCESS = "success";
@@ -39,26 +40,12 @@ public class VendorMainActivityViewModel extends AndroidViewModel {
         super(application);
     }
 
-    public void fetchVendorInventory(FirebaseAuth vendor){
-        inventoryRepo.fetchInventory(vendor, new OnCompleteFetchListener() {
-            @Override
-            public void onStart() {
-                isFetching.setValue(true);
-            }
+    public void loadInventory(SessionManager sessionManager, Map<String, String> query) {
+        inventoryList = inventoryRepo.loadInventory(sessionManager, query);
+    }
 
-            @Override
-            public void onSuccess(Object result) {
-                isFetching.setValue(false);
-                Log.i("fetched list", "success: " + result.toString());
-                vendorList.setValue((ArrayList<Product>) result);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                isFetching.setValue(false);
-                Log.i("InventoryFetchException", "" + e.getMessage());
-            }
-        });
+    public LiveData<ArrayList<Product>> getInventoryList() {
+        return inventoryList;
     }
 
     public void addProduct(Product newProduct, String vendorId, Uri uploadUri){
