@@ -1,0 +1,157 @@
+package com.unc0ded.shopeasy.views.fragments;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.unc0ded.shopeasy.ShopEasy;
+import com.unc0ded.shopeasy.databinding.FragmentVendorSignUpMainBinding;
+import com.unc0ded.shopeasy.utils.SessionManager;
+import com.unc0ded.shopeasy.viewmodels.LoginActivityViewModel;
+import com.unc0ded.shopeasy.views.widgets.OtpWidget;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+public class VendorSignUpMainFragment extends Fragment {
+
+    FragmentVendorSignUpMainBinding binding;
+    LoginActivityViewModel loginActivityVM;
+    SessionManager sessionManager;
+
+    private String phoneNumber;
+
+    AlertDialog otpDialog;
+
+    //empty constructor
+    public VendorSignUpMainFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentVendorSignUpMainBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        loginActivityVM = new ViewModelProvider(requireActivity()).get(LoginActivityViewModel.class);
+        sessionManager = ((ShopEasy)requireActivity().getApplication()).getSessionManager();
+
+        binding.otpBtn.setOnClickListener(v -> {
+            ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
+            boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+            if (isConnected){
+                MaterialAlertDialogBuilder otpAlertBuilder = new MaterialAlertDialogBuilder(requireContext());
+                otpAlertBuilder.setMessage("You will receive an OTP and standard SMS charges may apply.")
+                        .setCancelable(true)
+                        .setPositiveButton("Accept",
+                                (dialog, which) -> {
+                                    if (binding.phoneNumber.getText().toString().trim().length() != 10) {
+                                        Toast.makeText(getContext(), "Please enter a valid mobile number.", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        phoneNumber = "+91" + binding.phoneNumber.getText().toString();
+                                        Map<String, Object> bodyMap = new HashMap<>();
+                                        bodyMap.put("phone", phoneNumber);
+                                        loginActivityVM.requestOtp(sessionManager, "vendor", bodyMap);
+                                        startObservingForOtpRequest();
+                                        binding.progressbar.setVisibility(View.VISIBLE);
+                                    }
+                                    dialog.dismiss();
+                                })
+                        .setNegativeButton("Cancel",
+                                (dialog, which) -> dialog.cancel()).show();
+            }
+            else
+                Toast.makeText(getContext(), "No internet connection!", Toast.LENGTH_LONG).show();
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //de-initialize binding object
+        binding = null;
+    }
+
+    public void startObservingForOtpRequest() {
+        loginActivityVM.getOtpRequestStatus().observe(getViewLifecycleOwner(), jsonObject -> {
+            if (jsonObject != null && jsonObject.get("error").isJsonNull()) {
+                binding.progressbar.setVisibility(View.GONE);
+                Toast.makeText(requireContext(), "OTP has been sent", Toast.LENGTH_SHORT).show();
+
+                OtpWidget otpView = new OtpWidget(requireContext());
+                otpView.getVerifyBtn().setOnClickListener(v -> {
+                    if (!otpView.getOtpView().getText().toString().isEmpty() && otpView.getOtpView().getText().toString().length() == 6) {
+                        Map<String, Object> bodyMap = new HashMap<>();
+                        bodyMap.put("phone", phoneNumber);
+                        bodyMap.put("code", otpView.getOtpView().getText().toString());
+                        loginActivityVM.verifyOtp(sessionManager, bodyMap);
+                        startObservingForVerificationResult();
+                        //loginActivityVM.clearOtpRequestStatus();
+                        loginActivityVM.getOtpRequestStatus().removeObservers(getViewLifecycleOwner());
+                    }
+                    else
+                        Toast.makeText(requireContext(), "Please enter complete OTP", Toast.LENGTH_SHORT).show();
+                });
+                otpDialog = new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Enter OTP")
+                        .setCancelable(true)
+                        .setView(otpView)
+                        .show();
+            }
+            else if (jsonObject != null && !jsonObject.get("error").isJsonNull()) {
+                binding.progressbar.setVisibility(View.GONE);
+                Toast.makeText(requireContext(), jsonObject.get("error").getAsString(), Toast.LENGTH_SHORT).show();
+                //loginActivityVM.clearOtpRequestStatus();
+                loginActivityVM.getOtpRequestStatus().removeObservers(getViewLifecycleOwner());
+            }
+            else Log.e("RequestStatus", "Empty");
+        });
+    }
+
+    private void startObservingForVerificationResult() {
+        loginActivityVM.getVerificationResult().observe(getViewLifecycleOwner(), jsonObject -> {
+            if (jsonObject != null && jsonObject.get("success").getAsBoolean()) {
+                sessionManager.saveAuthToken(jsonObject.get("token").getAsString());
+                Toast.makeText(requireContext(), "Verified!", Toast.LENGTH_SHORT).show();
+                if (otpDialog.isShowing()) otpDialog.dismiss();
+                vendorSignUpMainDirections.ActionVendorSignUpMainToVendorSignUpDetails action = vendorSignUpMainDirections.actionVendorSignUpMainToVendorSignUpDetails("+91 "+binding.phoneNumber.getText().toString().trim());
+                Navigation.findNavController(getView()).navigate(action);
+                //loginActivityVM.emptyVerificationResult();
+                loginActivityVM.getVerificationResult().removeObservers(getViewLifecycleOwner());
+            }
+            else if (jsonObject != null && !jsonObject.get("success").getAsBoolean()) {
+                Toast.makeText(requireContext(), jsonObject.get("status").getAsString(), Toast.LENGTH_SHORT).show();
+                //loginActivityVM.emptyVerificationResult();
+                loginActivityVM.getVerificationResult().removeObservers(getViewLifecycleOwner());
+            }
+            else { Log.e("VerificationResult", "Empty"); }
+        });
+    }
+}

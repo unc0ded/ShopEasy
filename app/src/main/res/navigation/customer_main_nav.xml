@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/customer_shops_list"
-        android:name="com.unc0ded.shopdeliver.views.fragments.customerShopsListFragment"
+        android:name="com.unc0ded.shopeasy.views.fragments.CustomerShopsListFragment"
         android:label="Nearby Vendors"
         tools:layout="@layout/fragment_customer_shops_list">
         <action
@@ -18,18 +18,18 @@
 
     <fragment
         android:id="@+id/customer_orders"
-        android:name="com.unc0ded.shopdeliver.views.fragments.customerOrdersFragment"
+        android:name="com.unc0ded.shopeasy.views.fragments.CustomerOrdersFragment"
         android:label="Order History"
         tools:layout="@layout/fragment_customer_orders" />
 
     <fragment
         android:id="@+id/customer_settings"
-        android:name="com.unc0ded.shopdeliver.views.fragments.customerSettingsFragment"
+        android:name="com.unc0ded.shopeasy.views.fragments.CustomerSettingsFragment"
         android:label="Account Settings"
         tools:layout="@layout/fragment_customer_settings" />
     <fragment
         android:id="@+id/customer_navigation_product_list"
-        android:name="com.unc0ded.shopdeliver.views.fragments.customerProductList"
+        android:name="com.unc0ded.shopeasy.views.fragments.CustomerProductListFragment"
         android:label="Products Available"
         tools:layout="@layout/fragment_customer_product_list" />
 

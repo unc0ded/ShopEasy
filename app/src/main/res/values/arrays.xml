@@ -38,4 +38,41 @@
         <item>Lakshadweep</item>
         <item>Chandigarh</item>
     </string-array>
+
+    <string-array name="product_category">
+        <item>Grains</item>
+        <item>Pulses</item>
+        <item>Snacks</item>
+        <item>Beverages</item>
+        <item>Dairy</item>
+        <item>Spices</item>
+        <item>Baked Goods</item>
+        <item>Animal Products</item>
+        <item>Vegetables</item>
+        <item>Fruits</item>
+        <item>Candy &amp; Chocolates</item>
+        <item>Medicines</item>
+        <item>Instant Food</item>
+        <item>Pet Care</item>
+        <item>Sweets</item>
+        <item>Dry Fruits</item>
+    </string-array>
+
+    <string-array name="content_units">
+        <item>ml</item>
+        <item>L</item>
+        <item>m</item>
+        <item>cm</item>
+        <item>pcs</item>
+        <item>kg</item>
+        <item>g</item>
+    </string-array>
+
+    <string-array name="currencies">
+        <item>₹</item>
+        <item>$</item>
+        <item>£</item>
+        <item>€</item>
+        <item>¥</item>
+    </string-array>
 </resources>

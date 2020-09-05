@@ -62,6 +62,11 @@
     <string name="label_new">New</string>
     <string name="label_popular">Popular</string>
     <string name="rupee_symbol">₹</string>
+    <string name="contents_helper_text">e.g &lt;b>500&lt;/b> grams</string>
+    <string name="new_item_unit">Unit</string>
+    <string name="new_item_contents">Contents</string>
+    <string name="unit_helper_text">e.g. 500 &lt;b>grams&lt;/b></string>
+    <string name="description_text">Description (Optional)</string>
 
     <!--    Toolbar action items-->
     <string name="log_out">Log Out</string>
@@ -75,4 +80,6 @@
     <string name="upload_from_text">Upload from</string>
     <string name="gallery_text">Gallery</string>
     <string name="camera_text">Camera</string>
+    <string name="product_price_currency">Currency</string>
+
 </resources>

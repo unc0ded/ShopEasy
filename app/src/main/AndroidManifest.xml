@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.unc0ded.shopdeliver">
+    package="com.unc0ded.shopeasy">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SEND_SMS" />
@@ -18,8 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MaterialTheme">
-        <activity android:name=".views.activities.vendorMainActivity" />
-        <activity android:name=".views.activities.customerMainActivity"/>
+        <activity android:name=".views.activities.VendorMainActivity" />
+        <activity android:name=".views.activities.CustomerMainActivity"/>
         <activity android:name=".views.activities.SplashScreen" />
         <!--android:theme="@style/SplashTheme"-->
         <activity

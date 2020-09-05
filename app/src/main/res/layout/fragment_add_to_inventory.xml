@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/White">
+    android:background="@color/White"
+    tools:context=".views.fragments.AddToInventoryDialogFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +16,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#92DCE5"
+            android:background="@color/colorAccent"
             android:fontFamily="@font/sora_light"
             android:gravity="center"
             android:padding="5dp"
@@ -37,12 +38,12 @@
                     android:id="@+id/product_image"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
-                    app:civ_border_width="2dp"
-                    app:civ_border_color="@color/Black"
-                    android:background="@color/light_grey"
                     android:layout_marginEnd="10dp"
+                    android:background="@color/light_grey"
                     android:src="@drawable/ic_add_a_photo_24px"
-                    app:layout_constraintBottom_toTopOf="@+id/item_quantity_layout"
+                    app:civ_border_color="@color/Black"
+                    app:civ_border_width="2dp"
+                    app:layout_constraintBottom_toTopOf="@+id/item_contents_layout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -81,6 +82,44 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/item_contents_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:hint="@string/new_item_contents"
+                    app:helperText="@string/contents_helper_text"
+                    app:helperTextTextAppearance="@style/HelperTextAppearance"
+                    app:layout_constraintEnd_toStartOf="@id/item_unit_layout"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/item_type_layout">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/item_contents_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/montserrat_regular" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/item_unit_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:hint="@string/new_item_unit"
+                    app:helperText="@string/unit_helper_text"
+                    app:helperTextTextAppearance="@style/HelperTextAppearance"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/item_contents_layout"
+                    app:layout_constraintTop_toBottomOf="@+id/item_type_layout">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/item_unit_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/montserrat_regular" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/item_quantity_layout"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_height="wrap_content"
@@ -88,7 +127,7 @@
                     android:hint="@string/quantity"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/item_type_layout">
+                    app:layout_constraintTop_toBottomOf="@id/item_contents_layout">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/quantity_et"
@@ -100,11 +139,12 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/item_price_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
                     android:hint="@string/new_item_price"
+                    app:layout_constraintEnd_toStartOf="@+id/item_currency_layout"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/item_quantity_layout">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -115,14 +155,52 @@
                         android:inputType="numberDecimal" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/item_currency_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:hint="@string/product_price_currency"
+                    app:layout_constraintStart_toEndOf="@id/item_price_layout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/item_quantity_layout">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/item_currency_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/montserrat_regular" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/item_description_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:hint="@string/description_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/item_price_layout">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/description_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:inputType="numberDecimal" />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <LinearLayout
+                    android:id="@+id/linearLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/item_price_layout">
+                    app:layout_constraintTop_toBottomOf="@id/item_description_layout">
 
                     <com.google.android.material.chip.ChipGroup
                         android:layout_width="match_parent"

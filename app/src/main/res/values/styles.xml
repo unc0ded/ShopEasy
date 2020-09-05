@@ -81,4 +81,8 @@
         <item name="colorControlActivated">@color/colorPrimary</item>
     </style>
 
+    <style name="HelperTextAppearance" >
+        <item name="fontFamily">@font/montserrat_regular</item>
+    </style>
+
 </resources>

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.fragments.vendorSignUpDetails"
+    tools:context=".views.fragments.VendorSignUpDetailsFragment"
     android:background="@color/darkBackground">
 
     <androidx.core.widget.NestedScrollView
@@ -16,7 +16,7 @@
 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".views.fragments.vendorSignUpDetails"
+            tools:context=".views.fragments.VendorSignUpDetailsFragment"
             android:orientation="vertical">
 
             <com.google.android.material.textview.MaterialTextView
